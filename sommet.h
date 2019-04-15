@@ -11,20 +11,7 @@ class Sommet
         ///constructeur qui reçoit en params les données du sommet
         Sommet(std::string,double,double);
         void ajouterVoisin(const Sommet*);
-        void afficherData() const;
-        void afficherVoisins() const;
-        ///méthode de parcours en largeur du graphe à partir du sommet
-        ///renvoie les prédécesseurs sous forme d'une map (clé=id du sommet,valeur=id de son prédécesseur)
-        std::unordered_map<std::string,std::string> parcoursBFS(std::unordered_set <std::string> verif,std::unordered_map<std::string,std::string> file) const;
-        std::unordered_map<std::string,std::string> parcoursBFS() const;
-         ///méthode de parcours en profondeur du graphe à partir du sommet
-        std::unordered_map<std::string,std::string> parcoursDFS() const;
-        ///méthode qui recherche la composante connexe du sommet
-        ///renvoie la liste des ids des sommets de la composante
-        std::unordered_set<std::string> rechercherCC() const;
         ~Sommet();
-        std::string get_id() const;
-        getDegre() const;
 
     private:
         /// Voisinage : liste d'adjacence
