@@ -83,3 +83,8 @@ void graphe::afficher() const
         i.second->afficher();
     }
 }
+
+void graphe::ajouter_arete(int id,float P1,float P2 ,const Sommet* S1,const Sommet* S2)
+{
+    m_aretes.insert({id,new arete(id,P1,P2,S1,S2)});
+}

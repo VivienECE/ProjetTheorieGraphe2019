@@ -9,6 +9,7 @@ class arete
 {
     public:
         arete();
+        arete(int,float,float,const Sommet*,const Sommet*);
         arete(int,const Sommet*,const Sommet*);
         void afficher() const;
         ~arete();
