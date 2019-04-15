@@ -9,14 +9,15 @@ class arete
 {
     public:
         arete();
-        arete(std::string,const Sommet*,const Sommet*);
+        arete(int,const Sommet*,const Sommet*);
         void afficher() const;
         ~arete();
+        void ajouter_poids(float);
 
     private:
         std::vector<const Sommet*> m_extremites;
-        std::string m_id;
-        float m_poids;
+        std::vector<float> m_poids;
+        int m_id;
 
 };
 

@@ -45,8 +45,8 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="arrete.cpp" />
-		<Unit filename="arrete.h" />
+		<Unit filename="arete.cpp" />
+		<Unit filename="arete.h" />
 		<Unit filename="graphe.cpp" />
 		<Unit filename="graphe.h" />
 		<Unit filename="main.cpp" />
