@@ -10,6 +10,7 @@ class graphe
 {
     public:
         graphe(std::string);
+        graphe();
         void lire_poids(std::string nomFichier);
         ~graphe();
         void afficher() const;

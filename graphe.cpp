@@ -9,6 +9,11 @@ graphe::~graphe()
     //dtor
 }
 
+graphe::graphe()
+{
+    //ctor
+}
+
 graphe::graphe(std::string nomFichier){
     std::ifstream ifs{nomFichier};
     if (!ifs)
