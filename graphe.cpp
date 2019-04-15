@@ -44,7 +44,7 @@ graphe::graphe(std::string nomFichier){
         //ajouter chaque extrémité à la liste des voisins de l'autre (graphe non orienté)
         (m_sommets.find(id))->second->ajouterVoisin((m_sommets.find(id_voisin))->second);
         (m_sommets.find(id_voisin))->second->ajouterVoisin((m_sommets.find(id))->second);//remove si graphe orienté
-       // m_aretes.insert({i,new arete{i,(m_sommets.find(id))->second,(m_sommets.find(id_voisin))->second}}); ///AJOUT ARRETE PROB
+         m_aretes.insert({i,new arete{i,(m_sommets.find(id))->second,(m_sommets.find(id_voisin))->second}}); ///AJOUT ARRETE PROB
     }
 }
 
@@ -58,9 +58,17 @@ void graphe::lire_poids(std::string nomFichier)
     if ( ifs.fail() )
         throw std::runtime_error("Probleme lecture ordre du graphe");
     int ponderation;
+    float poids;
+    std::string id;
     ifs >> ponderation;
-    for (int i=0; i<taille; ++i){
-
+    for (int i=0; i<taille; ++i)
+    {
+        ifs >> id;
+        for(int j=0; j<ponderation; ++j)
+        {
+            ifs >> poids;
+            m_aretes.find(i)->second->ajouter_poids(poids);
+        }
     }
 
 
@@ -70,8 +78,13 @@ void graphe::afficher() const
 {
     for (const auto i:m_sommets)
     {
-        std::cout<<"sommet : ";
+        std::cout<<"sommets : ";
         i.second->afficherData();
         i.second->afficherVoisins();
+    }
+    for (const auto i:m_aretes)
+    {
+        std::cout<<"aretes : ";
+        i.second->afficher();
     }
 }
