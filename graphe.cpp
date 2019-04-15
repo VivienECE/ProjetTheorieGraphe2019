@@ -33,18 +33,21 @@ graphe::graphe(std::string nomFichier){
     }
     int taille;
     ifs >> taille;
+    std::cout << "TAILLE " << taille;
     if ( ifs.fail() )
         throw std::runtime_error("Probleme lecture taille du graphe");
     std::string id_voisin;
+    int id_arrete;
     //lecture des aretes
     for (int i=0; i<taille; ++i){
-        //lecture des ids des deux extrémités
+
+        ifs>>id_arrete; if(ifs.fail()) throw std::runtime_error("Probleme lecture arete");
         ifs>>id; if(ifs.fail()) throw std::runtime_error("Probleme lecture arete sommet 1");
         ifs>>id_voisin; if(ifs.fail()) throw std::runtime_error("Probleme lecture arete sommet 2");
-        //ajouter chaque extrémité à la liste des voisins de l'autre (graphe non orienté)
+
         (m_sommets.find(id))->second->ajouterVoisin((m_sommets.find(id_voisin))->second);
         (m_sommets.find(id_voisin))->second->ajouterVoisin((m_sommets.find(id))->second);//remove si graphe orienté
-         m_aretes.insert({i,new arete{i,(m_sommets.find(id))->second,(m_sommets.find(id_voisin))->second}}); ///AJOUT ARRETE PROB
+         m_aretes.insert({id_arrete,new arete{id_arrete,(m_sommets.find(id))->second,(m_sommets.find(id_voisin))->second}}); ///AJOUT ARRETE PROB
     }
 }
 
