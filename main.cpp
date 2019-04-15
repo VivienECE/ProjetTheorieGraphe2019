@@ -4,7 +4,7 @@
 
 int main()
 {
-    init_Allegro();
+   // init_Allegro();
     graphe g{"broadway.txt"};
     g.lire_poids("broadway_weights_0.txt");
     g.afficher();
