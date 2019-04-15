@@ -39,7 +39,34 @@ graphe::graphe(std::string nomFichier){
         //ajouter chaque extrémité à la liste des voisins de l'autre (graphe non orienté)
         (m_sommets.find(id))->second->ajouterVoisin((m_sommets.find(id_voisin))->second);
         (m_sommets.find(id_voisin))->second->ajouterVoisin((m_sommets.find(id))->second);//remove si graphe orienté
+       // m_aretes.insert({i,new arete{i,(m_sommets.find(id))->second,(m_sommets.find(id_voisin))->second}}); ///AJOUT ARRETE PROB
     }
 }
 
+void graphe::lire_poids(std::string nomFichier)
+{
+    std::ifstream ifs{nomFichier};
+    if (!ifs)
+        throw std::runtime_error( "Impossible d'ouvrir en lecture " + nomFichier );
+    int taille;
+    ifs >> taille;
+    if ( ifs.fail() )
+        throw std::runtime_error("Probleme lecture ordre du graphe");
+    int ponderation;
+    ifs >> ponderation;
+    for (int i=0; i<taille; ++i){
 
+    }
+
+
+}
+
+void graphe::afficher() const
+{
+    for (const auto i:m_sommets)
+    {
+        std::cout<<"sommet : ";
+        i.second->afficherData();
+        i.second->afficherVoisins();
+    }
+}
