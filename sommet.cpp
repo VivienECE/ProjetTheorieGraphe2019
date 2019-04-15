@@ -13,6 +13,17 @@ void Sommet::ajouterVoisin(const Sommet* voisin){
     m_voisins.push_back(voisin);
 }
 
+void Sommet::afficherData() const{
+     std::cout<<"    "<<m_id<<" : "<<"(x,y)=("<<m_x<<","<<m_y<<")"<<std::endl;
+ }
+
+void Sommet::afficherVoisins() const{
+    std::cout<<"  voisins :"<<std::endl;
+    for(auto v:m_voisins) {
+        v->afficherData();
+    }
+}
+
 Sommet::~Sommet()
 {
     //dtor
