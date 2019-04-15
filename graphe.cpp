@@ -3,6 +3,7 @@
 #include "graphe.h"
 #include <queue>
 #include <stack>
+#include "math.h"
 
 graphe::~graphe()
 {
@@ -13,6 +14,20 @@ graphe::graphe()
 {
     //ctor
 }
+
+graphe::graphe(std::vector<bool> vect,graphe g)
+{
+    m_sommets=g.m_sommets;
+    int num_arete=0;
+    for(const auto i:vect)
+    {
+        if(i==true);
+            m_aretes.emplace(g.m_aretes.find(num_arete)->first,g.m_aretes.find(num_arete)->second);
+        num_arete++;
+    }
+
+}
+
 
 graphe::graphe(std::string nomFichier){
     std::ifstream ifs{nomFichier};
@@ -33,7 +48,6 @@ graphe::graphe(std::string nomFichier){
     }
     int taille;
     ifs >> taille;
-    std::cout << "TAILLE " << taille;
     if ( ifs.fail() )
         throw std::runtime_error("Probleme lecture taille du graphe");
     std::string id_voisin;
@@ -95,4 +109,52 @@ void graphe::afficher() const
 void graphe::ajouter_arete(int id,float P1,float P2 ,const Sommet* S1,const Sommet* S2)
 {
     m_aretes.insert({id,new arete(id,P1,P2,S1,S2)});
+}
+
+std::vector<bool> add(const std::vector<bool>& a, const std::vector<bool>& b)
+{
+        bool c;
+        std::vector<bool> result;
+        for(size_t i = 0; i < a.size() ; i++){
+                result.push_back(false);
+                result[i] = ((a[i] ^ b[i]) ^ c); // c is carry
+                c = ((a[i] & b[i]) | (a[i] & c)) | (b[i] & c);
+        }
+        return result;
+}
+
+std::vector<const graphe*> graphe::bruteforce()
+{
+    int taille=m_aretes.size();
+    std::vector <bool> nb_bool,bin_1; //bin 1 est le chiffre binaire 1
+    bin_1.push_back(true);
+    for(int i=0; i<taille;++i) //initialise à 0 nb_bool, à 1 bin_1
+    {
+        nb_bool.push_back(false);
+        bin_1.push_back(false);
+    }
+    bin_1.pop_back();
+
+    std::vector <const graphe*> espace_recherche;
+    size_t compteur=0;
+    for(int i=0; i<pow(2,taille);++i) //Boucle de 0 à 2^taille
+    {
+        nb_bool=add(nb_bool,bin_1);//Incremente en chiffre binaire
+        for(const auto i:nb_bool)
+            if(i==true)
+                compteur++;
+        if(compteur==m_sommets.size()-1); //Si combinaison ordre-1 arete
+            espace_recherche.push_back(new graphe{nb_bool,*this}); //Rajoute un graphe en fonction du num bool.
+        compteur=0;
+    }
+    //DEBUG
+    std::cout<<std::endl<<"ESPACE RECHERCHE"<<std::endl;
+    for(const auto j:espace_recherche)
+    {
+        std::cout<<std::endl<<std::endl;
+        j->afficher();
+    }
+    //DEBUG
+    //espace_recherche=connexe(espace_recherche); //A coder, renvoie que les graphes connexes
+    return espace_recherche;
 }
