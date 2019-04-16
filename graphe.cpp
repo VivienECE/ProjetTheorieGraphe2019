@@ -118,6 +118,9 @@ graphe graphe::prim(int poids)
     ArbreCouvrant.m_sommets.insert({m_sommets.begin()->first, new Sommet   {m_sommets.begin()->second->getm_id(),
                                                                             m_sommets.begin()->second->getm_x(),
                                                                             m_sommets.begin()->second->getm_y()}});
+    std::cout << "voila l'arbre couvrant au début..." << std::endl;
+    ArbreCouvrant.afficher();
+    //system("pause");
     float tampon, newtampon;
     arete *candidat1, *candidat2;
     int prems=1, dems=1;
@@ -136,6 +139,9 @@ graphe graphe::prim(int poids)
                    ||((a.second->getm_extremites()[1]->getm_id()==s.first)&&
                         (ArbreCouvrant.m_aretes.count(a.second->getm_id())==0)))
                 {
+                    std::cout << "voila une arete interessante" << std::endl << std::endl;
+                    a.second->afficher();
+                    //system("pause");
                     /// Si l'arete que j'explore a d'un coté un sommet du nouveau graphe
                     /// et de l'autre un sommet non present dans le nouveau graphe
 
@@ -148,23 +154,34 @@ graphe graphe::prim(int poids)
                         tampon=newtampon;
                         candidat2=a.second;    // Je stocke le premier candidat au cas où on n'ai qu'une seule arete candidate
                     }
+                    std::cout << "voila le tampon " << tampon << " et le newtampon " << newtampon << std::endl << std::endl;
                     if((newtampon<tampon)&&(dems==0))
                     {
                         /// Si le poids de la nouvelle arete étudiée est moins lourd, je stocke dans mon tampon le nouveau poids
                         tampon=newtampon;
                         candidat2=a.second;    // Et je met à jour le candidat
                     }
+                    std::cout << "voila le nouveau tampon " << tampon << std::endl << std::endl;
+                    //system("pause");
                     if(prems==1)
                         candidat1=candidat2;
                     dems=0;
                     prems=0;
                 }
             }
+            std::cout << "voila le candidat 1" << std::endl << std::endl;
+            candidat1->afficher();
+            std::cout << "voila le candidat 2" << std::endl << std::endl;
+            candidat2->afficher();
             /// Il faut maintenant comparer l'arete 'n-1' candidate précédemment étudiée
             /// voisine de 's-1' avec l'arete qu'on vient d'etudier
-            if((candidat1->getm_poids()>candidat2->getm_poids())&&(prems==0))
+            if((candidat1->getm_poids()[poids]>candidat2->getm_poids()[poids])&&(prems==0))
                 candidat1=candidat2;    // Et le tour est joué ! :)
+            std::cout << "voila le nouveau candidat 1" << std::endl << std::endl;
+            candidat1->afficher();
+            //system("pause");
         }
+        std::cout << "jai fait toutes les aretes" << std::endl << std::endl;
         dems=1;
         prems=1;
         ArbreCouvrant.m_aretes.insert({candidat1->getm_id(), candidat1});
@@ -186,6 +203,9 @@ graphe graphe::prim(int poids)
                                            candidat1->getm_extremites()[1]->getm_y()}});
             ArbreCouvrant.m_sommets.find(candidat1->getm_extremites()[1]->getm_id())->second->ajouterVoisin(candidat1->getm_extremites()[0]);
         }
+
+        std::cout << "voila l'arbre couvrant !" << std::endl << std::endl;
+        ArbreCouvrant.afficher();
 
     }while(ArbreCouvrant.m_sommets.size()!=m_sommets.size());
 
@@ -258,6 +278,38 @@ int graphe::rechercher_CC_graphe() const
 
 void graphe::afficher_allegro(BITMAP*page) const
 {
+    std::vector <float> poidsTotaux;
+    int prems=1;
+
+    for(const auto &a : m_aretes)
+    {
+        for(size_t i=0; i<a.second->getm_poids().size(); ++i)
+        {
+            if(prems==1)
+                poidsTotaux.resize(a.second->getm_poids().size(),0);
+            poidsTotaux[i]+=a.second->getm_poids()[i];
+            prems=0;
+        }
+    }
+    //std::cout<<poidsTotaux[0]<<poidsTotaux[1]<< std::endl;
+    std::string msg ;
+    const char *msgf;
+    msg += "( ";
+    for(const auto &p : poidsTotaux)
+    {
+        msg+=std::to_string(p);
+        msg += ";";
+    }
+    msg += ")";
+
+    msgf=msg.c_str();
+
+    //std::cout << "je suis la" << std::endl;
+
+    textprintf_centre_ex(page, font, 100, 20, makecol(13, 174, 64), -1, msgf);
+
+    //std::cout << "et le bouffon a coté avec sa musique me saoul"<<std::endl;
+
     for(const auto i:m_sommets)
         circle(page,i.second->getm_x(),i.second->getm_y(), 10, makecol(255,0,0));
 
