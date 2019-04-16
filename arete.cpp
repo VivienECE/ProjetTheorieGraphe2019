@@ -16,6 +16,8 @@ std::vector<float> arete::getm_poids() const {return m_poids;}
 
 int arete::getm_id() const {return m_id;}
 
+Sommet* arete::getm_extremite(int i) const {return m_extremites[i];}
+
 arete::arete(int id,float P1,float P2 ,Sommet* S1, Sommet* S2):m_id(id)
 {
     m_poids.push_back(P1);

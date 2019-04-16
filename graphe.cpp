@@ -18,13 +18,41 @@ graphe::graphe()
 graphe::graphe(std::vector<bool> vect,graphe g)
 {
     m_sommets=g.m_sommets; //Prob arete, va également copier les voisins/arete que possede les sommets
+    for(const auto i:m_sommets) //Supprime voisin, arete appartenant au sommet
+        i.second->resetConnexite();
+
     int num_arete=0;
     for(const auto i:vect)
     {
         if(i==true)
-            m_aretes.emplace(g.m_aretes.find(num_arete)->first,g.m_aretes.find(num_arete)->second);
+        {
+            m_aretes.insert({g.m_aretes.find(num_arete)->first,g.m_aretes.find(num_arete)->second});
+
+            //A partir des données de l'arete, redéfinis les liens entre les sommets
+            m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id())->second
+            ->ajouterVoisin(m_aretes.find(num_arete)->second->getm_extremites()[1]);
+
+            m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id())->second
+            ->ajouterVoisin(m_aretes.find(num_arete)->second->getm_extremites()[0]);
+
+            //Met à jour les aretes des 2 sommets (extremités de l'arete selectionné)
+            m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id())->second
+            ->ajouterArete(m_aretes.find(num_arete)->second);
+
+             m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id())->second
+            ->ajouterArete(m_aretes.find(num_arete)->second);
+
+            //DEBUG//
+            std::cout << "CONNEXITE : " << m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id() << "-" <<m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id()<<std::endl;
+            //DEBUG
+        }
         num_arete++;
     }
+
+    //DEBUG
+    this->afficher();
+    std::cout<<std::endl;
+    //DEBUG
 }
 
 
@@ -100,6 +128,7 @@ void graphe::afficher() const
         i.second->afficherData();
         i.second->afficherVoisins();
     }
+    std::cout<<std::endl;
     for (const auto i:m_aretes)
     {
         std::cout<<"aretes : ";
@@ -204,7 +233,7 @@ std::vector<bool> add(const std::vector<bool>& a, const std::vector<bool>& b)
         return result;
 }
 
-std::vector<const graphe*> graphe::bruteforce()
+std::vector<graphe*> graphe::bruteforce()
 {
     int taille=m_aretes.size();
     std::vector <bool> nb_bool,bin_1; //bin 1 est le chiffre binaire 1
@@ -216,8 +245,10 @@ std::vector<const graphe*> graphe::bruteforce()
     }
     bin_1.pop_back();
 
-    std::vector <const graphe*> espace_recherche;
+    std::vector <graphe*> espace_recherche;
     size_t compteur=0;
+
+    ///WTF
     for(int i=0; i<pow(2,taille);++i) //Boucle de 0 à 2^taille
     {
         nb_bool=add(nb_bool,bin_1);//Incremente en chiffre binaire
@@ -227,11 +258,36 @@ std::vector<const graphe*> graphe::bruteforce()
 
         if(compteur==m_sommets.size()-1) //Si combinaison ordre-1 arete
         {
-            espace_recherche.push_back(new graphe{nb_bool,*this}); //Rajoute un graphe en fonction du num bool.
+            graphe* a;
+            a =new graphe{nb_bool,*this};
+            std::cout << std::endl << &a << std::endl;
+            espace_recherche.push_back(a); //Rajoute un graphe en fonction du num bool.
+            espace_recherche.front()->afficher();
+           // system("pause");
+           //delete (a);
+           free(a);
         }
+        std::cout<<"---------------------------------------------------Affichage espace recherche-"<<std::endl;
+        for(auto i:espace_recherche)
+        {
+            std::cout << &i;
+            std::cout<<"XXXXXXXXXXXXXXXXXX"<<std::endl;
+        }
+        system("pause");
+
         compteur=0;
     }
+    /// ???
     //espace_recherche=connexe(espace_recherche); //A coder, renvoie que les graphes connexes
+
+    //DEBUG
+    std::cout<<"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"<<std::endl;
+    for(auto i:espace_recherche)
+    {
+        i->afficher();
+        std::cout<<"------------------------------------------------------------"<<std::endl;
+    }
+    //DEBUG
     return espace_recherche;
 }
 

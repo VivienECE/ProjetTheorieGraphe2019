@@ -20,7 +20,7 @@ class graphe
         void ajouter_arete(int,float,float, Sommet*, Sommet*);
         graphe prim(int poids) ;
         void afficher_allegro(BITMAP*) const;
-        std::vector<const graphe*> bruteforce();
+        std::vector<graphe*> bruteforce();
         int rechercher_CC_graphe() const;
 
     private:

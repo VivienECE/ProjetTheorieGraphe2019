@@ -14,6 +14,7 @@ class Sommet
         Sommet();
         Sommet(std::string,double,double);
         void ajouterVoisin(Sommet*);
+        void resetConnexite();
         void ajouterArete(arete*);
         void afficherData() const;
         void afficherVoisins() const;

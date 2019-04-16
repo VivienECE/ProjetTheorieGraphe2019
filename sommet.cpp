@@ -18,6 +18,10 @@ void Sommet::ajouterVoisin(Sommet* voisin){
     m_voisins.push_back(voisin);
 }
 
+void Sommet::resetConnexite(){
+    m_voisins.clear();
+    m_arete.clear();
+}
 void Sommet::afficherData() const{
      std::cout<<"    "<<m_id<<" : "<<"(x,y)=("<<m_x<<","<<m_y<<")"<<std::endl;
  }
