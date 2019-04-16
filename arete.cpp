@@ -10,7 +10,13 @@ arete::~arete()
 
 }
 
-arete::arete(int id,float P1,float P2 ,const Sommet* S1,const Sommet* S2):m_id(id)
+std::vector<Sommet*> arete::getm_extremites() const {return m_extremites;}
+
+std::vector<float> arete::getm_poids() const {return m_poids;}
+
+int arete::getm_id() const {return m_id;}
+
+arete::arete(int id,float P1,float P2 ,Sommet* S1, Sommet* S2):m_id(id)
 {
     m_poids.push_back(P1);
     m_poids.push_back(P2);
@@ -18,7 +24,7 @@ arete::arete(int id,float P1,float P2 ,const Sommet* S1,const Sommet* S2):m_id(i
     m_extremites.push_back(S2);
 }
 
-arete::arete(int id, const Sommet* debut, const Sommet* fin):m_id(id)
+arete::arete(int id,  Sommet* debut,  Sommet* fin):m_id(id)
 {
     m_extremites.push_back(debut);
     m_extremites.push_back(fin);

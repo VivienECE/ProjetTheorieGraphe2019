@@ -5,6 +5,11 @@
 #include<unordered_set>
 #include "sommet.h"
 
+Sommet::Sommet()
+{
+
+}
+
 Sommet::Sommet(std::string id,double x,double y):m_id{id},m_x{x},m_y{y}
 {
 }
@@ -23,6 +28,8 @@ void Sommet::afficherVoisins() const{
         v->afficherData();
     }
 }
+
+std::string Sommet::getm_id() const {return m_id;}
 
 Sommet::~Sommet()
 {
