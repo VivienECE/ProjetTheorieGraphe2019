@@ -21,6 +21,7 @@ class graphe
         graphe prim(int poids) ;
         void afficher_allegro(BITMAP*) const;
         std::vector<const graphe*> bruteforce();
+        int rechercher_CC_graphe() const;
 
     private:
         std::unordered_map<std::string,Sommet*> m_sommets;//stockée dans une map (clé=id du sommet, valeur= pointeur sur le sommet)

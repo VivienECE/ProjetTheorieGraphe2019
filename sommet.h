@@ -20,6 +20,7 @@ class Sommet
         std::string getm_id() const;
         double getm_x() const;
         double getm_y() const;
+        void rechercherCC(std::unordered_set<std::string> &cc) const;
         ~Sommet();
 
     private:

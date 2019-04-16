@@ -29,6 +29,17 @@ void Sommet::afficherVoisins() const{
     }
 }
 
+void Sommet::rechercherCC(std::unordered_set<std::string> &cc) const
+{
+    cc.insert(m_id);                                        /// je met le sommet dans le tableau des sommets explores
+    std::cout << m_id << "   " ;                            /// je l'affiche dans la console
+    for(const auto &it : m_voisins)                         /// je regarde les voisins du sommet
+    {
+        if(cc.count(it->m_id)==0)                           /// un blindage qui verifie que le voisin n'est pas deja dans le tableau cc
+            it->rechercherCC(cc);                           /// j'explore tous les voisins en utilisant la recursivite
+    }
+}
+
 std::string Sommet::getm_id() const {return m_id;}
 
 double Sommet::getm_x() const {return m_x;}

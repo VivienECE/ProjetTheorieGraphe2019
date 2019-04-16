@@ -235,6 +235,27 @@ std::vector<const graphe*> graphe::bruteforce()
     return espace_recherche;
 }
 
+int graphe::rechercher_CC_graphe() const
+{
+    int i=0;
+    std::cout<< std::endl<< std::endl << "Composantes connexes :"
+    <<std::endl<<std::endl<<std::endl;
+    std::unordered_set<std::string> cc;                                 /// id des sommets
+    for(const auto &it : m_sommets)                                     /// boucle pour voir les sommets
+    {
+        if(cc.count(it.second->getm_id())==0)                           /// si le sommet n'est pas dans la liste des sommets découverts
+        {
+            ++i;                                                        /// j'implémante la variable du nombre de composante connexes
+            std::cout <<"Composante connexe n : " << i << std::endl;
+            it.second->rechercherCC(cc);                                /// et je rentre dans un programme recursif qui rempli le tableau des sommets decouverts
+            std::cout << std::endl << std::endl;
+            std::cout<<"g fini"<<std::endl;
+        }
+    }
+
+    return i;
+}
+
 void graphe::afficher_allegro(BITMAP*page) const
 {
     for(const auto i:m_sommets)
