@@ -30,4 +30,6 @@ class graphe
 
 std::vector<bool> add(const std::vector<bool>& a, const std::vector<bool>& b);
 
+std::vector<const graphe*> retirerCnC(std::vector<const graphe*> listeGrapheAChanger);
+
 #endif // GRAPHE_H

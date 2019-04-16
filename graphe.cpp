@@ -268,3 +268,16 @@ void graphe::afficher_allegro(BITMAP*page) const
     }
     //rectfill(page, 100, 200, 200,200,makecol(209,130,30));
 }
+
+std::vector<const graphe*> retirerCnC(std::vector<const graphe*> listeGrapheAChanger)
+{
+    std::vector<const graphe*> listeGrapheARendre;
+    for (const auto &g : listeGrapheAChanger)
+    {
+        g->afficher();
+        //system("pause");
+        if(g->rechercher_CC_graphe()==1)
+            listeGrapheARendre.push_back(g);
+    }
+    return listeGrapheARendre;
+}
