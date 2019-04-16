@@ -17,15 +17,14 @@ graphe::graphe()
 
 graphe::graphe(std::vector<bool> vect,graphe g)
 {
-    m_sommets=g.m_sommets;
+    m_sommets=g.m_sommets; //Prob arete, va également copier les voisins/arete que possede les sommets
     int num_arete=0;
     for(const auto i:vect)
     {
-        if(i==true);
+        if(i==true)
             m_aretes.emplace(g.m_aretes.find(num_arete)->first,g.m_aretes.find(num_arete)->second);
         num_arete++;
     }
-
 }
 
 
@@ -51,17 +50,21 @@ graphe::graphe(std::string nomFichier){
     if ( ifs.fail() )
         throw std::runtime_error("Probleme lecture taille du graphe");
     std::string id_voisin;
-    int id_arrete;
+    int id_arete;
     //lecture des aretes
     for (int i=0; i<taille; ++i){
 
-        ifs>>id_arrete; if(ifs.fail()) throw std::runtime_error("Probleme lecture arete");
+        ifs>>id_arete; if(ifs.fail()) throw std::runtime_error("Probleme lecture arete");
         ifs>>id; if(ifs.fail()) throw std::runtime_error("Probleme lecture arete sommet 1");
         ifs>>id_voisin; if(ifs.fail()) throw std::runtime_error("Probleme lecture arete sommet 2");
 
         (m_sommets.find(id))->second->ajouterVoisin((m_sommets.find(id_voisin))->second);
         (m_sommets.find(id_voisin))->second->ajouterVoisin((m_sommets.find(id))->second);//remove si graphe orienté
-         m_aretes.insert({id_arrete,new arete{id_arrete,(m_sommets.find(id))->second,(m_sommets.find(id_voisin))->second}}); ///AJOUT ARRETE PROB
+         m_aretes.insert({id_arete,new arete{id_arete,(m_sommets.find(id))->second,(m_sommets.find(id_voisin))->second}});
+         //Ajout de l'arete au 2 sommets
+         (m_sommets.find(id))->second->ajouterArete(new arete{id_arete,(m_sommets.find(id))->second,(m_sommets.find(id_voisin))->second});
+         (m_sommets.find(id_voisin))->second->ajouterArete(new arete{id_arete,(m_sommets.find(id))->second,(m_sommets.find(id_voisin))->second});
+
     }
 }
 
@@ -87,7 +90,6 @@ void graphe::lire_poids(std::string nomFichier)
             m_aretes.find(i)->second->ajouter_poids(poids);
         }
     }
-
 
 }
 
@@ -143,8 +145,12 @@ std::vector<const graphe*> graphe::bruteforce()
         for(const auto i:nb_bool)
             if(i==true)
                 compteur++;
-        if(compteur==m_sommets.size()-1); //Si combinaison ordre-1 arete
+
+        if(compteur==m_sommets.size()-1) //Si combinaison ordre-1 arete
+        {
+            std::cout <<"-" <<compteur << std::endl;
             espace_recherche.push_back(new graphe{nb_bool,*this}); //Rajoute un graphe en fonction du num bool.
+        }
         compteur=0;
     }
     //DEBUG
@@ -157,4 +163,17 @@ std::vector<const graphe*> graphe::bruteforce()
     //DEBUG
     //espace_recherche=connexe(espace_recherche); //A coder, renvoie que les graphes connexes
     return espace_recherche;
+}
+
+void graphe::afficher_allegro(BITMAP*page) const
+{
+    for(const auto i:m_sommets)
+        circle(page,i.second->get_x(),i.second->get_y(), 10, makecol(255,0,0));
+
+    for(const auto j:m_aretes)
+    {
+        line(page,j.second->get_extremite(0)->get_x(),j.second->get_extremite(0)->get_y(),j.second->get_extremite(1)->get_x(),j.second->get_extremite(1)->get_y(), makecol(255,30,30));
+        //std::cout << "num:" << j.first << " " << j.second->get_extremite(0)->get_x() << " " << j.second->get_extremite(0)->get_y() << " " << j.second->get_extremite(1)->get_x() << " " <<j.second->get_extremite(1)->get_y() << std::endl;
+    }
+    //rectfill(page, 100, 200, 200,200,makecol(209,130,30));
 }

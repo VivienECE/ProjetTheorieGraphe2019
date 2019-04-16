@@ -5,17 +5,19 @@
 #include <unordered_set>
 #include "sommet.h"
 #include "arete.h"
+#include "allegro.h"
 
 class graphe
 {
     public:
         graphe(std::string);
         graphe();
-        ///Créer un nouveau graphen en fonction du vecteur booleen et des sommets du graphe
+        ///Créer un nouveau graphe en fonction du vecteur booleen et des sommets du graphe
         graphe(std::vector<bool>,graphe);
         void lire_poids(std::string nomFichier);
         ~graphe();
         void afficher() const;
+        void afficher_allegro(BITMAP*) const;
         void ajouter_arete(int,float,float,const Sommet*,const Sommet*);
         std::vector<const graphe*> bruteforce();
 

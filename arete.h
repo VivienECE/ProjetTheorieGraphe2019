@@ -5,6 +5,7 @@
 #include "sommet.h"
 #include <vector>
 
+class Sommet;
 class arete
 {
     public:
@@ -15,6 +16,8 @@ class arete
         void afficher() const;
         ~arete();
         void ajouter_poids(float);
+        ///0 ou 1 en entrée
+        const Sommet* get_extremite(int);
 
     private:
         std::vector<const Sommet*> m_extremites;

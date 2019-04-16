@@ -4,21 +4,26 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include "arete.h"
 
+class arete;
 class Sommet
 {
     public:
         ///constructeur qui reçoit en params les données du sommet
         Sommet(std::string,double,double);
-        void ajouterVoisin(const Sommet*);
+        void ajouterVoisin(Sommet*);
+        void ajouterArete(arete*);
         void afficherData() const;
         void afficherVoisins() const;
+        float get_x() const;
+        float get_y() const;
         ~Sommet();
 
     private:
         /// Voisinage : liste d'adjacence
-        std::vector<const Sommet*> m_voisins;
-
+        std::vector<Sommet*> m_voisins;
+        std::vector<arete*> m_arete;
         /// Données spécifiques du sommet
         std::string m_id; // Identifiant
         double m_x, m_y; // Position

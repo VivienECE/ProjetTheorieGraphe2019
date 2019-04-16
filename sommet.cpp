@@ -9,7 +9,7 @@ Sommet::Sommet(std::string id,double x,double y):m_id{id},m_x{x},m_y{y}
 {
 }
 
-void Sommet::ajouterVoisin(const Sommet* voisin){
+void Sommet::ajouterVoisin(Sommet* voisin){
     m_voisins.push_back(voisin);
 }
 
@@ -27,4 +27,19 @@ void Sommet::afficherVoisins() const{
 Sommet::~Sommet()
 {
     //dtor
+}
+
+float Sommet::get_x() const
+{
+    return m_x;
+}
+
+float Sommet::get_y() const
+{
+    return m_y;
+}
+
+void Sommet::ajouterArete(arete*a)
+{
+    m_arete.push_back(a);
 }

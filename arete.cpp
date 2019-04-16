@@ -40,3 +40,8 @@ void arete::afficher() const
         std::cout<< " : "<< j ;
     std::cout<< std::endl;
 }
+
+const Sommet* arete::get_extremite(int id)
+{
+    return m_extremites[id];
+}
