@@ -31,6 +31,10 @@ void Sommet::afficherVoisins() const{
 
 std::string Sommet::getm_id() const {return m_id;}
 
+double Sommet::getm_x() const {return m_x;}
+
+double Sommet::getm_y() const {return m_y;}
+
 Sommet::~Sommet()
 {
     //dtor

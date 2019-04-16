@@ -10,7 +10,7 @@ int main()
     graphe pri;
     pri=g.prim(0);
     pri.afficher();
-    g.afficher();
+    //g.afficher();
     return 0;
 }
 END_OF_MAIN();

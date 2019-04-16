@@ -15,6 +15,8 @@ class Sommet
         void afficherData() const;
         void afficherVoisins() const;
         std::string getm_id() const;
+        double getm_x() const;
+        double getm_y() const;
         ~Sommet();
 
     private:

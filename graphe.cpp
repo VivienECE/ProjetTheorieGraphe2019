@@ -36,9 +36,11 @@ graphe::graphe(std::string nomFichier){
     if ( ifs.fail() )
         throw std::runtime_error("Probleme lecture taille du graphe");
     std::string id_voisin;
+    int id_arete;
     //lecture des aretes
     for (int i=0; i<taille; ++i){
         //lecture des ids des deux extrémités
+        ifs>>id_arete; if(ifs.fail()) throw std::runtime_error("Probleme lecture arete sommet 1");
         ifs>>id; if(ifs.fail()) throw std::runtime_error("Probleme lecture arete sommet 1");
         ifs>>id_voisin; if(ifs.fail()) throw std::runtime_error("Probleme lecture arete sommet 2");
         //ajouter chaque extrémité à la liste des voisins de l'autre (graphe non orienté)
@@ -99,11 +101,12 @@ graphe graphe::prim(int poids)
     graphe ArbreCouvrant;
 
 
-    ArbreCouvrant.m_sommets.insert({m_sommets.begin()->first, m_sommets.begin()->second});
-
-
-
-
+    ArbreCouvrant.m_sommets.insert({m_sommets.begin()->first, new Sommet   {m_sommets.begin()->second->getm_id(),
+                                                                            m_sommets.begin()->second->getm_x(),
+                                                                            m_sommets.begin()->second->getm_y()}});
+    //std::cout << "Voila la première arrete que j'insert" << std::endl;
+    //this->afficher();
+    std::cout << std::endl;
     float tampon, newtampon;
     arete *candidat1, *candidat2;
     int prems=1, dems=1;
@@ -112,18 +115,20 @@ graphe graphe::prim(int poids)
         for(auto &s : ArbreCouvrant.m_sommets)
         {
             /// Je parcours tous les sommets de mon nouvel arbre
-            std::cout << ArbreCouvrant.m_sommets.size() << std::endl;
+            //std::cout << ArbreCouvrant.m_sommets.size() << std::endl;
             for(auto &a : m_aretes)
             {
                 /// Je cherche les meilleurs candidats (poids le plus faible). Autrement dit, je regarde tous les voisins de mon graphe
                 /// et donc tous les voisins des sommets qui le constituent
                 /// On aura ici le meilleur candidat pour l'un des sommets 's' du nouveau graphe
                 if(((a.second->getm_extremites()[0]->getm_id()==s.first)&&
-                        (ArbreCouvrant.m_sommets.count(a.second->getm_extremites()[1]->getm_id())==0))
+                        (ArbreCouvrant.m_aretes.count(a.second->getm_id())==0))
                    ||((a.second->getm_extremites()[1]->getm_id()==s.first)&&
-                        (ArbreCouvrant.m_sommets.count(a.second->getm_extremites()[0]->getm_id())==0)))
+                        (ArbreCouvrant.m_aretes.count(a.second->getm_id())==0)))
                 {
-                    std::cout<< "dans le if 1" << std::endl;
+                    //std::cout<< "J'ai trouvé une arrete qui peut t'intéresser." << std::endl << "----------------------------------" << std::endl;
+                    //a.second->afficher();
+                    //system("pause");
                     /// Si l'arete que j'explore a d'un coté un sommet du nouveau graphe
                     /// et de l'autre un sommet non present dans le nouveau graphe
 
@@ -136,31 +141,61 @@ graphe graphe::prim(int poids)
                         tampon=newtampon;
                         candidat2=a.second;    // Je stocke le premier candidat au cas où on n'ai qu'une seule arete candidate
                     }
-                    if((newtampon>tampon)&&(dems==0))
+                    //std::cout << "voila le tampon" << std::endl << tampon << std::endl;
+                    //std::cout << "voila le newtampon" << std::endl << newtampon << std::endl;
+                    if((newtampon<tampon)&&(dems==0))
                     {
                         /// Si le poids de la nouvelle arete étudiée est moins lourd, je stocke dans mon tampon le nouveau poids
                         tampon=newtampon;
                         candidat2=a.second;    // Et je met à jour le candidat
                     }
+                    //std::cout << "voila  le nouveau tampon" << tampon << std::endl;
                     if(prems==1)
                         candidat1=candidat2;
+                    //std::cout << "------------------------------------------"<< std::endl;
+                    //system("pause");
                     dems=0;
                     prems=0;
-                    std::cout << tampon << std::endl;
-                    system("pause");
                 }
             }
+
+            //system("pause");
+            //std::cout<< "voila le candidat 1" << std::endl;
+            //candidat1->afficher();
+            //std::cout<< "voila le candidat 2" << std::endl;
+            //candidat2->afficher();
             /// Il faut maintenant comparer l'arete 'n-1' candidate précédemment étudiée
             /// voisine de 's-1' avec l'arete qu'on vient d'etudier
-            if(candidat1->getm_poids()>candidat2->getm_poids())
+            if((candidat1->getm_poids()>candidat2->getm_poids())&&(prems==0))
                 candidat1=candidat2;    // Et le tour est joué ! :)
+            //std::cout<< "voila le nouveau candidat 1" << std::endl;
+            //candidat1->afficher();
         }
+        //std::cout << "J'ai parcouru tous les sommets de mon nouvel arbre couvrant" << std::endl;
+        dems=1;
+        prems=1;
         ArbreCouvrant.m_aretes.insert({candidat1->getm_id(), candidat1});
-            //new arete(candidat1->getm_id(),candidat1->getm_poids()[0],candidat1->getm_poids()[1],candidat1->getm_extremites()[0],candidat1->getm_extremites()[1]));
         if(ArbreCouvrant.m_sommets.count(candidat1->getm_extremites()[0]->getm_id())==0)
+        {
+            ArbreCouvrant.m_sommets.find(candidat1->getm_extremites()[1]->getm_id())->second->ajouterVoisin(candidat1->getm_extremites()[0]);
             ArbreCouvrant.m_sommets.insert({candidat1->getm_extremites()[0]->getm_id(),
-                                            candidat1->getm_extremites()[0]});
-        else ArbreCouvrant.m_sommets.insert({candidat1->getm_extremites()[1]->getm_id(), candidat1->getm_extremites()[1]});
+                                           new Sommet{candidat1->getm_extremites()[0]->getm_id(),
+                                           candidat1->getm_extremites()[0]->getm_x(),
+                                           candidat1->getm_extremites()[0]->getm_y()}});
+            ArbreCouvrant.m_sommets.find(candidat1->getm_extremites()[0]->getm_id())->second->ajouterVoisin(candidat1->getm_extremites()[1]);
+        }
+        else
+        {
+            ArbreCouvrant.m_sommets.find(candidat1->getm_extremites()[0]->getm_id())->second->ajouterVoisin(candidat1->getm_extremites()[1]);
+            ArbreCouvrant.m_sommets.insert({candidat1->getm_extremites()[1]->getm_id(),
+                                           new Sommet{candidat1->getm_extremites()[1]->getm_id(),
+                                           candidat1->getm_extremites()[1]->getm_x(),
+                                           candidat1->getm_extremites()[1]->getm_y()}});
+            ArbreCouvrant.m_sommets.find(candidat1->getm_extremites()[1]->getm_id())->second->ajouterVoisin(candidat1->getm_extremites()[0]);
+        }
+        //std::cout << "voila l'arbre couvrant que j'ai pour le moment" << std::endl <<std::endl<<std::endl;
+        //ArbreCouvrant.afficher();
+        //std::cout << std::endl<<std::endl<<std::endl;
 
     }while(ArbreCouvrant.m_sommets.size()!=m_sommets.size());
 
