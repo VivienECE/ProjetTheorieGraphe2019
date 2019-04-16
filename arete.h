@@ -5,6 +5,7 @@
 #include "sommet.h"
 #include <vector>
 
+class Sommet;
 class arete
 {
     public:

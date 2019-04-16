@@ -30,6 +30,7 @@ arete::arete(int id,  Sommet* debut,  Sommet* fin):m_id(id)
     m_extremites.push_back(fin);
 }
 
+
 void arete::ajouter_poids(float poids)
 {
     m_poids.push_back(poids);
@@ -37,11 +38,16 @@ void arete::ajouter_poids(float poids)
 
 void arete::afficher() const
 {
-    std::cout<< m_id;
+    std::cout<< m_id << std::endl;
     for(auto i:m_extremites)
         i->afficherData();
-    std::cout<<" -> ";
+    std::cout<<"Poids";
     for (auto j:m_poids)
-        std::cout<< j << "-";
+        std::cout<< " : "<< j ;
     std::cout<< std::endl;
+}
+
+const Sommet* arete::get_extremite(int id)
+{
+    return m_extremites[id];
 }
