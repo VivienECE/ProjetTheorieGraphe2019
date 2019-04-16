@@ -40,16 +40,6 @@ Sommet::~Sommet()
     //dtor
 }
 
-float Sommet::get_x() const
-{
-    return m_x;
-}
-
-float Sommet::get_y() const
-{
-    return m_y;
-}
-
 void Sommet::ajouterArete(arete*a)
 {
     m_arete.push_back(a);

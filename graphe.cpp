@@ -227,19 +227,10 @@ std::vector<const graphe*> graphe::bruteforce()
 
         if(compteur==m_sommets.size()-1) //Si combinaison ordre-1 arete
         {
-            std::cout <<"-" <<compteur << std::endl;
             espace_recherche.push_back(new graphe{nb_bool,*this}); //Rajoute un graphe en fonction du num bool.
         }
         compteur=0;
     }
-    //DEBUG
-    std::cout<<std::endl<<"ESPACE RECHERCHE"<<std::endl;
-    for(const auto j:espace_recherche)
-    {
-        std::cout<<std::endl<<std::endl;
-        j->afficher();
-    }
-    //DEBUG
     //espace_recherche=connexe(espace_recherche); //A coder, renvoie que les graphes connexes
     return espace_recherche;
 }
