@@ -17,6 +17,7 @@ class graphe
         graphe();
         ///Créer un nouveau graphe en fonction du vecteur booleen et des sommets du graphe
         graphe(std::vector<bool>, const graphe &g);
+        graphe(int, const graphe &g);
         void lire_poids(std::string nomFichier);
         ~graphe();
         void afficher() const;
