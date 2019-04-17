@@ -4,7 +4,7 @@
 #include <queue>
 #include <stack>
 #include "math.h"
-#define COEFFICIENT 10
+
 
 graphe::~graphe()
 {
@@ -279,25 +279,26 @@ std::vector<graphe*> graphe::bruteforce()
             j.second->connexite();
 
 
-    //espace_recherche=retirerCnC(espace_recherche);
+    espace_recherche=retirerCnC(espace_recherche);
     return espace_recherche;
 }
 
 int graphe::rechercher_CC_graphe() const
 {
     int i=0;
-    std::cout<< std::endl<< std::endl << "Composantes connexes :"
-    <<std::endl<<std::endl<<std::endl;
+    /*std::cout<< std::endl<< std::endl << "Composantes connexes :"
+    <<std::endl<<std::endl<<std::endl;*/
     std::unordered_set<int> cc;                                 /// id des sommets
     for(const auto &it : m_sommets)                                     /// boucle pour voir les sommets
     {
         if(cc.count(it.second->getm_id())==0)                           /// si le sommet n'est pas dans la liste des sommets découverts
         {
             ++i;                                                        /// j'implémante la variable du nombre de composante connexes
-            std::cout <<"Composante connexe n : " << i << std::endl;
-            it.second->rechercherCC(cc);                                /// et je rentre dans un programme recursif qui rempli le tableau des sommets decouverts
+            it.second->rechercherCC(cc);
+
+            /*std::cout <<"Composante connexe n : " << i << std::endl;                          /// et je rentre dans un programme recursif qui rempli le tableau des sommets decouverts
             std::cout << std::endl << std::endl;
-            std::cout<<"g fini"<<std::endl;
+            std::cout<<"g fini"<<std::endl;*/
         }
     }
 
@@ -330,7 +331,7 @@ void graphe::afficher_frontierePareto(BITMAP*page)
     for(const auto i:espace_recherche)
         circle(page,i->getm_poids()[0]*COEFFICIENT,i->getm_poids()[1]*COEFFICIENT, 3 , makecol(255,255,255));
 
-    line(page,0,0,0,20*COEFFICIENT,makecol(255,255,255));
+    line(page,100,20*COEFFICIENT,100,10*COEFFICIENT,makecol(255,255,255));
 
 
 }
@@ -388,12 +389,12 @@ std::vector<graphe*> retirerCnC(std::vector<graphe*> listeGrapheAChanger)
     std::vector<graphe*> listeGrapheARendre;
     for (const auto &g : listeGrapheAChanger)
     {
-        g->afficher();
-        /*
+        //DEBUG
+        /*g->afficher();
         std::cout << "jaffiche les voisins en local" << std::endl << std::endl;
         for(const auto &v : g->m_sommets)
-            g.second->afficherVoisins();*/
-        system("pause");
+            g.second->afficherVoisins();
+        system("pause");*/
         if(g->rechercher_CC_graphe()==1)
             listeGrapheARendre.push_back(g);
     }

@@ -10,7 +10,8 @@ int main()
     std::vector <const graphe*> Liste;
     graphe g{"broadway.txt"};
     g.lire_poids("broadway_weights_0.txt");
-    afficher_allegro(g.bruteforce());
+    //afficher_allegro(g.bruteforce());
+    afficherFrontierePareto_allegro(g);
     return 0;
 }
 END_OF_MAIN();

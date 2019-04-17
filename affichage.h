@@ -6,5 +6,6 @@
 void afficher_allegro(std::vector<graphe*> Liste);
 void afficher_allegro(graphe g);
 void afficherFrontierePareto_allegro(graphe g);
+double convert(double);
 
 #endif // AFFICHAGE_H_INCLUDED

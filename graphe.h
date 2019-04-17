@@ -6,6 +6,9 @@
 #include "sommet.h"
 #include "arete.h"
 #include "allegro.h"
+#define COEFFICIENT 10
+#define origine_x 200
+#define origine_y 200
 
 class graphe
 {
