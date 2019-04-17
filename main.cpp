@@ -6,11 +6,12 @@
 int main()
 {
     init_Allegro();
-    //graphe g{"manhattan.txt"};
-    graphe g{"broadway.txt"};
-    g.lire_poids("broadway_weights_0.txt");
-    //afficher_allegro(g);
-    //afficher_allegro(g.prim(0));
+    graphe g{"manhattan.txt"};
+    g.lire_poids("manhattan_weights_0.txt");
+    //graphe g{"broadway.txt"};
+    //g.lire_poids("broadway_weights_0.txt");
+    afficher_allegro(g);
+    afficher_allegro(g.prim(0));afficher_allegro(g.prim(1));
     afficher_allegro(g.bruteforce());
     //afficher_allegro(g.prim(0));
     //afficher_allegro(g.prim(1));
