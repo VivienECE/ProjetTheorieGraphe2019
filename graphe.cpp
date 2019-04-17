@@ -30,10 +30,13 @@ graphe::graphe(int valeur, const graphe &g)
                                     s_o_m.second->getm_x(),
                                     s_o_m.second->getm_y()}});
     }
-    int num_arete=0;
-    for(int i=0;i<pow(2,m_aretes.size());i++)
+
+    for(size_t num_arete=0;num_arete<g.m_aretes.size();num_arete++)
+    {
+        int i=pow(2,num_arete);
         if(valeur&i)
         {
+            std::cout<< "DEBUG CONSTRUCTEUR" <<std::endl;
             m_aretes.insert({g.m_aretes.find(num_arete)->first,
                             new arete{  num_arete,
                                         g.m_aretes.find(num_arete)->second->getm_poids(),
@@ -47,7 +50,8 @@ graphe::graphe(int valeur, const graphe &g)
              m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id())->second
             ->ajouterArete(m_aretes.find(num_arete)->second);
         }
-        this->afficher();
+    }
+       // this->afficher();
 }
 
 graphe::graphe(std::vector<bool> vect, const graphe &g)
@@ -316,20 +320,22 @@ std::vector<graphe*> graphe::bruteforce()
         }
         compteur=0;
     }*/
-    int compteur=0;
-    for(int i=0;i<pow(2,taille);i++)
+    std::cout << "DETECTION" << std::endl;
+    size_t compteur=0;
+    for(int i=0;i<pow(2,taille);i++) //Parcours de 0 à 2^n aretes
     {
-        for(int comp=0;comp<taille;comp++)
+        for(int comp=0;comp<taille;comp++) //Parcours de 0 à n aretes
         {
             int a=pow(2,comp);
-            if(i&a)
+            if(i&a)       //J'ai 1 bit
                compteur++;
         }
-       if(compteur==taille-1)
+        if(compteur==m_sommets.size()-1) //Si autant d'aretes que ordre -1
             espace_recherche.push_back(new graphe{i,*this});
+
        compteur=0;
     }
-    std::cout << "DEBUG2" << std::endl;
+    std::cout << "FIN DETECTION" << std::endl;
 
     for(auto i:espace_recherche)
         for(auto j:i->m_sommets)
