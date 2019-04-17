@@ -22,14 +22,15 @@ class graphe
         void afficher_allegro(BITMAP*) const;
         std::vector<graphe*> bruteforce();
         int rechercher_CC_graphe() const;
+        void ajouter_connexite() const;
 
     private:
-        std::unordered_map<std::string,Sommet*> m_sommets;//stockée dans une map (clé=id du sommet, valeur= pointeur sur le sommet)
+        std::unordered_map<int,Sommet*> m_sommets;//stockée dans une map (clé=id du sommet, valeur= pointeur sur le sommet)
         std::unordered_map<int,arete*> m_aretes;
 };
 
 std::vector<bool> add(const std::vector<bool>& a, const std::vector<bool>& b);
 
-std::vector<const graphe*> retirerCnC(std::vector<const graphe*> listeGrapheAChanger);
+std::vector<graphe*> retirerCnC(std::vector<graphe*> listeGrapheAChanger);
 
 #endif // GRAPHE_H

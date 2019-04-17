@@ -12,24 +12,25 @@ class Sommet
     public:
         ///constructeur qui reçoit en params les données du sommet
         Sommet();
-        Sommet(std::string,double,double);
+        Sommet(int,double,double);
         void ajouterVoisin(Sommet*);
         void resetConnexite();
         void ajouterArete(arete*);
         void afficherData() const;
         void afficherVoisins() const;
-        std::string getm_id() const;
+        int getm_id() const;
         double getm_x() const;
         double getm_y() const;
-        void rechercherCC(std::unordered_set<std::string> &cc) const;
+        void rechercherCC(std::unordered_set<int> &cc) const;
         ~Sommet();
+        void connexite();
 
     private:
         /// Voisinage : liste d'adjacence
         std::vector<Sommet*> m_voisins;
         std::vector<arete*> m_arete;
         /// Données spécifiques du sommet
-        std::string m_id; // Identifiant
+        int m_id; // Identifiant
         double m_x, m_y; // Position
 
 };
