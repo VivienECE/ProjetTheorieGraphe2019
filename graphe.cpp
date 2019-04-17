@@ -30,11 +30,11 @@ graphe::graphe(std::vector<bool> vect, const graphe &g)
     {
         if(i==true)
         {
-            m_aretes.insert({g.m_aretes.find(num_arete)->first, new arete{  num_arete,
-                                                                            g.m_aretes.find(num_arete)->second->getm_poids()[0],
-                                                                            g.m_aretes.find(num_arete)->second->getm_poids()[1],
-                                                                            m_sommets.find(g.m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id())->second,
-                                                                            m_sommets.find(g.m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id())->second}});
+            m_aretes.insert({g.m_aretes.find(num_arete)->first,
+                            new arete{  num_arete,
+                                        g.m_aretes.find(num_arete)->second->getm_poids(),
+                                        m_sommets.find(g.m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id())->second,
+                                        m_sommets.find(g.m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id())->second}});
 
             //Met à jour les aretes des 2 sommets (extremités de l'arete selectionné)
             m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id())->second
@@ -279,7 +279,7 @@ std::vector<graphe*> graphe::bruteforce()
             j.second->connexite();
 
 
-    //espace_recherche=retirerCnC(espace_recherche);
+    espace_recherche=retirerCnC(espace_recherche);
     return espace_recherche;
 }
 
@@ -336,33 +336,28 @@ void graphe::afficher_frontierePareto(BITMAP*page)
 }
 void graphe::afficher_allegro(BITMAP*page) const
 {
+    int increment=0;
     std::string msg ;
     const char *msgf;
     msg += "( ";
     for(const auto &p : m_poidsTotaux)
     {
         msg+=std::to_string(p);
-        msg += ";";
+        if(increment !=m_poidsTotaux.size()-1)
+            msg += " ; ";
+        increment++;
     }
-    msg += ")";
+    msg += " )";
 
     msgf=msg.c_str();
-
-    //std::cout << "je suis la" << std::endl;
-
-    textprintf_centre_ex(page, font, 100, 20, makecol(13, 174, 64), -1, msgf);
-
-    //std::cout << "et le bouffon a coté avec sa musique me saoul"<<std::endl;
-
+    textprintf_centre_ex(page, font, 100, 20, makecol(255, 255, 255), -1, msgf);
     for(const auto i:m_sommets)
         circle(page,i.second->getm_x(),i.second->getm_y(), 10, makecol(255,0,0));
 
     for(const auto j:m_aretes)
     {
         line(page,j.second->getm_extremites()[0]->getm_x(),j.second->getm_extremites()[0]->getm_y(),j.second->getm_extremites()[1]->getm_x(),j.second->getm_extremites()[1]->getm_y(), makecol(255,30,30));
-        //std::cout << "num:" << j.first << " " << j.second->get_extremite(0)->get_x() << " " << j.second->get_extremite(0)->get_y() << " " << j.second->get_extremite(1)->get_x() << " " <<j.second->get_extremite(1)->get_y() << std::endl;
     }
-    //rectfill(page, 100, 200, 200,200,makecol(209,130,30));
 }
 
 std::vector <graphe*> graphe::frontierePareto(std::vector <graphe*> espace_recherche) //RENVOIE LA FRONTIERE
@@ -374,12 +369,6 @@ std::vector <graphe*> graphe::frontierePareto(std::vector <graphe*> espace_reche
         i->poidsTotaux(); //CALCUL LES POIDS TOTAUX
                             //Recup Extremum
     }
-    //REDUIT ESPACE RECHERCHE
-    /*for(const auto i:espace_recherche) //PARCOURS
-    {
-        //SUPPRIME SI
-    }*/
-
     return frontiere;
 }
 
@@ -389,13 +378,11 @@ std::vector<graphe*> retirerCnC(std::vector<graphe*> listeGrapheAChanger)
     for (const auto &g : listeGrapheAChanger)
     {
         g->afficher();
-        /*
-        std::cout << "jaffiche les voisins en local" << std::endl << std::endl;
-        for(const auto &v : g->m_sommets)
-            g.second->afficherVoisins();*/
-        system("pause");
         if(g->rechercher_CC_graphe()==1)
+        {
             listeGrapheARendre.push_back(g);
+            g->poidsTotaux();
+        }
     }
     return listeGrapheARendre;
 }
