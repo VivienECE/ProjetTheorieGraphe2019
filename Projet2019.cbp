@@ -34,6 +34,8 @@
 		</Compiler>
 		<Unit filename="InitAllegro.cpp" />
 		<Unit filename="InitAllegro.h" />
+		<Unit filename="affichage.cpp" />
+		<Unit filename="affichage.h" />
 		<Unit filename="arete.cpp" />
 		<Unit filename="arete.h" />
 		<Unit filename="graphe.cpp" />

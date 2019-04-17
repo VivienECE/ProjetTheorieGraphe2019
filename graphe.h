@@ -6,7 +6,7 @@
 #include "sommet.h"
 #include "arete.h"
 #include "allegro.h"
-#define COEFFICIENT 10
+
 #define origine_x 200
 #define origine_y 200
 
@@ -40,5 +40,8 @@ class graphe
 std::vector<bool> add(const std::vector<bool>& a, const std::vector<bool>& b);
 
 std::vector<graphe*> retirerCnC(std::vector<graphe*> listeGrapheAChanger);
+
+float real_x(float x);
+float real_y(float y);
 
 #endif // GRAPHE_H

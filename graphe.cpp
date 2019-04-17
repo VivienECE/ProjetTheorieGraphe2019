@@ -4,7 +4,12 @@
 #include <queue>
 #include <stack>
 #include "math.h"
-
+#define ORX 100
+#define ORY 550
+#define LONGEURAXE 30
+#define LONGUEURGRAD 5
+#define LONGUEURGRAD2 2
+#define COEFFICIENT 15
 
 graphe::~graphe()
 {
@@ -322,6 +327,16 @@ void graphe::poidsTotaux()
 
 std::vector<float> graphe::getm_poids(){return m_poidsTotaux;}
 
+float real_x(float x)
+{
+    return x*COEFFICIENT+ORX;
+}
+
+float real_y(float y)
+{
+    return ORY-y*COEFFICIENT;
+}
+
 void graphe::afficher_frontierePareto(BITMAP*page)
 {
     //TOUT AFFICHER+SURLIGNER FRONTIERE
@@ -329,11 +344,20 @@ void graphe::afficher_frontierePareto(BITMAP*page)
     std::vector<graphe*> frontiere=frontierePareto(espace_recherche);
 
     for(const auto i:espace_recherche)
-        circle(page,i->getm_poids()[0]*COEFFICIENT,i->getm_poids()[1]*COEFFICIENT, 3 , makecol(255,255,255));
+        circle(page, real_x(i->getm_poids()[0]),real_y(i->getm_poids()[1]), 3 , makecol(255,255,255));
 
-    line(page,100,20*COEFFICIENT,100,10*COEFFICIENT,makecol(255,255,255));
-
-
+    line(page, ORX,ORY,ORX,ORY-LONGEURAXE*COEFFICIENT,makecol(255,255,255));
+    line(page, ORX,ORY,ORX+LONGEURAXE*COEFFICIENT,ORY,makecol(255,255,255));
+    for(int i=0; i<=30; i+=2)
+    {
+        if(i%10==0)
+        {
+            line(page, real_x(i), ORY+LONGUEURGRAD, real_x(i), ORY-LONGUEURGRAD, makecol(200,200,200));
+            line(page, ORX-LONGUEURGRAD, real_y(i), ORX+LONGUEURGRAD, real_y(i), makecol(200,200,200));
+        }
+        line(page, real_x(i), ORY+LONGUEURGRAD2, real_x(i), ORY-LONGUEURGRAD2, makecol(200,200,200));
+        line(page, ORX-LONGUEURGRAD2, real_y(i), ORX+LONGUEURGRAD2, real_y(i), makecol(200,200,200));
+    }
 }
 void graphe::afficher_allegro(BITMAP*page) const
 {
@@ -365,11 +389,6 @@ std::vector <graphe*> graphe::frontierePareto(std::vector <graphe*> espace_reche
 {
     std::vector <graphe*> frontiere;
     std::vector <std::vector <float>> liste_poids; //Liste des poids (cout1,cout2) de chaque graphe de espace_recherche
-    for(const auto i:espace_recherche) //PARCOURS
-    {
-        i->poidsTotaux(); //CALCUL LES POIDS TOTAUX
-                            //Recup Extremum
-    }
     return frontiere;
 }
 

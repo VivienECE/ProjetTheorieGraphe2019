@@ -39,9 +39,9 @@ void afficherFrontierePareto_allegro(graphe g) //Affiche la frontier du graphe
     BITMAP*page;
     //PARTIE AFFICHAGE
     page=create_bitmap(800,600);
+    g.afficher_frontierePareto(page);
     while (!key[KEY_ESC])
     {
-        g.afficher_frontierePareto(page);
         blit(page, screen,0,0,0,0, 800,600);
     }
 }
