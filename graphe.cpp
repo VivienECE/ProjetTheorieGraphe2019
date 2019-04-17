@@ -31,12 +31,12 @@ graphe::graphe(int valeur, const graphe &g)
                                     s_o_m.second->getm_y()}});
     }
 
-    for(size_t num_arete=0;num_arete<g.m_aretes.size();num_arete++)
+    for(int num_arete=0;num_arete<g.m_aretes.size();num_arete++)
     {
         int i=pow(2,num_arete);
         if(valeur&i)
         {
-            std::cout<< "DEBUG CONSTRUCTEUR" <<std::endl;
+            //std::cout<< "DEBUG CONSTRUCTEUR" <<std::endl;
             m_aretes.insert({g.m_aretes.find(num_arete)->first,
                             new arete{  num_arete,
                                         g.m_aretes.find(num_arete)->second->getm_poids(),
@@ -176,10 +176,10 @@ graphe graphe::prim(int poids)
     graphe ArbreCouvrant;
     ArbreCouvrant.m_sommets.insert({m_sommets.begin()->first, new Sommet   {m_sommets.begin()->second->getm_id(),
                                                                             m_sommets.begin()->second->getm_x(),
-                                                                            m_sommets.begin()->second->getm_y()}});
+                                                                            m_sommets.begin()->second->getm_y()}});/*
     std::cout << "voila l'arbre couvrant au début..." << std::endl;
     ArbreCouvrant.afficher();
-    //system("pause");
+    system("pause");*/
     float tampon, newtampon;
     arete *candidat1, *candidat2;
     int prems=1, dems=1;
@@ -193,14 +193,18 @@ graphe graphe::prim(int poids)
                 /// Je cherche les meilleurs candidats (poids le plus faible). Autrement dit, je regarde tous les voisins de mon graphe
                 /// et donc tous les voisins des sommets qui le constituent
                 /// On aura ici le meilleur candidat pour l'un des sommets 's' du nouveau graphe
-                if(((a.second->getm_extremites()[0]->getm_id()==s.first)&&
+                if((((a.second->getm_extremites()[0]->getm_id()==s.first)&&
                         (ArbreCouvrant.m_aretes.count(a.second->getm_id())==0))
-                   ||((a.second->getm_extremites()[1]->getm_id()==s.first)&&
+                        ||((a.second->getm_extremites()[1]->getm_id()==s.first)&&
                         (ArbreCouvrant.m_aretes.count(a.second->getm_id())==0)))
-                {
+                    &&(((ArbreCouvrant.m_sommets.count(a.second->getm_extremites()[0]->getm_id())==0) &&
+                        (ArbreCouvrant.m_sommets.count(a.second->getm_extremites()[1]->getm_id())==1))||
+                        ((ArbreCouvrant.m_sommets.count(a.second->getm_extremites()[0]->getm_id())==1) &&
+                        (ArbreCouvrant.m_sommets.count(a.second->getm_extremites()[1]->getm_id())==0))))
+                {/*
                     std::cout << "voila une arete interessante" << std::endl << std::endl;
                     a.second->afficher();
-                    //system("pause");
+                    system("pause");*/
                     /// Si l'arete que j'explore a d'un coté un sommet du nouveau graphe
                     /// et de l'autre un sommet non present dans le nouveau graphe
 
@@ -212,35 +216,36 @@ graphe graphe::prim(int poids)
 
                         tampon=newtampon;
                         candidat2=a.second;    // Je stocke le premier candidat au cas où on n'ai qu'une seule arete candidate
-                    }
-                    std::cout << "voila le tampon " << tampon << " et le newtampon " << newtampon << std::endl << std::endl;
+                    }/*
+                    std::cout << "voila le tampon " << tampon << " et le newtampon " << newtampon << std::endl << std::endl;*/
                     if((newtampon<tampon)&&(dems==0))
                     {
                         /// Si le poids de la nouvelle arete étudiée est moins lourd, je stocke dans mon tampon le nouveau poids
                         tampon=newtampon;
                         candidat2=a.second;    // Et je met à jour le candidat
-                    }
+                    }/*
                     std::cout << "voila le nouveau tampon " << tampon << std::endl << std::endl;
-                    //system("pause");
+                    system("pause");*/
                     if(prems==1)
                         candidat1=candidat2;
                     dems=0;
                     prems=0;
                 }
-            }
+            }/*
             std::cout << "voila le candidat 1" << std::endl << std::endl;
             candidat1->afficher();
             std::cout << "voila le candidat 2" << std::endl << std::endl;
-            candidat2->afficher();
+            candidat2->afficher();*/
             /// Il faut maintenant comparer l'arete 'n-1' candidate précédemment étudiée
             /// voisine de 's-1' avec l'arete qu'on vient d'etudier
             if((candidat1->getm_poids()[poids]>candidat2->getm_poids()[poids])&&(prems==0))
                 candidat1=candidat2;    // Et le tour est joué ! :)
+            /*
             std::cout << "voila le nouveau candidat 1" << std::endl << std::endl;
             candidat1->afficher();
-            //system("pause");
-        }
-        std::cout << "jai fait toutes les aretes" << std::endl << std::endl;
+            system("pause");*/
+        }/*
+        std::cout << "jai fait toutes les aretes" << std::endl << std::endl;*/
         dems=1;
         prems=1;
         ArbreCouvrant.m_aretes.insert({candidat1->getm_id(), candidat1});
@@ -262,9 +267,9 @@ graphe graphe::prim(int poids)
                                            candidat1->getm_extremites()[1]->getm_y()}});
             ArbreCouvrant.m_sommets.find(candidat1->getm_extremites()[1]->getm_id())->second->ajouterVoisin(candidat1->getm_extremites()[0]);
         }
-
+        /*
         std::cout << "voila l'arbre couvrant !" << std::endl << std::endl;
-        ArbreCouvrant.afficher();
+        ArbreCouvrant.afficher();*/
 
     }while(ArbreCouvrant.m_sommets.size()!=m_sommets.size());
 
@@ -320,8 +325,9 @@ std::vector<graphe*> graphe::bruteforce()
         }
         compteur=0;
     }*/
-    std::cout << "DETECTION" << std::endl;
+    //std::cout << "DETECTION" << std::endl;
     size_t compteur=0;
+    int indice =0;
     for(int i=0;i<pow(2,taille);i++) //Parcours de 0 à 2^n aretes
     {
         for(int comp=0;comp<taille;comp++) //Parcours de 0 à n aretes
@@ -331,16 +337,20 @@ std::vector<graphe*> graphe::bruteforce()
                compteur++;
         }
         if(compteur==m_sommets.size()-1) //Si autant d'aretes que ordre -1
+        {
             espace_recherche.push_back(new graphe{i,*this});
+            //std::cout << ++indice << std::endl;
+        }
 
-       compteur=0;
+
+        compteur=0;
     }
-    std::cout << "FIN DETECTION" << std::endl;
+    //std::cout << "FIN DETECTION" << std::endl;
 
     for(auto i:espace_recherche)
         for(auto j:i->m_sommets)
             j.second->connexite();
-    std::cout << "DEBUG3" << std::endl;
+    //std::cout << "DEBUG3" << std::endl;
 
     espace_recherche=retirerCnC(espace_recherche);
     return espace_recherche;
@@ -371,12 +381,13 @@ int graphe::rechercher_CC_graphe() const
 void graphe::poidsTotaux()
 {
     int prems=1;
-    std::cout << "-------DEBUG POIDS INI---------" << std::endl;
+    //std::cout << "-------DEBUG POIDS INI---------" << std::endl;
+    /*
     for(auto i:m_aretes)
     {
         for(size_t j=0; j<i.second->getm_poids().size(); ++j)
-            std::cout << " " << i.second->getm_poids()[j] <<std::endl;
-    }
+           std::cout << " " << i.second->getm_poids()[j] <<std::endl;
+    }*/
     for(const auto &a : m_aretes)
     {
         for(size_t i=0; i<a.second->getm_poids().size(); ++i)
@@ -498,7 +509,7 @@ std::vector<graphe*> retirerCnC(std::vector<graphe*> listeGrapheAChanger)
     std::vector<graphe*> listeGrapheARendre;
     for (const auto &g : listeGrapheAChanger)
     {
-        g->afficher();
+        //g->afficher();
         if(g->rechercher_CC_graphe()==1)
         {
             listeGrapheARendre.push_back(g);

@@ -43,8 +43,8 @@ void Sommet::connexite(){
 void Sommet::rechercherCC(std::unordered_set<int> &cc) const
 {
     cc.insert(m_id);                                        /// je met le sommet dans le tableau des sommets explores
-    std::cout << m_id << "   " << std::endl;                /// je l'affiche dans la console
-    this->afficherVoisins();
+    //std::cout << m_id << "   " << std::endl;                /// je l'affiche dans la console
+    //this->afficherVoisins();
     std::cout << std::endl;
     for(const auto &it : m_voisins)                         /// je regarde les voisins du sommet
     {
