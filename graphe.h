@@ -13,7 +13,7 @@ class graphe
         graphe(std::string);
         graphe();
         ///Créer un nouveau graphe en fonction du vecteur booleen et des sommets du graphe
-        graphe(std::vector<bool>,graphe);
+        graphe(std::vector<bool>, const graphe &g);
         void lire_poids(std::string nomFichier);
         ~graphe();
         void afficher() const;
@@ -22,10 +22,13 @@ class graphe
         void afficher_allegro(BITMAP*) const;
         std::vector<graphe*> bruteforce();
         int rechercher_CC_graphe() const;
+        //graphe prochainGraphe(std::vector<bool> vect, const graphe &g);
+        void poidsTotaux();
 
     private:
         std::unordered_map<std::string,Sommet*> m_sommets;//stockée dans une map (clé=id du sommet, valeur= pointeur sur le sommet)
         std::unordered_map<int,arete*> m_aretes;
+        std::vector <float> m_poidsTotaux;
 };
 
 std::vector<bool> add(const std::vector<bool>& a, const std::vector<bool>& b);

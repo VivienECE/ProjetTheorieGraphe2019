@@ -15,14 +15,14 @@ graphe::graphe()
     //ctor
 }
 
-graphe::graphe(std::vector<bool> vect,graphe g)
+graphe::graphe(std::vector<bool> vect, const graphe &g)
 {
     m_sommets=g.m_sommets; //Prob arete, va également copier les voisins/arete que possede les sommets
     for(const auto i:m_sommets) //Supprime voisin, arete appartenant au sommet
         i.second->resetConnexite();
 
     int num_arete=0;
-    for(const auto i:vect)
+    for(const auto &i:vect)
     {
         if(i==true)
         {
@@ -41,6 +41,8 @@ graphe::graphe(std::vector<bool> vect,graphe g)
 
              m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id())->second
             ->ajouterArete(m_aretes.find(num_arete)->second);
+
+
 
             //DEBUG//
             std::cout << "CONNEXITE : " << m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id() << "-" <<m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id()<<std::endl;
@@ -278,22 +280,38 @@ std::vector<graphe*> graphe::bruteforce()
 
         if(compteur==m_sommets.size()-1) //Si combinaison ordre-1 arete
         {
-            graphe* a;
-            a =new graphe{nb_bool,*this};
-            std::cout << std::endl << &a << std::endl;
-            espace_recherche.push_back(a); //Rajoute un graphe en fonction du num bool.
+            std::cout << "-----------------------------------------------------------------"<<std::endl;
+            espace_recherche.push_back(new graphe{nb_bool,*this}); //Rajoute un graphe en fonction du num bool.
+            //espace_recherche.emplace_back(test); //Rajoute un graphe en fonction du num bool.
+
+            //espace_recherche.push_back(prochainGraphe(nb_bool,*this));
+            std::cout << "----------------------l'element en front-----------------------" << std::endl;
             espace_recherche.front()->afficher();
-           // system("pause");
+            std::cout << "---------------------------------------------------------------" << std::endl;
+            system("pause");
+
+
+
+
+            std::cout << "-----------------------------dans ma boucle for-------------------------------" << std::endl ;
+            for(auto i:espace_recherche)
+            {
+                std::cout << std::endl << std::endl << i << std::endl << std::endl;
+                i->afficher();
+                system("pause");
+            }
+            std::cout << "-----------------------------------------------------------------"<<std::endl;
            //delete (a);
-           free(a);
-        }
-        std::cout<<"---------------------------------------------------Affichage espace recherche-"<<std::endl;
+           //free(a);
+        }/*
+        std::cout<<"--------------------------Affichage espace recherche---------------------------"<<std::endl;
         for(auto i:espace_recherche)
         {
-            std::cout << &i;
-            std::cout<<"XXXXXXXXXXXXXXXXXX"<<std::endl;
+            std::cout << std::endl << std::endl << i << std::endl << std::endl;
+            i->afficher();
+            system("pause");
         }
-        system("pause");
+        system("pause");*/
 
         compteur=0;
     }
@@ -332,26 +350,27 @@ int graphe::rechercher_CC_graphe() const
     return i;
 }
 
-void graphe::afficher_allegro(BITMAP*page) const
+void graphe::poidsTotaux()
 {
-    std::vector <float> poidsTotaux;
     int prems=1;
-
     for(const auto &a : m_aretes)
     {
         for(size_t i=0; i<a.second->getm_poids().size(); ++i)
         {
             if(prems==1)
-                poidsTotaux.resize(a.second->getm_poids().size(),0);
-            poidsTotaux[i]+=a.second->getm_poids()[i];
+                m_poidsTotaux.resize(a.second->getm_poids().size(),0);
+            m_poidsTotaux[i]+=a.second->getm_poids()[i];
             prems=0;
         }
     }
-    //std::cout<<poidsTotaux[0]<<poidsTotaux[1]<< std::endl;
+}
+
+void graphe::afficher_allegro(BITMAP*page) const
+{
     std::string msg ;
     const char *msgf;
     msg += "( ";
-    for(const auto &p : poidsTotaux)
+    for(const auto &p : m_poidsTotaux)
     {
         msg+=std::to_string(p);
         msg += ";";
