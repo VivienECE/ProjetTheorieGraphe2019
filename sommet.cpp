@@ -38,13 +38,14 @@ void Sommet::connexite(){
         for(const auto j:i->getm_extremites()) //PARCOURS les extremites de l'arete aretes du sommet
             if(j->getm_id()!=m_id)
                 ajouterVoisin(j);
-
 }
 
 void Sommet::rechercherCC(std::unordered_set<int> &cc) const
 {
     cc.insert(m_id);                                        /// je met le sommet dans le tableau des sommets explores
-    std::cout << m_id << "   " ;                            /// je l'affiche dans la console
+    std::cout << m_id << "   " << std::endl;                /// je l'affiche dans la console
+    this->afficherVoisins();
+    std::cout << std::endl;
     for(const auto &it : m_voisins)                         /// je regarde les voisins du sommet
     {
         if(cc.count(it->m_id)==0)                           /// un blindage qui verifie que le voisin n'est pas deja dans le tableau cc

@@ -34,7 +34,11 @@ graphe::graphe(std::vector<bool> vect, const graphe &g)
     {
         if(i==true)
         {
-            m_aretes.insert({g.m_aretes.find(num_arete)->first,g.m_aretes.find(num_arete)->second});
+            m_aretes.insert({g.m_aretes.find(num_arete)->first, new arete{  num_arete,
+                                                                            g.m_aretes.find(num_arete)->second->getm_poids()[0],
+                                                                            g.m_aretes.find(num_arete)->second->getm_poids()[1],
+                                                                            m_sommets.find(g.m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id())->second,
+                                                                            m_sommets.find(g.m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id())->second}});
 
             //Met à jour les aretes des 2 sommets (extremités de l'arete selectionné)
             m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id())->second
@@ -389,7 +393,11 @@ std::vector<graphe*> retirerCnC(std::vector<graphe*> listeGrapheAChanger)
     for (const auto &g : listeGrapheAChanger)
     {
         g->afficher();
-        //system("pause");
+        /*
+        std::cout << "jaffiche les voisins en local" << std::endl << std::endl;
+        for(const auto &v : g->m_sommets)
+            g.second->afficherVoisins();*/
+        system("pause");
         if(g->rechercher_CC_graphe()==1)
             listeGrapheARendre.push_back(g);
     }
