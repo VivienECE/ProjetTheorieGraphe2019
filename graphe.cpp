@@ -398,11 +398,11 @@ void graphe::afficher_allegro(BITMAP*page) const
 
 std::vector <graphe*> graphe::frontierePareto(std::vector <graphe*> espace_recherche) //RENVOIE LA FRONTIERE
 {
-    std::vector <graphe*> frontiere;
+    std::vector <graphe*> NONfrontiere, frontiere;
     std::vector <std::vector <float>> liste_poids; //Liste des poids (cout1,cout2) de chaque graphe de espace_recherche
+    this->poidsTotaux();
     //Ini les extremums en fonction de la pondération
-    this->poidsTotaux(); //Avoir au moins la taille.
-    size_t marqueur1,marqueur2=0;
+    size_t marqueur1,marqueur2=0, memeadresse=0;
     for(auto a:espace_recherche)
     {
         for(auto b:espace_recherche)
@@ -416,11 +416,23 @@ std::vector <graphe*> graphe::frontierePareto(std::vector <graphe*> espace_reche
                             marqueur2++;
                     }
                     if( (marqueur1>1) && (marqueur2 == m_poidsTotaux.size())) //PROB
-                        frontiere.push_back(b);
+                        NONfrontiere.push_back(b);
                     marqueur1=0;
                     marqueur2=0;
                 }
-
+    }
+    for(auto adE_R : espace_recherche)
+    {
+        for(auto adN_F : NONfrontiere)
+        {
+            if(adE_R==adN_F)
+            {
+                memeadresse++;
+            }
+        }
+        if(memeadresse==0)
+            frontiere.push_back(adE_R);
+        memeadresse=0;
     }
     return frontiere;
 }
