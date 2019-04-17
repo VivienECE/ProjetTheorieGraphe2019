@@ -50,7 +50,6 @@ graphe::graphe(std::vector<bool> vect, const graphe &g)
         }
         num_arete++;
     }
-
 }
 
 
@@ -274,15 +273,18 @@ std::vector<graphe*> graphe::bruteforce()
                 compteur++;
 
         if(compteur==m_sommets.size()-1) //Si combinaison ordre-1 arete
+        {
             espace_recherche.push_back(new graphe{nb_bool,*this}); //Rajoute un graphe en fonction du num bool.
-
+            std::cout << "DEBUG1" << std::endl;
+        }
         compteur=0;
     }
+    std::cout << "DEBUG2" << std::endl;
 
     for(auto i:espace_recherche)
         for(auto j:i->m_sommets)
             j.second->connexite();
-
+    std::cout << "DEBUG3" << std::endl;
 
     espace_recherche=retirerCnC(espace_recherche);
     return espace_recherche;
@@ -313,6 +315,12 @@ int graphe::rechercher_CC_graphe() const
 void graphe::poidsTotaux()
 {
     int prems=1;
+    std::cout << "-------DEBUG POIDS INI---------" << std::endl;
+    for(auto i:m_aretes)
+    {
+        for(size_t j=0; j<i.second->getm_poids().size(); ++j)
+            std::cout << " " << i.second->getm_poids()[j] <<std::endl;
+    }
     for(const auto &a : m_aretes)
     {
         for(size_t i=0; i<a.second->getm_poids().size(); ++i)
@@ -346,6 +354,9 @@ void graphe::afficher_frontierePareto(BITMAP*page)
     for(const auto i:espace_recherche)
         circle(page, real_x(i->getm_poids()[0]),real_y(i->getm_poids()[1]), 3 , makecol(255,255,255));
 
+    for(const auto i:frontiere) //FRONTIERE
+        circlefill(page, real_x(i->getm_poids()[0]),real_y(i->getm_poids()[1]), 2 , makecol(0,255,0));
+
     line(page, ORX,ORY,ORX,ORY-LONGEURAXE*COEFFICIENT,makecol(255,255,255));
     line(page, ORX,ORY,ORX+LONGEURAXE*COEFFICIENT,ORY,makecol(255,255,255));
     for(int i=0; i<=30; i+=2)
@@ -361,7 +372,7 @@ void graphe::afficher_frontierePareto(BITMAP*page)
 }
 void graphe::afficher_allegro(BITMAP*page) const
 {
-    int increment=0;
+    size_t increment=0;
     std::string msg ;
     const char *msgf;
     msg += "( ";
@@ -389,6 +400,28 @@ std::vector <graphe*> graphe::frontierePareto(std::vector <graphe*> espace_reche
 {
     std::vector <graphe*> frontiere;
     std::vector <std::vector <float>> liste_poids; //Liste des poids (cout1,cout2) de chaque graphe de espace_recherche
+    //Ini les extremums en fonction de la pondération
+    this->poidsTotaux(); //Avoir au moins la taille.
+    size_t marqueur1,marqueur2=0;
+    for(auto a:espace_recherche)
+    {
+        for(auto b:espace_recherche)
+            if(b!=a)
+                {
+                    for(size_t i=0;i<m_poidsTotaux.size();i++)
+                    {
+                        if(a->getm_poids()[i]<b->getm_poids()[i])
+                            marqueur1++;
+                        if(a->getm_poids()[i]<=b->getm_poids()[i])
+                            marqueur2++;
+                    }
+                    if( (marqueur1>1) && (marqueur2 == m_poidsTotaux.size())) //PROB
+                        frontiere.push_back(b);
+                    marqueur1=0;
+                    marqueur2=0;
+                }
+
+    }
     return frontiere;
 }
 
