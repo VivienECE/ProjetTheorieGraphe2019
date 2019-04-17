@@ -22,8 +22,11 @@ class graphe
         void afficher_allegro(BITMAP*) const;
         std::vector<graphe*> bruteforce();
         int rechercher_CC_graphe() const;
-        void poidsTotaux();
+        void poidsTotaux(); //Calcul du poids total
+        std::vector<float> getm_poids();
         void ajouter_connexite() const;
+        std::vector <graphe*> frontierePareto(std::vector <graphe*>); //RENVOIE LES GRAPHES FRONTIERE
+        void afficher_frontierePareto(BITMAP*page); //ONLY 2D ou 1D
 
     private:
         std::unordered_map<int,Sommet*> m_sommets;//stockée dans une map (clé=id du sommet, valeur= pointeur sur le sommet)

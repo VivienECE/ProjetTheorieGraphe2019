@@ -1,6 +1,6 @@
 #include "affichage.h"
 
-void afficher_allegro(std::vector<graphe*> Liste)
+void afficher_allegro(std::vector<graphe*> Liste) //AFFICHE LISTE GRAPHE
 {
     BITMAP*page;
     //PARTIE AFFICHAGE
@@ -30,6 +30,18 @@ void afficher_allegro(graphe g)
     while (!key[KEY_ESC])
     {
         g.afficher_allegro(page);
+        blit(page, screen,0,0,0,0, 800,600);
+    }
+}
+
+void afficherFrontierePareto_allegro(graphe g) //Affiche la frontier du graphe
+{
+    BITMAP*page;
+    //PARTIE AFFICHAGE
+    page=create_bitmap(800,600);
+    while (!key[KEY_ESC])
+    {
+        g.afficher_frontierePareto(page);
         blit(page, screen,0,0,0,0, 800,600);
     }
 }
