@@ -17,9 +17,17 @@ graphe::graphe()
 
 graphe::graphe(std::vector<bool> vect, const graphe &g)
 {
-    m_sommets=g.m_sommets; //Prob arete, va également copier les voisins/arete que possede les sommets
-    for(const auto i:m_sommets) //Supprime voisin, arete appartenant au sommet
-        i.second->resetConnexite();
+    for(const auto & s_o_m : g.m_sommets)
+    {
+        m_sommets.insert({s_o_m.first,
+                         new Sommet {s_o_m.second->getm_id(),
+                                    s_o_m.second->getm_x(),
+                                    s_o_m.second->getm_y()}});
+    }
+
+    //m_sommets=g.m_sommets; //Prob arete, va également copier les voisins/arete que possede les sommets
+    //for(const auto i:m_sommets) //Supprime voisin, arete appartenant au sommet
+    //    i.second->resetConnexite();
 
     int num_arete=0;
     for(const auto &i:vect)
@@ -28,33 +36,16 @@ graphe::graphe(std::vector<bool> vect, const graphe &g)
         {
             m_aretes.insert({g.m_aretes.find(num_arete)->first,g.m_aretes.find(num_arete)->second});
 
-            //A partir des données de l'arete, redéfinis les liens entre les sommets
-            m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id())->second
-            ->ajouterVoisin(m_aretes.find(num_arete)->second->getm_extremites()[1]);
-
-            m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id())->second
-            ->ajouterVoisin(m_aretes.find(num_arete)->second->getm_extremites()[0]);
-
             //Met à jour les aretes des 2 sommets (extremités de l'arete selectionné)
             m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id())->second
             ->ajouterArete(m_aretes.find(num_arete)->second);
 
              m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id())->second
             ->ajouterArete(m_aretes.find(num_arete)->second);
-
-
-
-            //DEBUG//
-            std::cout << "CONNEXITE : " << m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id() << "-" <<m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id()<<std::endl;
-            //DEBUG
         }
         num_arete++;
     }
 
-    //DEBUG
-    this->afficher();
-    std::cout<<std::endl;
-    //DEBUG
 }
 
 
@@ -66,7 +57,7 @@ graphe::graphe(std::string nomFichier){
     ifs >> ordre;
     if ( ifs.fail() )
         throw std::runtime_error("Probleme lecture ordre du graphe");
-    std::string id;
+    int id;
     double x,y;
     //lecture des sommets
     for (int i=0; i<ordre; ++i){
@@ -79,7 +70,7 @@ graphe::graphe(std::string nomFichier){
     ifs >> taille;
     if ( ifs.fail() )
         throw std::runtime_error("Probleme lecture taille du graphe");
-    std::string id_voisin;
+    int id_voisin;
     int id_arete;
     //lecture des aretes
     for (int i=0; i<taille; ++i){
@@ -288,7 +279,7 @@ std::vector<graphe*> graphe::bruteforce()
             std::cout << "----------------------l'element en front-----------------------" << std::endl;
             espace_recherche.front()->afficher();
             std::cout << "---------------------------------------------------------------" << std::endl;
-            system("pause");
+            //system("pause");
 
 
 
@@ -298,7 +289,7 @@ std::vector<graphe*> graphe::bruteforce()
             {
                 std::cout << std::endl << std::endl << i << std::endl << std::endl;
                 i->afficher();
-                system("pause");
+                //system("pause");
             }
             std::cout << "-----------------------------------------------------------------"<<std::endl;
            //delete (a);
@@ -312,20 +303,16 @@ std::vector<graphe*> graphe::bruteforce()
             system("pause");
         }
         system("pause");*/
-
         compteur=0;
     }
-    /// ???
-    //espace_recherche=connexe(espace_recherche); //A coder, renvoie que les graphes connexes
 
-    //DEBUG
-    std::cout<<"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"<<std::endl;
     for(auto i:espace_recherche)
     {
-        i->afficher();
-        std::cout<<"------------------------------------------------------------"<<std::endl;
+        for(auto j:i->m_sommets)
+            j.second->connexite();
+
     }
-    //DEBUG
+    espace_recherche=retirerCnC(espace_recherche);
     return espace_recherche;
 }
 
@@ -334,7 +321,7 @@ int graphe::rechercher_CC_graphe() const
     int i=0;
     std::cout<< std::endl<< std::endl << "Composantes connexes :"
     <<std::endl<<std::endl<<std::endl;
-    std::unordered_set<std::string> cc;                                 /// id des sommets
+    std::unordered_set<int> cc;                                 /// id des sommets
     for(const auto &it : m_sommets)                                     /// boucle pour voir les sommets
     {
         if(cc.count(it.second->getm_id())==0)                           /// si le sommet n'est pas dans la liste des sommets découverts
@@ -396,9 +383,9 @@ void graphe::afficher_allegro(BITMAP*page) const
     //rectfill(page, 100, 200, 200,200,makecol(209,130,30));
 }
 
-std::vector<const graphe*> retirerCnC(std::vector<const graphe*> listeGrapheAChanger)
+std::vector<graphe*> retirerCnC(std::vector<graphe*> listeGrapheAChanger)
 {
-    std::vector<const graphe*> listeGrapheARendre;
+    std::vector<graphe*> listeGrapheARendre;
     for (const auto &g : listeGrapheAChanger)
     {
         g->afficher();

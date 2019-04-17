@@ -10,7 +10,7 @@ Sommet::Sommet()
 
 }
 
-Sommet::Sommet(std::string id,double x,double y):m_id{id},m_x{x},m_y{y}
+Sommet::Sommet(int id,double x,double y):m_id{id},m_x{x},m_y{y}
 {
 }
 
@@ -33,7 +33,15 @@ void Sommet::afficherVoisins() const{
     }
 }
 
-void Sommet::rechercherCC(std::unordered_set<std::string> &cc) const
+void Sommet::connexite(){
+    for(const auto i:m_arete) //PARCOURS Toutes les aretes du sommet
+        for(const auto j:i->getm_extremites()) //PARCOURS les extremites de l'arete aretes du sommet
+            if(j->getm_id()!=m_id)
+                ajouterVoisin(j);
+
+}
+
+void Sommet::rechercherCC(std::unordered_set<int> &cc) const
 {
     cc.insert(m_id);                                        /// je met le sommet dans le tableau des sommets explores
     std::cout << m_id << "   " ;                            /// je l'affiche dans la console
@@ -44,7 +52,7 @@ void Sommet::rechercherCC(std::unordered_set<std::string> &cc) const
     }
 }
 
-std::string Sommet::getm_id() const {return m_id;}
+int Sommet::getm_id() const {return m_id;}
 
 double Sommet::getm_x() const {return m_x;}
 
