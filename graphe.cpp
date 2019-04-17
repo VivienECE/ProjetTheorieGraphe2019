@@ -409,7 +409,7 @@ void graphe::afficher_frontierePareto(BITMAP*page)
 
     line(page, ORX,ORY,ORX,ORY-LONGEURAXE*COEFFICIENT,makecol(255,255,255));
     line(page, ORX,ORY,ORX+LONGEURAXE*COEFFICIENT,ORY,makecol(255,255,255));
-    for(int i=0; i<=30; i+=2)
+    for(int i=0; i<30; i+=2)
     {
         if(i%10==0)
         {
