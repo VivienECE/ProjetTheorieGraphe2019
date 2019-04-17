@@ -10,6 +10,7 @@ class arete
 {
     public:
         arete();
+        arete(int,std::vector<float>,Sommet*, Sommet*);
         arete(int,float,float,Sommet*,Sommet*);
         arete(int, Sommet*, Sommet*);
         void afficher() const;

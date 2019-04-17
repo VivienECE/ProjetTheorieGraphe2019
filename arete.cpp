@@ -26,6 +26,16 @@ arete::arete(int id,float P1,float P2 ,Sommet* S1, Sommet* S2):m_id(id)
     m_extremites.push_back(S2);
 }
 
+arete::arete(int id,std::vector<float> poids ,Sommet* S1, Sommet* S2):m_id(id)
+{
+    for(const auto i:poids)
+        m_poids.push_back(i);
+    m_extremites.push_back(S1);
+    m_extremites.push_back(S2);
+}
+
+
+
 arete::arete(int id,  Sommet* debut,  Sommet* fin):m_id(id)
 {
     m_extremites.push_back(debut);

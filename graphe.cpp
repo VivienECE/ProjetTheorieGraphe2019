@@ -4,6 +4,7 @@
 #include <queue>
 #include <stack>
 #include "math.h"
+#define COEFFICIENT 10
 
 graphe::~graphe()
 {
@@ -24,11 +25,6 @@ graphe::graphe(std::vector<bool> vect, const graphe &g)
                                     s_o_m.second->getm_x(),
                                     s_o_m.second->getm_y()}});
     }
-
-    //m_sommets=g.m_sommets; //Prob arete, va également copier les voisins/arete que possede les sommets
-    //for(const auto i:m_sommets) //Supprime voisin, arete appartenant au sommet
-    //    i.second->resetConnexite();
-
     int num_arete=0;
     for(const auto &i:vect)
     {
@@ -265,7 +261,6 @@ std::vector<graphe*> graphe::bruteforce()
     std::vector <graphe*> espace_recherche;
     size_t compteur=0;
 
-    ///WTF
     for(int i=0; i<pow(2,taille);++i) //Boucle de 0 à 2^taille
     {
         nb_bool=add(nb_bool,bin_1);//Incremente en chiffre binaire
@@ -274,49 +269,17 @@ std::vector<graphe*> graphe::bruteforce()
                 compteur++;
 
         if(compteur==m_sommets.size()-1) //Si combinaison ordre-1 arete
-        {
-            std::cout << "-----------------------------------------------------------------"<<std::endl;
             espace_recherche.push_back(new graphe{nb_bool,*this}); //Rajoute un graphe en fonction du num bool.
-            //espace_recherche.emplace_back(test); //Rajoute un graphe en fonction du num bool.
 
-            //espace_recherche.push_back(prochainGraphe(nb_bool,*this));
-            std::cout << "----------------------l'element en front-----------------------" << std::endl;
-            espace_recherche.front()->afficher();
-            std::cout << "---------------------------------------------------------------" << std::endl;
-            //system("pause");
-
-
-
-
-            std::cout << "-----------------------------dans ma boucle for-------------------------------" << std::endl ;
-            for(auto i:espace_recherche)
-            {
-                std::cout << std::endl << std::endl << i << std::endl << std::endl;
-                i->afficher();
-                //system("pause");
-            }
-            std::cout << "-----------------------------------------------------------------"<<std::endl;
-           //delete (a);
-           //free(a);
-        }/*
-        std::cout<<"--------------------------Affichage espace recherche---------------------------"<<std::endl;
-        for(auto i:espace_recherche)
-        {
-            std::cout << std::endl << std::endl << i << std::endl << std::endl;
-            i->afficher();
-            system("pause");
-        }
-        system("pause");*/
         compteur=0;
     }
 
     for(auto i:espace_recherche)
-    {
         for(auto j:i->m_sommets)
             j.second->connexite();
 
-    }
-    espace_recherche=retirerCnC(espace_recherche);
+
+    //espace_recherche=retirerCnC(espace_recherche);
     return espace_recherche;
 }
 
@@ -356,6 +319,21 @@ void graphe::poidsTotaux()
     }
 }
 
+std::vector<float> graphe::getm_poids(){return m_poidsTotaux;}
+
+void graphe::afficher_frontierePareto(BITMAP*page)
+{
+    //TOUT AFFICHER+SURLIGNER FRONTIERE
+    std::vector<graphe*> espace_recherche=bruteforce();
+    std::vector<graphe*> frontiere=frontierePareto(espace_recherche);
+
+    for(const auto i:espace_recherche)
+        circle(page,i->getm_poids()[0]*COEFFICIENT,i->getm_poids()[1]*COEFFICIENT, 3 , makecol(255,255,255));
+
+    line(page,0,0,0,20*COEFFICIENT,makecol(255,255,255));
+
+
+}
 void graphe::afficher_allegro(BITMAP*page) const
 {
     std::string msg ;
@@ -385,6 +363,24 @@ void graphe::afficher_allegro(BITMAP*page) const
         //std::cout << "num:" << j.first << " " << j.second->get_extremite(0)->get_x() << " " << j.second->get_extremite(0)->get_y() << " " << j.second->get_extremite(1)->get_x() << " " <<j.second->get_extremite(1)->get_y() << std::endl;
     }
     //rectfill(page, 100, 200, 200,200,makecol(209,130,30));
+}
+
+std::vector <graphe*> graphe::frontierePareto(std::vector <graphe*> espace_recherche) //RENVOIE LA FRONTIERE
+{
+    std::vector <graphe*> frontiere;
+    std::vector <std::vector <float>> liste_poids; //Liste des poids (cout1,cout2) de chaque graphe de espace_recherche
+    for(const auto i:espace_recherche) //PARCOURS
+    {
+        i->poidsTotaux(); //CALCUL LES POIDS TOTAUX
+                            //Recup Extremum
+    }
+    //REDUIT ESPACE RECHERCHE
+    /*for(const auto i:espace_recherche) //PARCOURS
+    {
+        //SUPPRIME SI
+    }*/
+
+    return frontiere;
 }
 
 std::vector<graphe*> retirerCnC(std::vector<graphe*> listeGrapheAChanger)
