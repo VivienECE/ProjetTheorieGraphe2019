@@ -9,7 +9,7 @@
 #define LONGEURAXE 30
 #define LONGUEURGRAD 5
 #define LONGUEURGRAD2 2
-#define COEFFICIENT 15
+#define COEFFICIENT 10
 
 graphe::~graphe()
 {
@@ -292,42 +292,10 @@ std::vector<graphe*> graphe::bruteforce()
 {
     int taille=m_aretes.size();
     std::vector <graphe*> espace_recherche;
-    /*std::vector <bool> nb_bool,bin_1; //bin 1 est le chiffre binaire 1
-    bin_1.push_back(true);
-    for(int i=0; i<taille;++i) //initialise à 0 nb_bool, à 1 bin_1
-    {
-        nb_bool.push_back(false);
-        bin_1.push_back(false);
-    }
-    bin_1.pop_back();
-
-    std::vector <graphe*> espace_recherche;
-    size_t compteur=0;
-
-    for(int i=0; i<pow(2,taille);++i) //Boucle de 0 à 2^taille
-    {
-        nb_bool=add(nb_bool,bin_1);//Incremente en chiffre binaire
-        for(const auto i:nb_bool)
-            if(i==true)
-                compteur++;
-       for(auto j:nb_bool)
-            {
-                if(j==true)
-                    std::cout << "1";
-                else
-                    std::cout << "0";
-            }
-            std::cout<<std::endl;
-
-        if(compteur==m_sommets.size()-1) //Si combinaison ordre-1 arete
-        {
-            espace_recherche.push_back(new graphe{nb_bool,*this}); //Rajoute un graphe en fonction du num bool.
-        }
-        compteur=0;
-    }*/
     //std::cout << "DETECTION" << std::endl;
     size_t compteur=0;
     int indice =0;
+    graphe *verifConnex;
     for(int i=0;i<pow(2,taille);i++) //Parcours de 0 à 2^n aretes
     {
         for(int comp=0;comp<taille;comp++) //Parcours de 0 à n aretes
@@ -338,20 +306,34 @@ std::vector<graphe*> graphe::bruteforce()
         }
         if(compteur==m_sommets.size()-1) //Si autant d'aretes que ordre -1
         {
-            espace_recherche.push_back(new graphe{i,*this});
-            //std::cout << ++indice << std::endl;
+            verifConnex=new graphe{i,*this};
+            for(auto j:verifConnex->m_sommets)
+            {
+                j.second->connexite();
+            }
+            if(verifConnex->rechercher_CC_graphe()==1){
+                //::cout << "salut" << std::endl;
+                espace_recherche.push_back(verifConnex);
+            }
+            //std::cout << ++indice << std::endl;*/
+            //espace_recherche.push_back(new graphe{i,*this});
         }
 
 
         compteur=0;
     }
     //std::cout << "FIN DETECTION" << std::endl;
-
-    for(auto i:espace_recherche)
-        for(auto j:i->m_sommets)
-            j.second->connexite();
+    /*
+    for(auto i:espace_recherche){
+        i->afficher();
+        system("pause");
+    }*/
     //std::cout << "DEBUG3" << std::endl;
-
+    for(auto i : espace_recherche)
+        for(auto j:i->m_sommets)
+        {
+            j.second->connexite();
+        }
     espace_recherche=retirerCnC(espace_recherche);
     return espace_recherche;
 }
@@ -418,10 +400,10 @@ void graphe::afficher_frontierePareto(BITMAP*page)
     std::vector<graphe*> espace_recherche=bruteforce();
     std::vector<graphe*> frontiere=frontierePareto(espace_recherche);
 
-    for(const auto i:espace_recherche)
+    for(const auto &i:espace_recherche)
         circle(page, real_x(i->getm_poids()[0]),real_y(i->getm_poids()[1]), 3 , makecol(255,255,255));
 
-    for(const auto i:frontiere) //FRONTIERE
+    for(const auto &i:frontiere) //FRONTIERE
         circlefill(page, real_x(i->getm_poids()[0]),real_y(i->getm_poids()[1]), 2 , makecol(0,255,0));
 
     line(page, ORX,ORY,ORX,ORY-LONGEURAXE*COEFFICIENT,makecol(255,255,255));
@@ -463,34 +445,42 @@ void graphe::afficher_allegro(BITMAP*page) const
     }
 }
 
-std::vector <graphe*> graphe::frontierePareto(std::vector <graphe*> espace_recherche) //RENVOIE LA FRONTIERE
+std::vector <graphe*> graphe::frontierePareto(const std::vector <graphe*> &espace_recherche) //RENVOIE LA FRONTIERE
 {
     std::vector <graphe*> NONfrontiere, frontiere;
     std::vector <std::vector <float>> liste_poids; //Liste des poids (cout1,cout2) de chaque graphe de espace_recherche
     this->poidsTotaux();
     //Ini les extremums en fonction de la pondération
+    std::cout << "je commence le chmilblik" << std::endl;
+    //std::cout << m_poidsTotaux.size() << std::endl;
+    system("pause");
     size_t marqueur1,marqueur2=0, memeadresse=0;
-    for(auto a:espace_recherche)
+    for(const auto &a:espace_recherche)
     {
-        for(auto b:espace_recherche)
+        //std::cout<< "je suis la" << std::endl;
+        for(const auto &b:espace_recherche){
+          //  std::cout<< "je suis la" << std::endl;
             if(b!=a)
+            {
+                for(size_t i=0;i<m_poidsTotaux.size();i++)
                 {
-                    for(size_t i=0;i<m_poidsTotaux.size();i++)
-                    {
-                        if(a->getm_poids()[i]<b->getm_poids()[i])
-                            marqueur1++;
-                        if(a->getm_poids()[i]<=b->getm_poids()[i])
-                            marqueur2++;
-                    }
-                    if( (marqueur1>1) && (marqueur2 == m_poidsTotaux.size())) //PROB
-                        NONfrontiere.push_back(b);
-                    marqueur1=0;
-                    marqueur2=0;
+                    if(a->getm_poids()[i]<b->getm_poids()[i])
+                        marqueur1++;
+                    if(a->getm_poids()[i]<=b->getm_poids()[i])
+                        marqueur2++;
                 }
+                if( (marqueur1>1) && (marqueur2 == m_poidsTotaux.size())) //PROB
+                    NONfrontiere.push_back(b);
+                marqueur1=0;
+                marqueur2=0;
+            }
+        }
     }
-    for(auto adE_R : espace_recherche)
+    //std::cout << "je fini de trouver nonfrontiere" << std::endl;
+    //system("pause");
+    for(const auto &adE_R : espace_recherche)
     {
-        for(auto adN_F : NONfrontiere)
+        for(const auto &adN_F : NONfrontiere)
         {
             if(adE_R==adN_F)
             {
@@ -501,6 +491,8 @@ std::vector <graphe*> graphe::frontierePareto(std::vector <graphe*> espace_reche
             frontiere.push_back(adE_R);
         memeadresse=0;
     }
+    //std::cout << "je retourne la frontiere" << std::endl;
+    //system("pause");
     return frontiere;
 }
 

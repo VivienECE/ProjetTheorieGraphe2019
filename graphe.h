@@ -29,7 +29,7 @@ class graphe
         void poidsTotaux(); //Calcul du poids total
         std::vector<float> getm_poids();
         void ajouter_connexite() const;
-        std::vector <graphe*> frontierePareto(std::vector <graphe*>); //RENVOIE LES GRAPHES FRONTIERE
+        std::vector <graphe*> frontierePareto(const std::vector <graphe*> &espace_recherche); //RENVOIE LES GRAPHES FRONTIERE
         void afficher_frontierePareto(BITMAP*page); //ONLY 2D ou 1D
 
     private:
