@@ -21,6 +21,35 @@ graphe::graphe()
     //ctor
 }
 
+graphe::graphe(int valeur, const graphe &g)
+{
+    for(const auto & s_o_m : g.m_sommets)
+    {
+        m_sommets.insert({s_o_m.first,
+                         new Sommet {s_o_m.second->getm_id(),
+                                    s_o_m.second->getm_x(),
+                                    s_o_m.second->getm_y()}});
+    }
+    int num_arete=0;
+    for(int i=0;i<pow(2,m_aretes.size());i++)
+        if(valeur&i)
+        {
+            m_aretes.insert({g.m_aretes.find(num_arete)->first,
+                            new arete{  num_arete,
+                                        g.m_aretes.find(num_arete)->second->getm_poids(),
+                                        m_sommets.find(g.m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id())->second,
+                                        m_sommets.find(g.m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id())->second}});
+
+            //Met à jour les aretes des 2 sommets (extremités de l'arete selectionné)
+            m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id())->second
+            ->ajouterArete(m_aretes.find(num_arete)->second);
+
+             m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id())->second
+            ->ajouterArete(m_aretes.find(num_arete)->second);
+        }
+        this->afficher();
+}
+
 graphe::graphe(std::vector<bool> vect, const graphe &g)
 {
     for(const auto & s_o_m : g.m_sommets)
@@ -253,7 +282,8 @@ std::vector<bool> add(const std::vector<bool>& a, const std::vector<bool>& b)
 std::vector<graphe*> graphe::bruteforce()
 {
     int taille=m_aretes.size();
-    std::vector <bool> nb_bool,bin_1; //bin 1 est le chiffre binaire 1
+    std::vector <graphe*> espace_recherche;
+    /*std::vector <bool> nb_bool,bin_1; //bin 1 est le chiffre binaire 1
     bin_1.push_back(true);
     for(int i=0; i<taille;++i) //initialise à 0 nb_bool, à 1 bin_1
     {
@@ -271,13 +301,33 @@ std::vector<graphe*> graphe::bruteforce()
         for(const auto i:nb_bool)
             if(i==true)
                 compteur++;
+       for(auto j:nb_bool)
+            {
+                if(j==true)
+                    std::cout << "1";
+                else
+                    std::cout << "0";
+            }
+            std::cout<<std::endl;
 
         if(compteur==m_sommets.size()-1) //Si combinaison ordre-1 arete
         {
             espace_recherche.push_back(new graphe{nb_bool,*this}); //Rajoute un graphe en fonction du num bool.
-            std::cout << "DEBUG1" << std::endl;
         }
         compteur=0;
+    }*/
+    int compteur=0;
+    for(int i=0;i<pow(2,taille);i++)
+    {
+        for(int comp=0;comp<taille;comp++)
+        {
+            int a=pow(2,comp);
+            if(i&a)
+               compteur++;
+        }
+       if(compteur==taille-1)
+            espace_recherche.push_back(new graphe{i,*this});
+       compteur=0;
     }
     std::cout << "DEBUG2" << std::endl;
 

@@ -6,6 +6,7 @@
 int main()
 {
     init_Allegro();
+    //graphe g{"manhattan.txt"};
     graphe g{"broadway.txt"};
     g.lire_poids("broadway_weights_0.txt");
     //afficher_allegro(g);
