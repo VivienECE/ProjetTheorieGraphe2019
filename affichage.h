@@ -2,10 +2,11 @@
 #define AFFICHAGE_H_INCLUDED
 #include "graphe.h"
 #include <vector>
+#include <unordered_map>
 
-void afficher_allegro(std::vector<graphe*> Liste);
-void afficher_allegro(graphe g);
-void afficherFrontierePareto_allegro(graphe g);
+void afficher_allegro(const std::unordered_map <int, std::vector<float>> &espace_recherche_int, const graphe &g_base);
+void afficher_allegro(const graphe &g);
+void afficherFrontierePareto_allegro(const graphe &g);
 double convert(double);
 
 #endif // AFFICHAGE_H_INCLUDED
