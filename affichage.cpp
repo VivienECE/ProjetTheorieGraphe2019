@@ -63,3 +63,31 @@ void afficherFrontierePareto_allegro(const graphe &g, bool dist) //Affiche la fr
 
     }
 }
+
+
+void afficher_allegro2(const graphe &g_base,const std::vector<unsigned int> espace_recherche_int) //AFFICHE LISTE GRAPHE
+{
+    BITMAP* page;
+    //PARTIE AFFICHAGE
+    page=create_bitmap(800,600);
+    graphe* grapheTemp;
+    while (!key[KEY_ESC])
+    {
+        for (const auto &i : espace_recherche_int)
+        {
+            grapheTemp = new graphe {i, g_base};
+            grapheTemp->poidsTotaux();
+            grapheTemp->afficher_allegro(page, i);
+            blit(page, screen,0,0,0,0, 800,600);
+            while (!key[KEY_ENTER])
+            {
+                if (key[KEY_ESC]) //Option quitter si la liste est longue
+                    return;
+            }
+            clear(page);
+            clear(screen);
+            delete(grapheTemp);
+        }
+    }
+    return;
+}
