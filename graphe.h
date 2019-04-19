@@ -43,10 +43,11 @@ class graphe
         void poidsTotaux(); //Calcul du poids total
         std::vector<float> getm_poids();
         void ajouter_connexite() const;
-        std::vector <unsigned int> frontierePareto(std::vector <unsigned int> espace_recherche) const;
-        std::vector <unsigned int> algoDjikstra(std::vector <unsigned int> espace_recherche) const;
+        std::vector <unsigned int> frontierePareto(std::vector <unsigned int>) const;
         void afficher_frontierePareto(BITMAP*page) const;//ONLY 2D ou 1D
-        std::unordered_map<int,float> Djikstra(int) const;
+        std::vector<float> poidsTotauxDjikstra(const unsigned int &I); //retourne les poids total+ total des distances
+        float** Djikstra_sommet(int,const unsigned int &i) const; //retourne 1 tableau remplit de djikstra
+
 
     private:
         std::unordered_map<int,Sommet*> m_sommets;//stockée dans une map (clé=id du sommet, valeur= pointeur sur le sommet)

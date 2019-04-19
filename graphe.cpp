@@ -659,30 +659,45 @@ void graphe::afficher_allegro(BITMAP*page) const
     }
 }*/
 
-std::unordered_map<int,float> graphe::Djikstra(int id_debut) const
+float** graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
 {
     //INI
+    std::cout<< "DEBUG 1" << std::endl;
+    float **tab;
+    tab=(float**)malloc(sizeof(float*)*m_sommets.size());
+    for(size_t i=0;i<m_sommets.size();i++)
+        tab[i]=((float*)malloc(sizeof(float)*m_sommets.size()));
+
     std::priority_queue<std::pair <int,float>,std::vector<std::pair<int,float>>, prioritize> p_queue; //QUEUE PRIORITAIRE, TRI PAR POIDS DECROISSANT, DEF Ligne 3, graphe.Cpp
     std::unordered_map<int,float> s_marques; s_marques.emplace(id_debut,0);
     int id;float poids;
     p_queue.push(std::make_pair(id_debut,0));
     //INI
-
-    while(p_queue.size()!=0) //PARCOURS DFS PILE PRIORITAIRE, TJR EN PREMIER LE SOMMET AVEC PLUS PETIT POIDS
+    while(p_queue.size()!=0) //PARCOURS BFS PILE PRIORITAIRE, TJR EN PREMIER LE SOMMET AVEC PLUS PETIT POIDS
     {
         id=p_queue.top().first; //ENREGISTRE LE PREMIER SOMMET ET SA DISTANCE TOTAL AU SOMMET D'ORIGINE
         poids=p_queue.top().second;
         p_queue.pop(); //EJECTE
         for(const auto i:m_sommets.find(id)->second->getm_voisins()) //Rajoute sommets adjacent non parcourus
+         if(I & (int)pow(2,i->id_arete(id)) )//SI l'arrete existe
             if(s_marques.count(i->getm_id())==0) //SI NON PARCOURU
                 p_queue.push(std::make_pair(i->getm_id(),i->calcul_distance(id)+poids)); //RAJOUTE A LA PILE PRIORITAIRE
 
         s_marques.emplace(p_queue.top().first,p_queue.top().second); //MARQUE LE SOMMET DE POIDS PLUS FAIBLE DE LA PILE
+        //tab[p_queue.top().first][id_debut]=p_queue.top().second;
+        //tab[id_debut][p_queue.top().first]=p_queue.top().second;
     }
     for(const auto i:s_marques) //AFFICHE DJIKSTRA DEPUIS LE SOMMET MIS EN PARAMETRE id_debut
         std::cout<< "id :" << i.first << " Distance :" << i.second << std::endl;
 
     system("pause");
-    return s_marques;
+    return tab;
 }
 
+std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I)
+{
+    std::vector<float> poidsTotaux;
+    float** tabDjikstra=Djikstra_sommet(0,I);
+    //poidsTotaux.push_back()
+    return poidsTotaux;
+}

@@ -19,7 +19,7 @@ class arete
         std::vector<Sommet*> getm_extremites() const;
         std::vector<float> getm_poids() const;
         int getm_id() const;
-        Sommet* getm_extremite(int) const;
+        Sommet* getm_extremite(int) const; //renvoie seconde extre.
         float getm_distance(int, int) const; //renvoi la distance si bon id correct, 0 sinon
 
     private:

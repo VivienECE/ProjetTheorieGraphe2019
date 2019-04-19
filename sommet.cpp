@@ -151,3 +151,18 @@ int Sommet::id_adjacent(int id_arete) const
                 return i->getm_extremites()[1]->getm_id();
     }
 }*/
+
+int Sommet::id_arete(int id_sommet) const
+{
+    std::cout << "NB ARETE " << m_arete.size() << std::endl;
+    for(const auto i:m_arete)
+    {
+        std::cout <<"DEBUG id_arete:" <<i->getm_extremite(m_id)->getm_id()
+            << "-"<< id_sommet << std::endl;
+        if(i->getm_extremite(m_id)->getm_id()==id_sommet)
+            return i->getm_id();
+
+    }
+    std::cout << "Erreur sommet.cpp/id_arete" << std::endl;
+    return -1;
+}
