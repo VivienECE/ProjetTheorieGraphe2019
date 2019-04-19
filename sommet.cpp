@@ -51,7 +51,7 @@ void Sommet::connexite(){
 void Sommet::rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i, const graphe &g, int stop) const
 {
     sommetParcourus.insert(m_id);                                        /// je met le sommet dans le tableau des sommets explores
-    if(((int)m_arete.size()>1)&&((int)sommetParcourus.size()!=stop))
+    if((m_arete.size()>1)&&(sommetParcourus.size()!=stop))
     {
         for(const auto &ar : m_arete)                         /// je regarde les voisins du sommet
         {
@@ -150,7 +150,7 @@ int Sommet::id_arete(int id_sommet) const
     for(const auto i:m_arete) //PARCOURS LES ARETES DU SOMMET
     {
         if( ((i->getm_extremite(0)->getm_id()==id_sommet) && (i->getm_extremite(1)->getm_id()==m_id) )
-            || ((i->getm_extremite(1)->getm_id()==id_sommet) && (i->getm_extremite(0)->getm_id()==m_id)))
+            || (i->getm_extremite(1)->getm_id()==id_sommet) && (i->getm_extremite(0)->getm_id()==m_id))
         //SI UNE ARETE A LES 2 ID EN EXTREMITES, RETOUR ID DE L'ARETE
         {
             //std::cout <<"DEBUG retour id_arete:" << i->getm_id() << std::endl << std::endl;
