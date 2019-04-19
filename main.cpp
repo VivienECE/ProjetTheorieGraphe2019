@@ -16,26 +16,6 @@ int main()
     //g.lire_poids("broadway_weights_0.txt");
 
     g.poidsTotaux();
-    //afficher_allegro(g);
-
-
-    //afficher_allegro(g.prim(1));
-    //std::cout << "prim 1 fini go prim2" << std::endl;
-    //system("pause");
-    //afficher_allegro(g.prim(1));
-    //std::cout << "prim 2 fini go bruteforce" << std::endl;
-    //system("pause");
-
-
-    //afficher_allegro(g.bruteforce(), g);
-
-
-    //std::cout << "bruteforce fini go frontiere" << std::endl;
-    //system("pause");
-    //afficher_allegro(g.prim(0));
-    //afficher_allegro(g.prim(1));
-    //afficher_allegro(g.bruteforce());
-
 
     afficherFrontierePareto_allegro(g);
     system("pause");

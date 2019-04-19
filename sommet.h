@@ -6,6 +6,7 @@
 #include <unordered_set>
 #include "arete.h"
 #include "graphe.h"
+#include <string>
 
 class arete;
 class graphe;
@@ -20,6 +21,8 @@ class Sommet
         void ajouterArete(arete*);
         void afficherData() const;
         void afficherVoisins() const;
+        std::vector<float> min_distance_voisin(std::vector<int>) const; //[id][cout]
+        std::vector<Sommet*> getm_voisins() const;
         int getm_id() const;
         double getm_x() const;
         double getm_y() const;
@@ -28,6 +31,9 @@ class Sommet
         void rechercherCC(std::unordered_set<int> &cc) const;
         ~Sommet();
         void connexite();
+        float calcul_distance(int) const; //Calcul la distance avec le sommet entrée en parametre, uniquement distance avec sommet adj.
+        //std::pair<int,float> cout_min(std::unordered_set<int>) const; //Non utulisé finalement
+        //int id_adjacent(int) const;
 
     private:
         /// Voisinage : liste d'adjacence

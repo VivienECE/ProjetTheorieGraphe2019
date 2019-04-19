@@ -3,9 +3,10 @@
 #include <stack>
 #include<unordered_map>
 #include<unordered_set>
+#include <algorithm>
 #include "sommet.h"
 #include <math.h>
-
+#include <stack>
 
 Sommet::Sommet()
 {
@@ -28,6 +29,7 @@ void Sommet::resetConnexite(){
     m_voisins.clear();
     m_arete.clear();
 }
+
 void Sommet::afficherData() const{
      std::cout<<"    "<<m_id<<" : "<<"(x,y)=("<<m_x<<","<<m_y<<")"<<std::endl;
  }
@@ -124,3 +126,50 @@ void Sommet::ajouterArete(arete*a)
 {
     m_arete.push_back(a);
 }
+
+float Sommet::calcul_distance(int id_voisin) const
+{
+    int i=0;
+    float distance=0;
+    while(distance==0)
+    {
+        distance=(int)m_arete[i]->getm_distance(m_id, id_voisin);
+        i++;
+    }
+    //std::cout<< " DEBUGG POIDS:" << distance<<std::endl;
+    return distance;
+}
+
+std::vector<Sommet*> Sommet::getm_voisins() const {return m_voisins;}
+
+/*
+std::pair<int,float> Sommet::cout_min(std::unordered_set<int> s_marque) const
+{
+    float coutMin=m_arete[0]->getm_poids()[m_arete[0]->getm_poids().size()-1];
+    int id=id_adjacent(m_arete[0]->getm_id());
+
+    for(const auto i:m_arete)
+    {
+        if(i->getm_poids()[i->getm_poids().size()-1]<coutMin && s_marque.count(id_adjacent(i->getm_id()))==0)
+        {
+            id=id_adjacent(i->getm_id());
+            coutMin=i->getm_poids()[i->getm_poids().size()-1];
+        }
+    }
+    std::pair<int,float> retour(id,coutMin);
+    std::cout<< retour.first <<":"<<retour.second<<std::endl<<std::endl;
+    return retour;
+}
+
+/*
+int Sommet::id_adjacent(int id_arete) const
+{
+    for(const auto i:m_arete)
+    {
+        if(i->getm_id()==id_arete)
+            if(m_id != i->getm_extremites()[0]->getm_id())
+                return i->getm_extremites()[0]->getm_id();
+            else
+                return i->getm_extremites()[1]->getm_id();
+    }
+}*/
