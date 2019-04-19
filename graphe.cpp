@@ -1,17 +1,6 @@
-#include <fstream>
-#include <iostream>
 #include "graphe.h"
-#include <queue>
-#include <stack>
-#include "math.h"
-#define ORX 100
-#define ORY 550
-#define LONGEURAXE 400
-#define LONGUEURGRAD 5
-#define LONGUEURGRAD2 2
-#define COEFFICIENT 10
-#define NBGRAD 30
 
+class prioritize{public: bool operator ()(std::pair<int, float>&p1 ,std::pair<int, float>&p2){return p1.second>p2.second;}};
 graphe::~graphe()
 {
     //std::cout << "je détruis" << std::endl;
@@ -40,7 +29,7 @@ graphe::graphe(const int &valeur, const graphe &g)
                                     s_o_m.second->getm_y()}});
     }
 
-    for(int num_arete=0;num_arete<g.m_aretes.size();num_arete++)
+    for(size_t num_arete=0;num_arete<g.m_aretes.size();num_arete++)
     {
         int i=pow(2,num_arete);
         if(valeur&i)
@@ -127,9 +116,9 @@ graphe::graphe(std::string nomFichier){
         (m_sommets.find(id))->second->ajouterVoisin((m_sommets.find(id_voisin))->second);
         (m_sommets.find(id_voisin))->second->ajouterVoisin((m_sommets.find(id))->second);//remove si graphe orienté
          m_aretes.insert({id_arete,new arete{id_arete,(m_sommets.find(id))->second,(m_sommets.find(id_voisin))->second}});
-         //Ajout de l'arete au 2 sommets
-         (m_sommets.find(id))->second->ajouterArete(new arete{id_arete,(m_sommets.find(id))->second,(m_sommets.find(id_voisin))->second});
-         (m_sommets.find(id_voisin))->second->ajouterArete(new arete{id_arete,(m_sommets.find(id))->second,(m_sommets.find(id_voisin))->second});
+         //Ajout de l'arete au 2 sommets m_aretes.find(id_arete);
+         (m_sommets.find(id))->second->ajouterArete(m_aretes.find(id_arete)->second);
+         (m_sommets.find(id_voisin))->second->ajouterArete(m_aretes.find(id_arete)->second);
 
     }
 }
@@ -652,3 +641,48 @@ void graphe::afficher_allegro(BITMAP*page) const
         line(page,j.second->getm_extremites()[0]->getm_x(),j.second->getm_extremites()[0]->getm_y(),j.second->getm_extremites()[1]->getm_x(),j.second->getm_extremites()[1]->getm_y(), makecol(255,30,30));
     }
 }
+
+/*std::vector <unsigned int> graphe::algoDjikstra(std::vector <unsigned int> espace_recherche) const
+{
+    graphe *g;
+    int taille=m_sommets.size();
+    std::vector<int> s_marques;
+    float tableau[taille][taille];
+    for(const auto &a:espace_recherche) //
+    {
+        //Djikstra
+        g=new graphe{a, *this};
+        for(size_t i=0;i<m_sommets.size();i++) //Pour chaque sommet
+        {
+            tableau[i][(g->m_sommets.find(i)->second)->getm_voisins()->)]
+        }
+    }
+}*/
+
+std::unordered_map<int,float> graphe::Djikstra(int id_debut) const
+{
+    //INI
+    std::priority_queue<std::pair <int,float>,std::vector<std::pair<int,float>>, prioritize> p_queue; //QUEUE PRIORITAIRE, TRI PAR POIDS DECROISSANT, DEF Ligne 3, graphe.Cpp
+    std::unordered_map<int,float> s_marques; s_marques.emplace(id_debut,0);
+    int id;float poids;
+    p_queue.push(std::make_pair(id_debut,0));
+    //INI
+
+    while(p_queue.size()!=0) //PARCOURS DFS PILE PRIORITAIRE, TJR EN PREMIER LE SOMMET AVEC PLUS PETIT POIDS
+    {
+        id=p_queue.top().first; //ENREGISTRE LE PREMIER SOMMET ET SA DISTANCE TOTAL AU SOMMET D'ORIGINE
+        poids=p_queue.top().second;
+        p_queue.pop(); //EJECTE
+        for(const auto i:m_sommets.find(id)->second->getm_voisins()) //Rajoute sommets adjacent non parcourus
+            if(s_marques.count(i->getm_id())==0) //SI NON PARCOURU
+                p_queue.push(std::make_pair(i->getm_id(),i->calcul_distance(id)+poids)); //RAJOUTE A LA PILE PRIORITAIRE
+
+        s_marques.emplace(p_queue.top().first,p_queue.top().second); //MARQUE LE SOMMET DE POIDS PLUS FAIBLE DE LA PILE
+    }
+    for(const auto i:s_marques) //AFFICHE DJIKSTRA DEPUIS LE SOMMET MIS EN PARAMETRE id_debut
+        std::cout<< "id :" << i.first << " Distance :" << i.second << std::endl;
+
+    system("pause");
+    return s_marques;
+}
+

@@ -6,6 +6,20 @@
 #include "sommet.h"
 #include "arete.h"
 #include "allegro.h"
+#include <fstream>
+#include <iostream>
+#include <queue>
+#include <stack>
+#include <algorithm>
+#include <vector>
+#include "math.h"
+#define ORX 100
+#define ORY 550
+#define LONGEURAXE 400
+#define LONGUEURGRAD 5
+#define LONGUEURGRAD2 2
+#define COEFFICIENT 10
+#define NBGRAD 30
 
 #define origine_x 200
 #define origine_y 200
@@ -29,8 +43,10 @@ class graphe
         void poidsTotaux(); //Calcul du poids total
         std::vector<float> getm_poids();
         void ajouter_connexite() const;
-        std::vector <unsigned int> frontierePareto(std::vector <unsigned int> espace_recherche) const; //RENVOIE LES GRAPHES FRONTIERE
+        std::vector <unsigned int> frontierePareto(std::vector <unsigned int> espace_recherche) const;
+        std::vector <unsigned int> algoDjikstra(std::vector <unsigned int> espace_recherche) const;
         void afficher_frontierePareto(BITMAP*page) const;//ONLY 2D ou 1D
+        std::unordered_map<int,float> Djikstra(int) const;
 
     private:
         std::unordered_map<int,Sommet*> m_sommets;//stockée dans une map (clé=id du sommet, valeur= pointeur sur le sommet)

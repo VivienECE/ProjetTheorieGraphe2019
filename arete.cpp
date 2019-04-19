@@ -8,8 +8,6 @@ arete::arete()
 arete::~arete()
 {
     //std::cout << " et moi aussi " << std::endl;
-
-
     /*
     for (auto it : m_extremites)
         delete it;*/
@@ -61,4 +59,16 @@ void arete::afficher() const
     for (auto j:m_poids)
         std::cout<< " : "<< j ;
     std::cout<< std::endl;
+}
+
+float arete::getm_distance(int a, int b) const
+{
+    //this->afficher();// PAS DE POIDS???
+    if( ((getm_extremites()[0]->getm_id()==a) && (getm_extremites()[1]->getm_id()==b))
+       ||((getm_extremites()[0]->getm_id()==b) && (getm_extremites()[1]->getm_id()==a)))
+        {
+            return m_poids.back();
+        }
+    else
+        return 0;
 }
