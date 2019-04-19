@@ -28,7 +28,7 @@ class Sommet
         double getm_y() const;
         std::vector<arete*> getm_arete() const;
         void rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i, const graphe &g, int stop) const;
-        void rechercherCC(std::unordered_set<int> &cc) const;
+        void rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i) const;
         ~Sommet();
         void connexite();
         float calcul_distance(int) const; //Calcul la distance avec le sommet entrée en parametre, uniquement distance avec sommet adj.

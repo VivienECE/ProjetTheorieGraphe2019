@@ -50,8 +50,10 @@ void Sommet::connexite(){
 
 void Sommet::rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i, const graphe &g, int stop) const
 {
+
     sommetParcourus.insert(m_id);                                        /// je met le sommet dans le tableau des sommets explores
     if(((int)m_arete.size()>1)&&((int)sommetParcourus.size()!=stop))
+
     {
         for(const auto &ar : m_arete)                         /// je regarde les voisins du sommet
         {
@@ -79,9 +81,9 @@ void Sommet::rechercherCC(std::unordered_set<int> &sommetParcourus, const unsign
     }
 }
 
-void Sommet::rechercherCC(std::unordered_set<int> &cc) const
+void Sommet::rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i) const
 {
-    cc.insert(m_id);
+    sommetParcourus.insert(m_id);
 
     std::stack <const Sommet*> file_sommets_explores;
     file_sommets_explores.push(this);
@@ -92,7 +94,30 @@ void Sommet::rechercherCC(std::unordered_set<int> &cc) const
     {
         s=file_sommets_explores.top();
         file_sommets_explores.pop();
-
+        for(const auto &ar : s->m_arete)                         /// je regarde les voisins du sommet
+        {
+            int id_arete=ar->getm_id();
+            int id_extr0=ar->getm_extremites()[0]->getm_id();
+            int id_extr1=ar->getm_extremites()[1]->getm_id();
+            int puis = pow(2, id_arete);
+            if  ((i & puis)&&                         // Et regarde si elle est "activée" dans le potentiel futur graphe
+                (((sommetParcourus.count(id_extr0)==0)&&(sommetParcourus.count(id_extr1)==1))||
+                ((sommetParcourus.count(id_extr0)==1)&&(sommetParcourus.count(id_extr1)==0))))
+            {
+                /// Si l'extremité 0 n'est pas dans le tableau, c'est donc elle qu'il faut ajouter
+                if  (sommetParcourus.count(id_extr0)==0)
+                {
+                    sommetParcourus.insert({id_extr0});
+                    file_sommets_explores.push(ar->getm_extremites()[0]);
+                }
+                else if (sommetParcourus.count(id_extr1)==0)
+                {
+                    sommetParcourus.insert({id_extr1});
+                    file_sommets_explores.push(ar->getm_extremites()[1]);
+                }
+            }
+        }
+        /*
         for(const auto &it : s->m_voisins)
         {
             if( (cc.find(it->m_id)==cc.end()) && (it != this))
@@ -100,8 +125,7 @@ void Sommet::rechercherCC(std::unordered_set<int> &cc) const
                 file_sommets_explores.push(it);
                 cc.insert({it->m_id, s->m_id});
             }
-        }
-
+        }*/
     }
 }
 

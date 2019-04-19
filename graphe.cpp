@@ -55,7 +55,6 @@ graphe::graphe(const int &valeur, const graphe &g)
             ->ajouterArete(m_aretes.find(num_arete)->second);
         }
     }
-       // this->afficher();
 }
 
 
@@ -243,7 +242,6 @@ std::vector<bool> add(const std::vector<bool>& a, const std::vector<bool>& b)
 
 std::vector <unsigned int> graphe::bruteforce_dist() const
 {
-    int stop = m_sommets.size();
     std::cout << "je rentre dans bruteforce_dist" << std::endl;
     clock_t t1, t2;
     t1=clock();
@@ -254,7 +252,7 @@ std::vector <unsigned int> graphe::bruteforce_dist() const
     int exp=0, puis=0;
     std::vector <int> mesPos;
     size_t maxS = m_sommets.size();
-    for (size_t max_temp=maxS; max_temp<m_aretes.size(); max_temp++)
+    for (size_t max_temp=maxS; max_temp<=m_aretes.size()+1; max_temp++)
     {
         std::cout << "nombre d'element dans espace_recherche_int " << espace_recherche_int.size() << std::endl;
         std::cout   << "et on en est qu'a la combinaison "
@@ -278,15 +276,18 @@ std::vector <unsigned int> graphe::bruteforce_dist() const
                 }
                 exp++;
             }
-            s0->rechercherCC(sommetParcourus, puis, *this, stop);
+            s0->rechercherCC(sommetParcourus, puis);
             if(sommetParcourus.size()==m_sommets.size())
             {
                 espace_recherche_int.push_back(puis);
+                //if(max_temp!=maxS)
+                    //std::cout << "je sors de la connexite" << std::endl;
             }
             sommetParcourus.clear();
             puis=0;
             exp=0;
         } while(std::next_permutation(a.begin(), a.end()));
+        a.clear();
     }
     std::cout << "jai fini bruteforce" << std::endl;
     std::cout << "taille de espace_recherche_int " << espace_recherche_int.size() << std::endl;
@@ -325,7 +326,7 @@ std::vector <unsigned int> graphe::bruteforce() const
             }
             exp++;
         }
-        s0->rechercherCC(sommetParcourus, puis, *this, stop);
+        s0->rechercherCC(sommetParcourus, puis);
         if(sommetParcourus.size()==m_sommets.size())
         {
             espace_recherche_int.push_back(puis);
@@ -510,8 +511,17 @@ std::vector<unsigned int> graphe::frontierePareto_dist(std::vector<unsigned int>
     // L'interet et que je rempli 'frontiere' en mettant tout ce qui n'est pas 'NONfrontiere'
     std::unordered_map <unsigned int, std::vector<float>> NONfrontiere, frontiere;
     std::vector <float> poids_aComp1, poids_aComp2;
+
     int incrementBoucle2=0, incrementBoucle1=0, paspossible=0;
     size_t marqueur1,marqueur2=0;
+    for(int j=0;j<=3;j++)
+        {
+            for(const auto i:espace_recherche_int)
+            this->poidsTotauxDjikstra(i);
+            std::cout << std::endl;
+        }
+    system("pause");
+
     do
     {
         /// Cette boucle for me permet de parcourir chaque combinaison de 'espace_recherche_int
@@ -646,7 +656,7 @@ std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I) const
     std::cout <<"DEBUG ( ";
     for(const auto i:poidsTotaux)
        std::cout << i << " ";
-    std::cout <<")" <<std::endl;
+    std::cout <<")" <<std::endl;//system("pause");
 
     return poidsTotaux;
 }
