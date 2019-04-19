@@ -11,7 +11,7 @@
 #define PARETO 2
 #define PARETO_DIST 3
 
-// Code inspiré de cpp.developpez.com
+
 
 int saisie(const int& borneInf, const int& borneSup);
 
@@ -64,6 +64,9 @@ int main()
         }
         graphe g{fichier};
         g.lire_poids(fichierP);
+        fichier.clear();
+        fichierP.clear();
+        g.poidsTotaux();
         system("cls");
         std::cout   << "Quel algorithme voulez-vous utiliser ?"  <<std::endl
                     << "<1> prim" << std::endl
@@ -77,9 +80,10 @@ int main()
             afficher_allegro_prim(g);
             break;
         case PARETO :
-            afficherFrontierePareto_allegro(g);
+            afficherFrontierePareto_allegro(g, false);
             break;
         case PARETO_DIST :
+            afficherFrontierePareto_allegro(g, true);
             break;
         case QUITTER :
             exit(EXIT_SUCCESS);
@@ -88,25 +92,11 @@ int main()
         }
         system("cls");
     }while (choixAlgo !=0);
-    /*
-    graphe g{"manhattan.txt"};
-    g.lire_poids("manhattan_weights_0.txt");
-
-    //graphe g{"cubetown.txt"};
-    //g.lire_poids("cubetown_weights_0.txt");
-
-    //graphe g{"broadway.txt"};
-    //g.lire_poids("broadway_weights_0.txt");
-
-    g.poidsTotaux();
-
-    afficherFrontierePareto_allegro(g);
-    system("pause");
-
-    std::cout << "pareto fini go terminer" << std::endl;*/
     return 0;
 }
 
+
+// Code inspiré de cpp.developpez.com
 int saisie(const int& borneInf, const int& borneSup)
 {
     int choix = 0;

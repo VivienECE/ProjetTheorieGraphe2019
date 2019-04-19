@@ -21,7 +21,7 @@ class Sommet
         void ajouterArete(arete*);
         void afficherData() const;
         void afficherVoisins() const;
-        std::vector<float> min_distance_voisin(std::vector<int>) const; //[id][cout]
+        //std::vector<float> min_distance_voisin(std::vector<int>) const; //[id][cout]
         std::vector<Sommet*> getm_voisins() const;
         int getm_id() const;
         double getm_x() const;
@@ -33,12 +33,14 @@ class Sommet
         void connexite();
         float calcul_distance(int) const; //Calcul la distance avec le sommet entrée en parametre, uniquement distance avec sommet adj.
         //std::pair<int,float> cout_min(std::unordered_set<int>) const; //Non utulisé finalement
-        //int id_adjacent(int) const;
+        int id_adjacent(int) const;
+        int id_arete(int id_sommet) const;
 
     private:
         /// Voisinage : liste d'adjacence
         std::vector<Sommet*> m_voisins;
         std::vector<arete*> m_arete;
+        //std::unordered_map<int,arete*> m_arete;
         /// Données spécifiques du sommet
         int m_id; // Identifiant
         double m_x, m_y; // Position

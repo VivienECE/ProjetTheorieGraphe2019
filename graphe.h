@@ -32,25 +32,33 @@ class graphe
     public:
         graphe(std::string);
         graphe();
-        ///Créer un nouveau graphe en fonction du vecteur booleen et des sommets du graphe
-        graphe(std::vector<bool>, const graphe &g);
         graphe(const int &I, const graphe &g);
-        void lire_poids(std::string nomFichier);
         ~graphe();
+
+        void lire_poids(std::string nomFichier);
+
         void afficher() const;
-        void ajouter_arete(int,float,float, Sommet*, Sommet*);
-        graphe prim(int poids) ;
         void afficher_allegro(BITMAP*, const int &i) const;
+        void afficher_allegro(BITMAP*) const;
+        void afficher_frontierePareto(BITMAP*page, bool dist) const;//ONLY 2D ou 1D
+
+        void ajouter_arete(int,float,float, Sommet*, Sommet*);
+        void ajouter_connexite() const;
+
+
+        graphe prim(int poids);
         std::vector <unsigned int> bruteforce()const;
-        int rechercher_CC_graphe() const;
+        std::vector <unsigned int> bruteforce_dist()const;
+
         void poidsTotaux(); //Calcul du poids total
         std::vector<float> getm_poids();
-        void ajouter_connexite() const;
-        std::vector <unsigned int> frontierePareto(std::vector <unsigned int> espace_recherche) const;
-        std::vector <unsigned int> algoDjikstra(std::vector <unsigned int> espace_recherche) const;
-        void afficher_frontierePareto(BITMAP*page) const;//ONLY 2D ou 1D
+
+        std::vector <unsigned int> frontierePareto(std::vector <unsigned int>) const;
+        std::vector <unsigned int> frontierePareto_dist(std::vector <unsigned int>) const;
+
+        std::vector<float> poidsTotauxDjikstra(const unsigned int &I) const; //retourne les poids total+ total des distances
+        float Djikstra_sommet(int,const unsigned int &i) const; //retourne somme des djisktra pour le sommet -symetrie
         std::vector<float> poidsTotaux(unsigned int i) const;
-        std::unordered_map<int,float> Djikstra(int) const;
 
     private:
         std::unordered_map<int,Sommet*> m_sommets;//stockée dans une map (clé=id du sommet, valeur= pointeur sur le sommet)
@@ -59,8 +67,6 @@ class graphe
 };
 
 std::vector<bool> add(const std::vector<bool>& a, const std::vector<bool>& b);
-
-std::vector<graphe*> retirerCnC(std::vector<graphe*> listeGrapheAChanger);
 
 float real_x(float x);
 float real_y(float y);

@@ -65,37 +65,6 @@ graphe::graphe(const int &valeur, const graphe &g)
        // this->afficher();
 }
 
-graphe::graphe(std::vector<bool> vect, const graphe &g)
-{
-    for(const auto & s_o_m : g.m_sommets)
-    {
-        m_sommets.insert({s_o_m.first,
-                         new Sommet {s_o_m.second->getm_id(),
-                                    s_o_m.second->getm_x(),
-                                    s_o_m.second->getm_y()}});
-    }
-    int num_arete=0;
-    for(const auto &i:vect)
-    {
-        if(i==true)
-        {
-            m_aretes.insert({g.m_aretes.find(num_arete)->first,
-                            new arete{  num_arete,
-                                        g.m_aretes.find(num_arete)->second->getm_poids(),
-                                        m_sommets.find(g.m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id())->second,
-                                        m_sommets.find(g.m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id())->second}});
-
-            //Met à jour les aretes des 2 sommets (extremités de l'arete selectionné)
-            m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id())->second
-            ->ajouterArete(m_aretes.find(num_arete)->second);
-
-             m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id())->second
-            ->ajouterArete(m_aretes.find(num_arete)->second);
-        }
-        num_arete++;
-    }
-}
-
 
 graphe::graphe(std::string nomFichier){
     std::ifstream ifs{nomFichier};
@@ -279,25 +248,10 @@ std::vector<bool> add(const std::vector<bool>& a, const std::vector<bool>& b)
 }
 
 
-std::vector<graphe*> retirerCnC(std::vector<graphe*> listeGrapheAChanger)
+std::vector <unsigned int> graphe::bruteforce_dist() const
 {
-    std::vector<graphe*> listeGrapheARendre;
-    for (const auto &g : listeGrapheAChanger)
-    {
-        //g->afficher();
-        if(g->rechercher_CC_graphe()==1)
-        {
-            listeGrapheARendre.push_back(g);
-            g->poidsTotaux();
-        }
-    }
-    return listeGrapheARendre;
-}
-
-
-
-std::vector <unsigned int> graphe::bruteforce() const
-{
+    int stop = m_sommets.size();
+    std::cout << "je rentre dans bruteforce_dist" << std::endl;
     clock_t t1, t2;
     t1=clock();
     Sommet *s0 = m_sommets.begin()->second;
@@ -306,9 +260,60 @@ std::vector <unsigned int> graphe::bruteforce() const
     std::string a;
     int i=0, exp=0, puis=0;
     std::vector <int> mesPos;
-    //std::cout << m_sommets.size()-1 << std::endl;
-    //std::cout << m_aretes.size()-m_sommets.size()+1 << std::endl;
-    //system("pause");
+    size_t maxS = m_sommets.size();
+    for (size_t max_temp=maxS; max_temp<m_aretes.size(); max_temp++)
+    {
+        std::cout << "nombre d'element dans espace_recherche_int " << espace_recherche_int.size() << std::endl;
+        std::cout   << "et on en est qu'a la combinaison "
+                    << max_temp-1 << " parmi 23" << std::endl;
+        for(unsigned int i=0; i<m_aretes.size()-max_temp+1; i++)
+        {
+            a+="0";
+        }
+        for(unsigned int i =0; i< max_temp-1; i++)
+        {
+            a+="1";
+        }
+        do
+        {
+            //++i;
+            for(const auto &b : a)
+            {
+                if(b=='1')
+                {
+                    puis+=(int)pow(2,exp);
+                }
+                exp++;
+            }
+            s0->rechercherCC(sommetParcourus, puis, *this, stop);
+            if(sommetParcourus.size()==m_sommets.size())
+            {
+                espace_recherche_int.push_back(puis);
+            }
+            sommetParcourus.clear();
+            puis=0;
+            exp=0;
+        } while(std::next_permutation(a.begin(), a.end()));
+    }
+    std::cout << "jai fini bruteforce" << std::endl;
+    std::cout << "taille de espace_recherche_int " << espace_recherche_int.size() << std::endl;
+    t2=clock();
+    std::cout << "temps de compilation de brutefroce : " << (float)(t2 -t1)/1000 << std::endl;
+    return espace_recherche_int;    // Pour finir, je retourne l'unordered_map qui contient mes combinaisons et les poids qui leurs sont associées
+}
+
+
+std::vector <unsigned int> graphe::bruteforce() const
+{
+    int stop=m_sommets.size();
+    clock_t t1, t2;
+    t1=clock();
+    Sommet *s0 = m_sommets.begin()->second;
+    std::vector <unsigned int> espace_recherche_int;
+    std::unordered_set <int> sommetParcourus;
+    std::string a;
+    int i=0, exp=0, puis=0;
+    std::vector <int> mesPos;
     for(unsigned int i=0; i<m_aretes.size()-m_sommets.size()+1; i++)
     {
         a+="0";
@@ -327,7 +332,7 @@ std::vector <unsigned int> graphe::bruteforce() const
             }
             exp++;
         }
-        s0->rechercherCC(sommetParcourus, puis, *this);
+        s0->rechercherCC(sommetParcourus, puis, *this, stop);
         if(sommetParcourus.size()==m_sommets.size())
         {
             espace_recherche_int.push_back(puis);
@@ -343,20 +348,6 @@ std::vector <unsigned int> graphe::bruteforce() const
     return espace_recherche_int;    // Pour finir, je retourne l'unordered_map qui contient mes combinaisons et les poids qui leurs sont associées
 }
 
-int graphe::rechercher_CC_graphe() const
-{
-    int i=0;
-    std::unordered_set<int> cc;                                 /// id des sommets
-    for(const auto &it : m_sommets)                                     /// boucle pour voir les sommets
-    {
-        if(cc.count(it.second->getm_id())==0)                           /// si le sommet n'est pas dans la liste des sommets découverts
-        {
-            ++i;                                                        /// j'implémante la variable du nombre de composante connexes
-            it.second->rechercherCC(cc);
-        }
-    }
-    return i;
-}
 
 void graphe::poidsTotaux()
 {
@@ -383,16 +374,33 @@ float real_y(float y)
     return ORY-y*COEFFICIENT;
 }
 
-void graphe::afficher_frontierePareto(BITMAP*page) const
+void graphe::afficher_frontierePareto(BITMAP*page, bool dist) const
 {
-    //TOUT AFFICHER+SURLIGNER FRONTIERE
-    std::vector <unsigned int> espace_recherche_int=bruteforce();
     clock_t t1, t2;
-    t1 = clock();
-    std::vector <unsigned int> frontiere=frontierePareto(espace_recherche_int);
+    //TOUT AFFICHER+SURLIGNER FRONTIERE
+    std::vector <unsigned int> espace_recherche_int;
+    std::vector <unsigned int> frontiere;
+
+    if(dist==false)
+    {
+        espace_recherche_int=bruteforce();
+        t1=clock();
+        frontiere=frontierePareto(espace_recherche_int);
+    }
+    else
+    {
+        espace_recherche_int=bruteforce_dist();
+        t1=clock();
+        frontiere=frontierePareto_dist(espace_recherche_int);
+    }
     t2=clock();
+
+
     std::cout<< "jai fini pareto" << std::endl;
     std::cout << "temps de compilation de pareto : " << (double) (t2-t1)/1000 << std::endl;
+    std::cout   << "espace_recherche_int " << espace_recherche_int.size() << std::endl
+                << "frontiere "<< frontiere.size() << std::endl;
+
     graphe *grapheTemp;
     //std::cout << "ji me tlouve prisontement don affichi frontier" << std::endl;
     for(const auto &i:espace_recherche_int)
@@ -455,12 +463,7 @@ std::vector<unsigned int> graphe::frontierePareto(std::vector<unsigned int> espa
     std::vector <float> poids_aComp1, poids_aComp2;
     int increment=0, incrementBoucle2=0, incrementBoucle1=0, paspossible=0;
     size_t marqueur1,marqueur2=0, memeadresse=0;
-    graphe *comp_1, *comp_2;/*
-    for(const auto &a : espace_recherche_int)
-        std::cout << a << std::endl;
-    system("pause");*/
-    //this->afficher();
-    //system("pause");
+    graphe *comp_1, *comp_2;
     do
     {
         /// Cette boucle for me permet de parcourir chaque combinaison de 'espace_recherche_int
@@ -481,15 +484,11 @@ std::vector<unsigned int> graphe::frontierePareto(std::vector<unsigned int> espa
                         marqueur2++;
                 }
                 if( (marqueur1>=1) && (marqueur2 == poids_aComp1.size()))    // Si j'ai un élément strictement meilleur et les deux éléments au moins meilleurs
-                {/*
-                    std::cout << std::endl << "J'ai un élément strictement meilleur et les deux éléments au moins meilleurs que comp_2" << std::endl;
-                    std::cout << std::endl << "Donc j'erase comp_2" << std::endl;*/
+                {
                     espace_recherche_int.erase(espace_recherche_int.cbegin()+incrementBoucle2);   // Le sommet est dominé, je le supprime donc de mon espace
                 }
                 else if(marqueur1==0)   // Si rien n'est meilleur chez comp_1
-                {/*
-                    std::cout << std::endl << "comp_1 n'a rien de mieux" << std::endl;
-                    std::cout << std::endl << "Donc j'erase comp_1" << std::endl;*/
+                {
                     espace_recherche_int.erase(espace_recherche_int.cbegin()+incrementBoucle1) ;   // Je le supprime
                     incrementBoucle2=espace_recherche_int.size();   // et je termine le while pour passer au comp_1 suivant
                     paspossible++;
@@ -497,55 +496,72 @@ std::vector<unsigned int> graphe::frontierePareto(std::vector<unsigned int> espa
                 }
                 marqueur1=0;    // Remise à zéro des marqueurs
                 marqueur2=0;
-                //delete(comp_2); // On évite la fuite de mémoire !
+            }
+            if(incrementBoucle2!=espace_recherche_int.size())
+
+                incrementBoucle2++; // J'incrémente l'incrément de mon comp_2
+            paspossible=0;
+        }while(incrementBoucle2!=espace_recherche_int.size()); // Et je fais tourner ma boucle tant que l'incrément n'arrive pas au bout d'espace_recherche
+        incrementBoucle2=0;
+        incrementBoucle1++;
+    }while(incrementBoucle1!=espace_recherche_int.size());
+
+    return espace_recherche_int;   // Je retourne enfin la frontiere, i.e. toutes les combinaisons dominantes avec leurs poids.
+    /// Je retourne maintenant tranquillement dans 'afficher_frontierePareto()'...
+}
+
+std::vector<unsigned int> graphe::frontierePareto_dist(std::vector<unsigned int> espace_recherche_int) const//RENVOIE LA FRONTIERE
+{
+    // On aura ici deux unordered_map du même type que notre espace de recherche :
+    // - Une stockant tous les sommets qui ne sont pas à la frontière 'NONfrontiere'
+    // - Une stockant tous les sommets qui sont à la frontière 'frontiere'
+    // L'interet et que je rempli 'frontiere' en mettant tout ce qui n'est pas 'NONfrontiere'
+    std::unordered_map <unsigned int, std::vector<float>> NONfrontiere, frontiere;
+    std::vector <float> poids_aComp1, poids_aComp2;
+    int increment=0, incrementBoucle2=0, incrementBoucle1=0, paspossible=0;
+    size_t marqueur1,marqueur2=0, memeadresse=0;
+    graphe *comp_1, *comp_2;
+    do
+    {
+        /// Cette boucle for me permet de parcourir chaque combinaison de 'espace_recherche_int
+        /// en créant et deletant un nouveau graphe pour chaque combinaison et en la comparant
+        /// deux à deux avec les autres combinaisons.
+        poids_aComp1 = this->poidsTotauxDjikstra(espace_recherche_int[incrementBoucle1]);
+        do
+        {
+            if(espace_recherche_int[incrementBoucle2]!=espace_recherche_int[incrementBoucle1])    // Si on ne parle pas du même sommet
+            {
+                /// Je créé le graphe
+                poids_aComp2 = this->poidsTotauxDjikstra(espace_recherche_int[incrementBoucle2]);
+                for(size_t i=0;i<poids_aComp1.size();i++)   // Je parcours tous les poids
+                {
+                    if(poids_aComp1[i]<poids_aComp2[i]) // Je compare la stricte supériorité
+                        marqueur1++;
+                    if(poids_aComp1[i]<=poids_aComp2[i])// Je compare la supériorité
+                        marqueur2++;
+                }
+                if( (marqueur1>=1) && (marqueur2 == poids_aComp1.size()))    // Si j'ai un élément strictement meilleur et les deux éléments au moins meilleurs
+                {
+                    espace_recherche_int.erase(espace_recherche_int.cbegin()+incrementBoucle2);   // Le sommet est dominé, je le supprime donc de mon espace
+                }
+                else if(marqueur1==0)   // Si rien n'est meilleur chez comp_1
+                {
+                    espace_recherche_int.erase(espace_recherche_int.cbegin()+incrementBoucle1) ;   // Je le supprime
+                    incrementBoucle2=espace_recherche_int.size();   // et je termine le while pour passer au comp_1 suivant
+                    paspossible++;
+                    incrementBoucle1--;
+                }
+                marqueur1=0;    // Remise à zéro des marqueurs
+                marqueur2=0;
             }
             if(incrementBoucle2!=espace_recherche_int.size())
                 incrementBoucle2++; // J'incrémente l'incrément de mon comp_2
             paspossible=0;
-            /*std::cout << std::endl << "-----------------------------------------" << std::endl;
-            std::cout << "                    " << espace_recherche_int.size() << std::endl;
-            std::cout << std::endl << "inc_b_1" << incrementBoucle1 << " inc_b_2 "  << incrementBoucle2 << std::endl;
-            //system("pause");*/
         }while(incrementBoucle2!=espace_recherche_int.size()); // Et je fais tourner ma boucle tant que l'incrément n'arrive pas au bout d'espace_recherche
         incrementBoucle2=0;
         incrementBoucle1++;
-        //delete(comp_1);
-    }while(incrementBoucle1!=espace_recherche_int.size());/*
-    for(const auto &i : espace_recherche_int)
-        std::cout << "voila les i : "<< i << std::endl;
-    system("pause");*/
-    //std::cout << "je fini de trouver nonfrontiere" << std::endl;
-    //system("pause");
-    /*
-    for(const auto &adE_R : espace_recherche_int)
-    {
-        /// 'NONfrontiere' etant rempli, il s'agit maintenant de parcourir espace_recherche_int
-        /// et de comparer chacun de ses elements à 'NONfrontiere'.
-        /// Si on ne retrouve pas un élément chez l'autre, c'est qui est à la frontiere !
-        for(const auto &adN_F : NONfrontiere)
-        {
-            if(adE_R==adN_F.first)
-            {
-                memeadresse++;
-            }
-        }
-        if(memeadresse==0)
-        {
-            //std::cout << "quelle belle barbe" << std::endl;
-            comp_1 = new graphe{adE_R, *this};
-            comp_1->poidsTotaux();
-            frontiere.insert({adE_R, comp_1->getm_poids()});
-            delete(comp_1);
-        }
-        memeadresse=0;
-    }*/
-    //std::cout << "je retourne la frontiere" << std::endl;
-    //system("pause");
-    /*
-    for(const auto &it : espace_recherche_int)
-    {
-        graphe_frontiere.push_back(new{it.first, *this});
-    }*/
+    }while(incrementBoucle1!=espace_recherche_int.size());
+
     return espace_recherche_int;   // Je retourne enfin la frontiere, i.e. toutes les combinaisons dominantes avec leurs poids.
     /// Je retourne maintenant tranquillement dans 'afficher_frontierePareto()'...
 }
@@ -581,47 +597,65 @@ void graphe::afficher_allegro(BITMAP*page, const int &i) const
     }
 }
 
-/*std::vector <unsigned int> graphe::algoDjikstra(std::vector <unsigned int> espace_recherche) const
-{
-    graphe *g;
-    int taille=m_sommets.size();
-    std::vector<int> s_marques;
-    float tableau[taille][taille];
-    for(const auto &a:espace_recherche) //
-    {
-        //Djikstra
-        g=new graphe{a, *this};
-        for(size_t i=0;i<m_sommets.size();i++) //Pour chaque sommet
-        {
-            tableau[i][(g->m_sommets.find(i)->second)->getm_voisins()->)]
-        }
-    }
-}*/
-
-std::unordered_map<int,float> graphe::Djikstra(int id_debut) const
+float graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
 {
     //INI
+    //std::cout<< "DEBUG DEPUIS SOMMET :" << id_debut<< std::endl;
+    float somme=0;
     std::priority_queue<std::pair <int,float>,std::vector<std::pair<int,float>>, prioritize> p_queue; //QUEUE PRIORITAIRE, TRI PAR POIDS DECROISSANT, DEF Ligne 3, graphe.Cpp
     std::unordered_map<int,float> s_marques; s_marques.emplace(id_debut,0);
     int id;float poids;
     p_queue.push(std::make_pair(id_debut,0));
-    //INI
 
-    while(p_queue.size()!=0) //PARCOURS DFS PILE PRIORITAIRE, TJR EN PREMIER LE SOMMET AVEC PLUS PETIT POIDS
+    //PARCOURS BFS PILE PRIORITAIRE, TJR EN PREMIER LE SOMMET AVEC PLUS PETIT POIDS
+    while(p_queue.size()!=0)
     {
         id=p_queue.top().first; //ENREGISTRE LE PREMIER SOMMET ET SA DISTANCE TOTAL AU SOMMET D'ORIGINE
-        poids=p_queue.top().second;
+        poids=p_queue.top().second; //MEMOIRE
         p_queue.pop(); //EJECTE
-        for(const auto i:m_sommets.find(id)->second->getm_voisins()) //Rajoute sommets adjacent non parcourus
-            if(s_marques.count(i->getm_id())==0) //SI NON PARCOURU
+        for(const auto i:m_sommets.find(id)->second->getm_voisins()) //Parcours sommets adj
+         if(I & (int)pow(2,i->id_arete(id)) )//Si l'arrete existe, evite de recrée un graphe, verif
+            if(s_marques.count(i->getm_id())==0) //Si sommet non marqués
                 p_queue.push(std::make_pair(i->getm_id(),i->calcul_distance(id)+poids)); //RAJOUTE A LA PILE PRIORITAIRE
 
         s_marques.emplace(p_queue.top().first,p_queue.top().second); //MARQUE LE SOMMET DE POIDS PLUS FAIBLE DE LA PILE
     }
-    for(const auto i:s_marques) //AFFICHE DJIKSTRA DEPUIS LE SOMMET MIS EN PARAMETRE id_debut
-        std::cout<< "id :" << i.first << " Distance :" << i.second << std::endl;
 
-    system("pause");
-    return s_marques;
+    //SOMME LES POIDS DU PARCOURS DE DJIKSTRA
+    for(const auto i:s_marques)
+    {
+        //std::cout<< "id :" << i.first << " Distance :" << i.second << std::endl;//EVITE LA SYMETRIE
+           somme+=i.second;
+    }
+   // std::cout << "DEBUG somme:" << somme <<std::endl;
+    return somme;
 }
 
+std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I) const
+{
+    //INI
+    std::vector<float> poidsTotaux;
+    float somme_distance=0,somme_cout=0;
+    //INI
+
+    //SOMME DES DISTANCES TOTAL
+    for(int i=0;i<m_sommets.size();i++)
+        somme_distance+=Djikstra_sommet(i,I);
+
+    //SOMME DES COUTS DES ARETES
+    for(const auto i:m_aretes)
+        if(I & (int)pow(2,i.second->getm_id()) )
+            for(const auto j:i.second->getm_poids())
+                if(j!=i.second->getm_poids().back())
+                    somme_cout+=j;
+    //PUSH VECTEUR FLOAT
+    poidsTotaux.push_back(somme_cout);
+    poidsTotaux.push_back(somme_distance);
+
+    /*std::cout <<"DEBUG ( ";
+    for(const auto i:poidsTotaux)
+       std::cout << i << " ";
+    std::cout <<")" <<std::endl;system("pause");*/
+
+    return poidsTotaux;
+}
