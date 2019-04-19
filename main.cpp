@@ -19,7 +19,13 @@ int saisie(const int& borneInf, const int& borneSup);
 int main()
 {
     init_Allegro();
-    unsigned int choixAlgo=0, choixFich=0, choixP=0;
+    graphe g{"broadway.txt"};
+    g.lire_poids("broadway_weights_0.txt");
+    std::vector<unsigned int> Liste=g.bruteforce_dist();
+    afficher_allegro2(g,Liste);
+    std::cout << Liste.size() <<std::endl;
+
+    /*unsigned int choixAlgo=0, choixFich=0, choixP=0;
     std::string fichier, fichierP;
     do
     {
@@ -112,7 +118,7 @@ int saisie(const int& borneInf, const int& borneSup)
         else
             std::cout << "Votre choix doit etre compris entre " << borneInf << " et " << borneSup << ", recommencez :";
     }
-    return choix;
+    return choix;*/
 }
 
 END_OF_MAIN();

@@ -258,7 +258,7 @@ std::vector <unsigned int> graphe::bruteforce_dist() const
     {
         std::cout << "nombre d'element dans espace_recherche_int " << espace_recherche_int.size() << std::endl;
         std::cout   << "et on en est qu'a la combinaison "
-                    << max_temp-1 << " parmi 23" << std::endl;
+                    << max_temp-1 << " parmi " << m_aretes.size() << std::endl;
         for(unsigned int i=0; i<m_aretes.size()-max_temp+1; i++)
         {
             a+="0";
@@ -643,10 +643,10 @@ std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I) const
     poidsTotaux.push_back(somme_cout);
     poidsTotaux.push_back(somme_distance);
 
-    /*std::cout <<"DEBUG ( ";
+    std::cout <<"DEBUG ( ";
     for(const auto i:poidsTotaux)
        std::cout << i << " ";
-    std::cout <<")" <<std::endl;system("pause");*/
+    std::cout <<")" <<std::endl;
 
     return poidsTotaux;
 }
