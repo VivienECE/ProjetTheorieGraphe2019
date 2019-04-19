@@ -4,6 +4,8 @@
 #include<unordered_map>
 #include<unordered_set>
 #include "sommet.h"
+#include <math.h>
+
 
 Sommet::Sommet()
 {
@@ -43,19 +45,37 @@ void Sommet::connexite(){
             if(j->getm_id()!=m_id)
                 ajouterVoisin(j);
 }
-/*
-void Sommet::rechercherCC(std::unordered_set<int> &cc) const
+
+void Sommet::rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i, const graphe &g) const
 {
-    cc.insert(m_id);                                        /// je met le sommet dans le tableau des sommets explores
-    //std::cout << m_id << "   " << std::endl;                /// je l'affiche dans la console
-    //this->afficherVoisins();
-    //std::cout << std::endl;
-    for(const auto &it : m_voisins)                         /// je regarde les voisins du sommet
+    sommetParcourus.insert(m_id);                                        /// je met le sommet dans le tableau des sommets explores
+    if(m_arete.size()>1)
     {
-        if(cc.count(it->m_id)==0)                           /// un blindage qui verifie que le voisin n'est pas deja dans le tableau cc
-            it->rechercherCC(cc);                           /// j'explore tous les voisins en utilisant la recursivite
+        for(const auto &ar : m_arete)                         /// je regarde les voisins du sommet
+        {
+            int id_arete=ar->getm_id();
+            int id_extr0=ar->getm_extremites()[0]->getm_id();
+            int id_extr1=ar->getm_extremites()[1]->getm_id();
+            int puis = pow(2, id_arete);
+            if  ((i & puis)&&                         // Et regarde si elle est "activée" dans le potentiel futur graphe
+                (((sommetParcourus.count(id_extr0)==0)&&(sommetParcourus.count(id_extr1)==1))||
+                ((sommetParcourus.count(id_extr0)==1)&&(sommetParcourus.count(id_extr1)==0))))
+            {
+                /// Si l'extremité 0 n'est pas dans le tableau, c'est donc elle qu'il faut ajouter
+                if  (sommetParcourus.count(id_extr0)==0)
+                {
+                    sommetParcourus.insert({id_extr0});
+                    ar->getm_extremites()[0]->rechercherCC(sommetParcourus, i, g);
+                }
+                else if (sommetParcourus.count(id_extr1)==0)
+                {
+                    sommetParcourus.insert({id_extr1});
+                    ar->getm_extremites()[1]->rechercherCC(sommetParcourus, i, g);
+                }
+            }
+        }
     }
-}*/
+}
 
 void Sommet::rechercherCC(std::unordered_set<int> &cc) const
 {
@@ -88,6 +108,8 @@ int Sommet::getm_id() const {return m_id;}
 double Sommet::getm_x() const {return m_x;}
 
 double Sommet::getm_y() const {return m_y;}
+
+std::vector<arete*> Sommet::getm_arete() const {return m_arete;}
 
 Sommet::~Sommet()
 {/*

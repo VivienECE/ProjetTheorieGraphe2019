@@ -6,10 +6,12 @@
 #include "sommet.h"
 #include "arete.h"
 #include "allegro.h"
+#include "sommet.h"
 
 #define origine_x 200
 #define origine_y 200
-
+class Sommet;
+class arete;
 class graphe
 {
     public:
@@ -31,6 +33,7 @@ class graphe
         void ajouter_connexite() const;
         std::vector <unsigned int> frontierePareto(std::vector <unsigned int> espace_recherche) const; //RENVOIE LES GRAPHES FRONTIERE
         void afficher_frontierePareto(BITMAP*page) const;//ONLY 2D ou 1D
+        std::vector<float> poidsTotaux(unsigned int i) const;
 
     private:
         std::unordered_map<int,Sommet*> m_sommets;//stockée dans une map (clé=id du sommet, valeur= pointeur sur le sommet)
