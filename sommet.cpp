@@ -48,10 +48,10 @@ void Sommet::connexite(){
                 ajouterVoisin(j);
 }
 
-void Sommet::rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i, const graphe &g) const
+void Sommet::rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i, const graphe &g, int stop) const
 {
     sommetParcourus.insert(m_id);                                        /// je met le sommet dans le tableau des sommets explores
-    if(m_arete.size()>1)
+    if((m_arete.size()>1)&&(sommetParcourus.size()!=stop))
     {
         for(const auto &ar : m_arete)                         /// je regarde les voisins du sommet
         {
@@ -67,12 +67,12 @@ void Sommet::rechercherCC(std::unordered_set<int> &sommetParcourus, const unsign
                 if  (sommetParcourus.count(id_extr0)==0)
                 {
                     sommetParcourus.insert({id_extr0});
-                    ar->getm_extremites()[0]->rechercherCC(sommetParcourus, i, g);
+                    ar->getm_extremites()[0]->rechercherCC(sommetParcourus, i, g, stop);
                 }
                 else if (sommetParcourus.count(id_extr1)==0)
                 {
                     sommetParcourus.insert({id_extr1});
-                    ar->getm_extremites()[1]->rechercherCC(sommetParcourus, i, g);
+                    ar->getm_extremites()[1]->rechercherCC(sommetParcourus, i, g, stop);
                 }
             }
         }
@@ -141,38 +141,6 @@ float Sommet::calcul_distance(int id_voisin) const
 }
 
 std::vector<Sommet*> Sommet::getm_voisins() const {return m_voisins;}
-
-/*
-std::pair<int,float> Sommet::cout_min(std::unordered_set<int> s_marque) const
-{
-    float coutMin=m_arete[0]->getm_poids()[m_arete[0]->getm_poids().size()-1];
-    int id=id_adjacent(m_arete[0]->getm_id());
-
-    for(const auto i:m_arete)
-    {
-        if(i->getm_poids()[i->getm_poids().size()-1]<coutMin && s_marque.count(id_adjacent(i->getm_id()))==0)
-        {
-            id=id_adjacent(i->getm_id());
-            coutMin=i->getm_poids()[i->getm_poids().size()-1];
-        }
-    }
-    std::pair<int,float> retour(id,coutMin);
-    std::cout<< retour.first <<":"<<retour.second<<std::endl<<std::endl;
-    return retour;
-}
-
-
-int Sommet::id_adjacent(int id_arete) const
-{
-    for(const auto i:m_arete)
-    {
-        if(i->getm_id()==id_arete)
-            if(m_id != i->getm_extremites()[0]->getm_id())
-                return i->getm_extremites()[0]->getm_id();
-            else
-                return i->getm_extremites()[1]->getm_id();
-    }
-}*/
 
 int Sommet::id_arete(int id_sommet) const
 {

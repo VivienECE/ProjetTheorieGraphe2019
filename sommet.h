@@ -27,7 +27,7 @@ class Sommet
         double getm_x() const;
         double getm_y() const;
         std::vector<arete*> getm_arete() const;
-        void rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i, const graphe &g) const;
+        void rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i, const graphe &g, int stop) const;
         void rechercherCC(std::unordered_set<int> &cc) const;
         ~Sommet();
         void connexite();
