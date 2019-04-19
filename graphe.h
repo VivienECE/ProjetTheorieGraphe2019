@@ -17,14 +17,17 @@
 #include "math.h"
 #define ORX 100
 #define ORY 550
-#define LONGEURAXE 400
-#define LONGUEURGRAD 100
-#define LONGUEURGRAD2 50
-#define COEFFICIENT 0.1
-#define NBGRAD 4000
+#define LONGUEURGRAD 5
+#define LONGUEURGRAD2 2
+#define COEFFICIENTX 0.4
+#define COEFFICIENTY 2
+#define NBGRADX 4000
+#define NBGRADY 100
+#define PASY1 10
+#define PASY2 5
+#define PASX1 200
+#define PASX2 50
 
-#define origine_x 200
-#define origine_y 200
 class Sommet;
 class arete;
 class graphe
@@ -54,7 +57,7 @@ class graphe
         std::vector<float> getm_poids();
 
         std::vector <unsigned int> frontierePareto(std::vector <unsigned int>) const;
-        std::vector <unsigned int> frontierePareto_dist(std::vector <unsigned int>) const;
+        std::unordered_map <unsigned int, std::vector<float>> frontierePareto_dist(std::vector <unsigned int> &futureFront) const;
 
         std::vector<float> poidsTotauxDjikstra(const unsigned int &I) const; //retourne les poids total+ total des distances
         float Djikstra_sommet(int,const unsigned int &i) const; //retourne somme des djisktra pour le sommet -symetrie
