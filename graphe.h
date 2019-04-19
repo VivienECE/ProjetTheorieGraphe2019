@@ -18,10 +18,10 @@
 #define ORX 100
 #define ORY 550
 #define LONGEURAXE 400
-#define LONGUEURGRAD 5
-#define LONGUEURGRAD2 2
-#define COEFFICIENT 10
-#define NBGRAD 30
+#define LONGUEURGRAD 100
+#define LONGUEURGRAD2 50
+#define COEFFICIENT 0.1
+#define NBGRAD 4000
 
 #define origine_x 200
 #define origine_y 200

@@ -250,10 +250,11 @@ std::vector <unsigned int> graphe::bruteforce_dist() const
     std::unordered_set <int> sommetParcourus;
     std::string a;
     int exp=0, puis=0;
-    std::vector <int> mesPos;
+    //std::unordered_set <int> mesPosRef, mesPos;
     size_t maxS = m_sommets.size();
     for (size_t max_temp=maxS; max_temp<=m_aretes.size()+1; max_temp++)
     {
+        //mesPos=mesPosRef;
         std::cout << "nombre d'element dans espace_recherche_int " << espace_recherche_int.size() << std::endl;
         std::cout   << "et on en est qu'a la combinaison "
                     << max_temp-1 << " parmi " << m_aretes.size() << std::endl;
@@ -374,6 +375,7 @@ void graphe::afficher_frontierePareto(BITMAP*page, bool dist) const
     //TOUT AFFICHER+SURLIGNER FRONTIERE
     std::vector <unsigned int> espace_recherche_int;
     std::vector <unsigned int> frontiere;
+    std::vector <float> mesPoids;
 
     if(dist==false)
     {
@@ -396,24 +398,26 @@ void graphe::afficher_frontierePareto(BITMAP*page, bool dist) const
                 << "frontiere "<< frontiere.size() << std::endl;
 
     graphe *grapheTemp;
-    //std::cout << "ji me tlouve prisontement don affichi frontier" << std::endl;
+    std::cout << "ji me tlouve prisontement don affichi frontier" << std::endl;
     for(const auto &i:espace_recherche_int)
     {
-        grapheTemp=new graphe{(int)i, *this};
-        grapheTemp->poidsTotaux();
-        circle(page, real_x(grapheTemp->getm_poids()[0]),real_y(grapheTemp->getm_poids()[1]), 1 , makecol(255,255,255));
+        if(dist==false)
+            mesPoids=this->poidsTotaux(i);
+        else mesPoids=this->poidsTotauxDjikstra(i);
+        circle(page, real_x(mesPoids[0]),real_y(mesPoids[1]), 1 , makecol(255,255,255));
         delete(grapheTemp);
     }
-    //std::cout << "ji me tlouve prisontement don affichi frontier2" << std::endl;
+    std::cout << "ji me tlouve prisontement don affichi frontier2" << std::endl;
     for(const auto &i:frontiere) //FRONTIERE
     {
-        grapheTemp=new graphe{(int)i, *this};
-        grapheTemp->poidsTotaux();
-        circlefill(page, real_x(grapheTemp->getm_poids()[0]),real_y(grapheTemp->getm_poids()[1]), 2 , makecol(0,255,0));
+        if(dist==false)
+            mesPoids=this->poidsTotaux(i);
+        else mesPoids=this->poidsTotauxDjikstra(i);
+        circlefill(page, real_x(mesPoids[0]),real_y(mesPoids[1]), 2 , makecol(0,255,0));
         delete(grapheTemp);
     }
 
-    //std::cout << "ji me tlouve prisontement don affichi frontier3" << std::endl;
+    std::cout << "ji me tlouve prisontement don affichi frontier3" << std::endl;
     line(page, ORX,ORY,ORX,ORY-LONGEURAXE*COEFFICIENT,makecol(255,255,255));
     line(page, ORX,ORY,ORX+LONGEURAXE*COEFFICIENT,ORY,makecol(255,255,255));
     for(int i=0; i<NBGRAD; i+=2)
@@ -426,6 +430,7 @@ void graphe::afficher_frontierePareto(BITMAP*page, bool dist) const
         line(page, real_x(i), ORY+LONGUEURGRAD2, real_x(i), ORY-LONGUEURGRAD2, makecol(200,200,200));
         line(page, ORX-LONGUEURGRAD2, real_y(i), ORX+LONGUEURGRAD2, real_y(i), makecol(200,200,200));
     }
+    std::cout << "jai fini l'affichage" << std::endl;
 }
 
 std::vector<float> graphe::poidsTotaux(unsigned int i) const
@@ -509,10 +514,14 @@ std::vector<unsigned int> graphe::frontierePareto_dist(std::vector<unsigned int>
     // - Une stockant tous les sommets qui ne sont pas à la frontière 'NONfrontiere'
     // - Une stockant tous les sommets qui sont à la frontière 'frontiere'
     // L'interet et que je rempli 'frontiere' en mettant tout ce qui n'est pas 'NONfrontiere'
-    std::unordered_map <unsigned int, std::vector<float>> NONfrontiere, frontiere;
+    std::unordered_map <unsigned int, std::vector<float>> mesPoids_E_R;
+    for(const auto &e_r_i: espace_recherche_int)
+    {
+        mesPoids_E_R.insert({e_r_i, this->poidsTotauxDjikstra(e_r_i)});
+    }
     std::vector <float> poids_aComp1, poids_aComp2;
 
-    int incrementBoucle2=0, incrementBoucle1=0, paspossible=0;
+    int incrementBoucle2=0, incrementBoucle1=0, paspossible=0, reste=0;
     size_t marqueur1,marqueur2=0;
     for(int j=0;j<=3;j++)
         {
@@ -524,16 +533,21 @@ std::vector<unsigned int> graphe::frontierePareto_dist(std::vector<unsigned int>
 
     do
     {
+        //std::cout << "Nouveau COMP1" << std::endl;
         /// Cette boucle for me permet de parcourir chaque combinaison de 'espace_recherche_int
         /// en créant et deletant un nouveau graphe pour chaque combinaison et en la comparant
         /// deux à deux avec les autres combinaisons.
         poids_aComp1 = this->poidsTotauxDjikstra(espace_recherche_int[incrementBoucle1]);
         do
-        {
+        {/*
+            std::cout   << "--------------- COMP 1 -------------------" << std::endl
+                        << "( " << poids_aComp1[0] << " ; " << poids_aComp1[1] << " )" << std::endl << std::endl;*/
             if(espace_recherche_int[incrementBoucle2]!=espace_recherche_int[incrementBoucle1])    // Si on ne parle pas du même sommet
             {
                 /// Je créé le graphe
-                poids_aComp2 = this->poidsTotauxDjikstra(espace_recherche_int[incrementBoucle2]);
+                poids_aComp2 = this->poidsTotauxDjikstra(espace_recherche_int[incrementBoucle2]);/*
+                std::cout   << "--------------- COMP 2" << std::endl
+                            << "( " << poids_aComp2[0] << " ; " << poids_aComp2[1] << " )" << std::endl << std::endl;*/
                 for(size_t i=0;i<poids_aComp1.size();i++)   // Je parcours tous les poids
                 {
                     if(poids_aComp1[i]<poids_aComp2[i]) // Je compare la stricte supériorité
@@ -543,10 +557,13 @@ std::vector<unsigned int> graphe::frontierePareto_dist(std::vector<unsigned int>
                 }
                 if( (marqueur1>=1) && (marqueur2 == poids_aComp1.size()))    // Si j'ai un élément strictement meilleur et les deux éléments au moins meilleurs
                 {
+                    //std::cout << "COMP 2 est domine, je le supprime de ma liste, CIAO" << std::endl;
                     espace_recherche_int.erase(espace_recherche_int.cbegin()+incrementBoucle2);   // Le sommet est dominé, je le supprime donc de mon espace
+                    reste++;
                 }
                 else if(marqueur1==0)   // Si rien n'est meilleur chez comp_1
                 {
+                    //std::cout << "COMP 1 est domine, je le supprime de ma liste, CIAO" << std::endl;
                     espace_recherche_int.erase(espace_recherche_int.cbegin()+incrementBoucle1) ;   // Je le supprime
                     incrementBoucle2=espace_recherche_int.size();   // et je termine le while pour passer au comp_1 suivant
                     paspossible++;
@@ -555,9 +572,11 @@ std::vector<unsigned int> graphe::frontierePareto_dist(std::vector<unsigned int>
                 marqueur1=0;    // Remise à zéro des marqueurs
                 marqueur2=0;
             }
-            if(incrementBoucle2!=(int)espace_recherche_int.size())
+            if((incrementBoucle2!=(int)espace_recherche_int.size())&&(reste==0))
                 incrementBoucle2++; // J'incrémente l'incrément de mon comp_2
             paspossible=0;
+            reste=0;
+            //system("pause");
         }while(incrementBoucle2!=(int)espace_recherche_int.size()); // Et je fais tourner ma boucle tant que l'incrément n'arrive pas au bout d'espace_recherche
         incrementBoucle2=0;
         incrementBoucle1++;
@@ -652,11 +671,12 @@ std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I) const
     //PUSH VECTEUR FLOAT
     poidsTotaux.push_back(somme_cout);
     poidsTotaux.push_back(somme_distance);
-
+/*
     std::cout <<"DEBUG ( ";
     for(const auto i:poidsTotaux)
        std::cout << i << " ";
     std::cout <<")" <<std::endl;//system("pause");
+*/
 
     return poidsTotaux;
 }
