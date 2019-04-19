@@ -4,13 +4,7 @@
 #include "math.h"
 #include <algorithm>
 #include "time.h"
-#define ORX 100
-#define ORY 550
-#define LONGEURAXE 400
-#define LONGUEURGRAD 5
-#define LONGUEURGRAD2 2
-#define COEFFICIENT 5
-#define NBGRAD 50
+
 
 class prioritize{public: bool operator ()(std::pair<int, float>&p1 ,std::pair<int, float>&p2){return p1.second>p2.second;}};
 graphe::~graphe()
@@ -709,45 +703,65 @@ void graphe::afficher_allegro(BITMAP*page) const
     }
 }*/
 
-float** graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
+float graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
 {
     //INI
-    std::cout<< "DEBUG 1" << std::endl;
-    float **tab;
-    tab=(float**)malloc(sizeof(float*)*m_sommets.size());
-    for(size_t i=0;i<m_sommets.size();i++)
-        tab[i]=((float*)malloc(sizeof(float)*m_sommets.size()));
-
+    //std::cout<< "DEBUG DEPUIS SOMMET :" << id_debut<< std::endl;
+    float somme=0;
     std::priority_queue<std::pair <int,float>,std::vector<std::pair<int,float>>, prioritize> p_queue; //QUEUE PRIORITAIRE, TRI PAR POIDS DECROISSANT, DEF Ligne 3, graphe.Cpp
     std::unordered_map<int,float> s_marques; s_marques.emplace(id_debut,0);
     int id;float poids;
     p_queue.push(std::make_pair(id_debut,0));
-    //INI
-    while(p_queue.size()!=0) //PARCOURS BFS PILE PRIORITAIRE, TJR EN PREMIER LE SOMMET AVEC PLUS PETIT POIDS
+
+    //PARCOURS BFS PILE PRIORITAIRE, TJR EN PREMIER LE SOMMET AVEC PLUS PETIT POIDS
+    while(p_queue.size()!=0)
     {
         id=p_queue.top().first; //ENREGISTRE LE PREMIER SOMMET ET SA DISTANCE TOTAL AU SOMMET D'ORIGINE
-        poids=p_queue.top().second;
+        poids=p_queue.top().second; //MEMOIRE
         p_queue.pop(); //EJECTE
-        for(const auto i:m_sommets.find(id)->second->getm_voisins()) //Rajoute sommets adjacent non parcourus
-         if(I & (int)pow(2,i->id_arete(id)) )//SI l'arrete existe
-            if(s_marques.count(i->getm_id())==0) //SI NON PARCOURU
+        for(const auto i:m_sommets.find(id)->second->getm_voisins()) //Parcours sommets adj
+         if(I & (int)pow(2,i->id_arete(id)) )//Si l'arrete existe, evite de recrée un graphe, verif
+            if(s_marques.count(i->getm_id())==0) //Si sommet non marqués
                 p_queue.push(std::make_pair(i->getm_id(),i->calcul_distance(id)+poids)); //RAJOUTE A LA PILE PRIORITAIRE
 
         s_marques.emplace(p_queue.top().first,p_queue.top().second); //MARQUE LE SOMMET DE POIDS PLUS FAIBLE DE LA PILE
-        //tab[p_queue.top().first][id_debut]=p_queue.top().second;
-        //tab[id_debut][p_queue.top().first]=p_queue.top().second;
     }
-    for(const auto i:s_marques) //AFFICHE DJIKSTRA DEPUIS LE SOMMET MIS EN PARAMETRE id_debut
-        std::cout<< "id :" << i.first << " Distance :" << i.second << std::endl;
 
-    system("pause");
-    return tab;
+    //SOMME LES POIDS DU PARCOURS DE DJIKSTRA
+    for(const auto i:s_marques)
+    {
+        //std::cout<< "id :" << i.first << " Distance :" << i.second << std::endl;//EVITE LA SYMETRIE
+           somme+=i.second;
+    }
+   // std::cout << "DEBUG somme:" << somme <<std::endl;
+    return somme;
 }
 
 std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I)
 {
+    //INI
     std::vector<float> poidsTotaux;
-    float** tabDjikstra=Djikstra_sommet(0,I);
-    //poidsTotaux.push_back()
+    float somme_distance=0,somme_cout=0;
+    //INI
+
+    //SOMME DES DISTANCES TOTAL
+    for(int i=0;i<m_sommets.size();i++)
+        somme_distance+=Djikstra_sommet(i,I);
+
+    //SOMME DES COUTS DES ARETES
+    for(const auto i:m_aretes)
+        if(I & (int)pow(2,i.second->getm_id()) )
+            for(const auto j:i.second->getm_poids())
+                if(j!=i.second->getm_poids().back())
+                    somme_cout+=j;
+    //PUSH VECTEUR FLOAT
+    poidsTotaux.push_back(somme_cout);
+    poidsTotaux.push_back(somme_distance);
+
+    /*std::cout <<"DEBUG ( ";
+    for(const auto i:poidsTotaux)
+       std::cout << i << " ";
+    std::cout <<")" <<std::endl;system("pause");*/
+
     return poidsTotaux;
 }

@@ -161,7 +161,7 @@ std::pair<int,float> Sommet::cout_min(std::unordered_set<int> s_marque) const
     return retour;
 }
 
-/*
+
 int Sommet::id_adjacent(int id_arete) const
 {
     for(const auto i:m_arete)
@@ -176,15 +176,19 @@ int Sommet::id_adjacent(int id_arete) const
 
 int Sommet::id_arete(int id_sommet) const
 {
-    std::cout << "NB ARETE " << m_arete.size() << std::endl;
-    for(const auto i:m_arete)
-    {
-        std::cout <<"DEBUG id_arete:" <<i->getm_extremite(m_id)->getm_id()
-            << "-"<< id_sommet << std::endl;
-        if(i->getm_extremite(m_id)->getm_id()==id_sommet)
-            return i->getm_id();
+    //std::cout << "DEBUG NB ARETES:" << m_arete.size() << " SOMMET "
+    //<< id_sommet << " et " << m_id << std::endl;
 
+    for(const auto i:m_arete) //PARCOURS LES ARETES DU SOMMET
+    {
+        if( ((i->getm_extremite(0)->getm_id()==id_sommet) && (i->getm_extremite(1)->getm_id()==m_id) )
+            || (i->getm_extremite(1)->getm_id()==id_sommet) && (i->getm_extremite(0)->getm_id()==m_id))
+        //SI UNE ARETE A LES 2 ID EN EXTREMITES, RETOUR ID DE L'ARETE
+        {
+            //std::cout <<"DEBUG retour id_arete:" << i->getm_id() << std::endl << std::endl;
+            return i->getm_id();
+        }
     }
-    std::cout << "Erreur sommet.cpp/id_arete" << std::endl;
+    std::cout << "DEBUG Erreur sommet.cpp/id_arete" << std::endl;
     return -1;
 }

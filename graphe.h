@@ -41,7 +41,7 @@ class graphe
         void ajouter_arete(int,float,float, Sommet*, Sommet*);
         graphe prim(int poids) ;
         void afficher_allegro(BITMAP*) const;
-        std::vector <unsigned int> bruteforce()const;
+        std::vector <unsigned int> bruteforce()const; //
         int rechercher_CC_graphe() const;
         void poidsTotaux(); //Calcul du poids total
         std::vector<float> getm_poids();
@@ -49,9 +49,8 @@ class graphe
         std::vector <unsigned int> frontierePareto(std::vector <unsigned int>) const;
         void afficher_frontierePareto(BITMAP*page) const;//ONLY 2D ou 1D
         std::vector<float> poidsTotauxDjikstra(const unsigned int &I); //retourne les poids total+ total des distances
-        float** Djikstra_sommet(int,const unsigned int &i) const; //retourne 1 tableau remplit de djikstra
+        float Djikstra_sommet(int,const unsigned int &i) const; //retourne somme des djisktra pour le sommet -symetrie
         std::vector<float> poidsTotaux(unsigned int i) const;
-        std::unordered_map<int,float> Djikstra(int) const;
 
     private:
         std::unordered_map<int,Sommet*> m_sommets;//stockée dans une map (clé=id du sommet, valeur= pointeur sur le sommet)
