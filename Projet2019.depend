@@ -48,3 +48,71 @@
 	<unordered_set>
 	"sommet.h"
 
+1555667372 source:c:\users\paolo\documents\github\projettheoriegraphe2019\affichage.cpp
+	"affichage.h"
+	<iostream>
+	<unordered_map>
+
+1555667372 c:\users\paolo\documents\github\projettheoriegraphe2019\affichage.h
+	"graphe.h"
+	<vector>
+	<unordered_map>
+
+1555671556 c:\users\paolo\documents\github\projettheoriegraphe2019\graphe.h
+	<string>
+	<unordered_map>
+	<unordered_set>
+	"sommet.h"
+	"arete.h"
+	"allegro.h"
+	"sommet.h"
+
+1555666438 c:\users\paolo\documents\github\projettheoriegraphe2019\sommet.h
+	<string>
+	<vector>
+	<unordered_map>
+	<unordered_set>
+	"arete.h"
+	"graphe.h"
+
+1555500575 c:\users\paolo\documents\github\projettheoriegraphe2019\arete.h
+	<unordered_map>
+	<iostream>
+	"sommet.h"
+	<vector>
+
+1555563487 source:c:\users\paolo\documents\github\projettheoriegraphe2019\arete.cpp
+	"arete.h"
+
+1555334804 source:c:\users\paolo\documents\github\projettheoriegraphe2019\initallegro.cpp
+	"InitAllegro.h"
+	<iostream>
+
+1555334664 c:\users\paolo\documents\github\projettheoriegraphe2019\initallegro.h
+	"allegro.h"
+
+1555676414 source:c:\users\paolo\documents\github\projettheoriegraphe2019\main.cpp
+	<iostream>
+	"graphe.h"
+	"InitAllegro.h"
+	"affichage.h"
+
+1555673439 source:c:\users\paolo\documents\github\projettheoriegraphe2019\sommet.cpp
+	<iostream>
+	<queue>
+	<stack>
+	<unordered_map>
+	<unordered_set>
+	"sommet.h"
+	<math.h>
+
+1555676388 source:c:\users\paolo\documents\github\projettheoriegraphe2019\graphe.cpp
+	<fstream>
+	<iostream>
+	"graphe.h"
+	<queue>
+	<stack>
+	"math.h"
+	<algorithm>
+	"time.h"
+

@@ -6,6 +6,8 @@
 #include "sommet.h"
 #include "arete.h"
 #include "allegro.h"
+
+#include "sommet.h"
 #include <fstream>
 #include <iostream>
 #include <queue>
@@ -23,7 +25,8 @@
 
 #define origine_x 200
 #define origine_y 200
-
+class Sommet;
+class arete;
 class graphe
 {
     public:
@@ -47,7 +50,8 @@ class graphe
         void afficher_frontierePareto(BITMAP*page) const;//ONLY 2D ou 1D
         std::vector<float> poidsTotauxDjikstra(const unsigned int &I); //retourne les poids total+ total des distances
         float** Djikstra_sommet(int,const unsigned int &i) const; //retourne 1 tableau remplit de djikstra
-
+        std::vector<float> poidsTotaux(unsigned int i) const;
+        std::unordered_map<int,float> Djikstra(int) const;
 
     private:
         std::unordered_map<int,Sommet*> m_sommets;//stockée dans une map (clé=id du sommet, valeur= pointeur sur le sommet)

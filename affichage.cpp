@@ -12,9 +12,11 @@ void afficher_allegro(const std::unordered_map <int, std::vector<float>> &espace
     {
         for (const auto &i : espace_recherche_int)
         {
-            grapheTemp = new graphe {i.first, g_base};/*
+            grapheTemp = new graphe {i.first, g_base};
+            /*
             for(const auto &s : grapheTemp->m_sommets)
                 s->second->connexite();*/
+            grapheTemp->poidsTotaux();
             grapheTemp->afficher_allegro(page);
             blit(page, screen,0,0,0,0, 800,600);
             while (!key[KEY_ENTER])
@@ -29,11 +31,12 @@ void afficher_allegro(const std::unordered_map <int, std::vector<float>> &espace
     }
 }
 
-void afficher_allegro(const graphe &g)
+void afficher_allegro(graphe g)
 {
     BITMAP*page;
     //PARTIE AFFICHAGE
     page=create_bitmap(800,600);
+    g.poidsTotaux();
     g.afficher_allegro(page);
     blit(page, screen,0,0,0,0, 800,600);
     while (!key[KEY_ESC])

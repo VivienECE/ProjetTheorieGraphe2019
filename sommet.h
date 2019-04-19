@@ -5,9 +5,11 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "arete.h"
+#include "graphe.h"
 #include <string>
 
 class arete;
+class graphe;
 class Sommet
 {
     public:
@@ -24,6 +26,8 @@ class Sommet
         int getm_id() const;
         double getm_x() const;
         double getm_y() const;
+        std::vector<arete*> getm_arete() const;
+        void rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i, const graphe &g) const;
         void rechercherCC(std::unordered_set<int> &cc) const;
         ~Sommet();
         void connexite();

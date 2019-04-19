@@ -1,4 +1,16 @@
 #include "graphe.h"
+#include <queue>
+#include <stack>
+#include "math.h"
+#include <algorithm>
+#include "time.h"
+#define ORX 100
+#define ORY 550
+#define LONGEURAXE 400
+#define LONGUEURGRAD 5
+#define LONGUEURGRAD2 2
+#define COEFFICIENT 5
+#define NBGRAD 50
 
 class prioritize{public: bool operator ()(std::pair<int, float>&p1 ,std::pair<int, float>&p2){return p1.second>p2.second;}};
 graphe::~graphe()
@@ -302,8 +314,54 @@ std::vector<graphe*> retirerCnC(std::vector<graphe*> listeGrapheAChanger)
     return listeGrapheARendre;
 }
 
+
+
 std::vector <unsigned int> graphe::bruteforce() const
 {
+    clock_t t1, t2;
+    t1=clock();
+    Sommet *s0 = m_sommets.begin()->second;
+    std::vector <unsigned int> espace_recherche_int;
+    std::unordered_set <int> sommetParcourus;
+    std::string a;
+    int i=0, exp=0, puis=0;
+    std::vector <int> mesPos;
+    //std::cout << m_sommets.size()-1 << std::endl;
+    //std::cout << m_aretes.size()-m_sommets.size()+1 << std::endl;
+    //system("pause");
+    for(unsigned int i=0; i<m_aretes.size()-m_sommets.size()+1; i++)
+    {
+        a+="0";
+    }
+    for(unsigned int i =0; i< m_sommets.size()-1; i++)
+    {
+        a+="1";
+    }
+    do {
+        //++i;
+        for(const auto &b : a)
+        {
+            if(b=='1')
+            {
+                puis+=(int)pow(2,exp);
+            }
+            exp++;
+        }
+        s0->rechercherCC(sommetParcourus, puis, *this);
+        if(sommetParcourus.size()==m_sommets.size())
+        {
+            espace_recherche_int.push_back(puis);
+        }
+        sommetParcourus.clear();
+        puis=0;
+        exp=0;
+    } while(std::next_permutation(a.begin(), a.end()));
+    /*
+    std::cout << mesPos.size();
+    float temps;
+    clock_t t1, t2, t_c1, t_c2;
+    t1=clock();
+
     int aaa = 50000;
     int bbb = 200000;
     int mmm = 700000;
@@ -315,6 +373,8 @@ std::vector <unsigned int> graphe::bruteforce() const
     int qqq = 16000000;
     int hhh = 16774703;
     std::cout << "je rentre dans bruteforce" << std::endl;
+    //std::cout << m_sommets.size() << std::endl;
+    //system("pause");
     int taille=m_aretes.size();
     int debut=0, fin=0;
     for (int i=0; i<m_sommets.size()-1; ++i)
@@ -330,23 +390,26 @@ std::vector <unsigned int> graphe::bruteforce() const
     //system("pause");
     std::vector <unsigned int> espace_recherche_int;
     std::vector <Sommet*> ptrTest;
+    Sommet *s0 = m_sommets.begin()->second;
+    std::unordered_set <int> sommetParcourus;     // Conteneur permettant de stocker les sommets parcourus
     size_t compteur=0;
     int indice =0;
-    int a=0;
+    int a=0, id_arete=0, puis=0, id_extr0=0, id_extr1=0;
+    int paolo=0, sortie=0;
     graphe *verifConnex;    // Ce graphe servira de graphe temporaire pour vérifier la connexité des combinaisons.
 
     for(unsigned int i=debut;i<=fin;i++)
     {
         if(i==aaa) std::cout<<"i = "<<i<<std::endl;
-        if(i==bbb) std::cout<<"i = "<<i<<std::endl;
-        if(i==mmm) std::cout<<"i = "<<i<<std::endl;
-        if(i==www) std::cout<<"i = "<<i<<std::endl;
-        if(i==lll) std::cout<<"i = "<<i<<std::endl;
-        if(i==ooo) std::cout<<"i = "<<i<<std::endl;
-        if(i==iii) std::cout<<"i = "<<i<<std::endl;
-        if(i==ppp) std::cout<<"i = "<<i<<std::endl;
-        if(i==qqq) std::cout<<"i = "<<i<<std::endl;
-        if(i==hhh) std::cout<<"i = "<<i<<std::endl;
+        else if(i==bbb) std::cout<<"i = "<<i<<std::endl;
+        else if(i==mmm) std::cout<<"i = "<<i<<std::endl;
+        else if(i==www) std::cout<<"i = "<<i<<std::endl;
+        else if(i==lll) std::cout<<"i = "<<i<<std::endl;
+        else if(i==ooo) std::cout<<"i = "<<i<<std::endl;
+        else if(i==iii) std::cout<<"i = "<<i<<std::endl;
+        else if(i==ppp) std::cout<<"i = "<<i<<std::endl;
+        else if(i==qqq) std::cout<<"i = "<<i<<std::endl;
+        else if(i==hhh) std::cout<<"i = "<<i<<std::endl;
         /// Première boucle for qui parcours de 0 à 2^n, avec n la taille du graphe,
         /// ce qui correspond à toutes les combinaisons d'aretes possibles.
         for(int comp=0;comp<taille;comp++)
@@ -360,58 +423,24 @@ std::vector <unsigned int> graphe::bruteforce() const
         }
         if(compteur==m_sommets.size()-1) //Si autant d'aretes que ordre -1
         {
-            //std::cout << "suis la" << std::endl;
-            verifConnex=new graphe{i,*this};    // Je créé un graphe temporaire qui permettra de vérifier la connexité
-            //verifConnex->afficher();
-            //std::cout << "suis la2" << std::endl;
-            for(const auto &j:verifConnex->m_sommets)
-            {
-                /// Cette boucle for permet d'initialiser chacun des sommets à partir des aretes
-                /// Afin de pouvoir utiliser le programme de vérification de la connexité correctement.
-                /*j.second->afficherData();
-                j.second->afficherVoisins();*/
-                j.second->connexite();
-                /*j.second->afficherData();
-                j.second->afficherVoisins();
-                //ptrTest.push_back(j.second);*/
-            }
+            //t_c1=clock();
+            s0->rechercherCC(sommetParcourus, i, *this);
+            //t_c2=clock();
+            //std::cout << "temps de compilation de rechercherCC " << (float) t_c2-t_c1 << std::endl;
             //system("pause");
-            if(verifConnex->rechercher_CC_graphe()==1){ // S'il n'y a qu'une seule composante connexe
-                espace_recherche_int.push_back(i); // Et j'insère uniquement la combinaison qui a permis d'obtenir ce graphe ainsi que le vecteur de poids
+            if(sommetParcourus.size()==m_sommets.size()){
+                espace_recherche_int.push_back(i);
+                //std::cout<< "je suis la"<<std::endl;
             }
-            delete verifConnex;
-            //delete verifConnex;    // Enfin, je libère l'espace occupé par l'endroit ou pointait verifConnex.
-            //std::cout << ++indice << std::endl;*/
-            //espace_recherche.push_back(new graphe{i,*this});
-            /*
-            for(const auto &ptr : ptrTest)
-                ptr->afficherVoisins();
-            system("pause");*/
+            sommetParcourus.clear();
         }
         compteur=0; // Enfin je réinitialise mon compteur à 0
-        /*if(espace_recherche_int.size()>0)
-            std::cout << sizeof(espace_recherche_int)*espace_recherche_int.size() << " " << espace_recherche_int.size() << std::endl;*/
     }
-    //std::cout << "FIN DETECTION" << std::endl;
-    /*
-    for(auto i:espace_recherche){
-        i->afficher();
-        system("pause");
-    }*/
-    //std::cout << "DEBUG3" << std::endl;
-    /*
-    for(auto i : espace_recherche)
-        for(auto j:i->m_sommets)
-        {
-            j.second->connexite();
-        }
-    espace_recherche=retirerCnC(espace_recherche);*//*
-    for (const auto &it:espace_recherche_int)
-        std::cout << it << std::endl;
-    system("pause");*/
+    */
     std::cout << "jai fini bruteforce" << std::endl;
-    std::cout << "taille du graphe " << espace_recherche_int.size() << std::endl;
-    //system("pause");
+    std::cout << "taille de espace_recherche_int " << espace_recherche_int.size() << std::endl;
+    t2=clock();
+    std::cout << "temps de compilation de brutefroce : " << (float)(t2 -t1)/1000 << std::endl;
     return espace_recherche_int;    // Pour finir, je retourne l'unordered_map qui contient mes combinaisons et les poids qui leurs sont associées
 }
 
@@ -440,13 +469,6 @@ int graphe::rechercher_CC_graphe() const
 void graphe::poidsTotaux()
 {
     int prems=1;
-    //std::cout << "-------DEBUG POIDS INI---------" << std::endl;
-    /*
-    for(auto i:m_aretes)
-    {
-        for(size_t j=0; j<i.second->getm_poids().size(); ++j)
-           std::cout << " " << i.second->getm_poids()[j] <<std::endl;
-    }*/
     for(const auto &a : m_aretes)
     {
         for(size_t i=0; i<a.second->getm_poids().size(); ++i)
@@ -473,15 +495,19 @@ void graphe::afficher_frontierePareto(BITMAP*page) const
 {
     //TOUT AFFICHER+SURLIGNER FRONTIERE
     std::vector <unsigned int> espace_recherche_int=bruteforce();
+    clock_t t1, t2;
+    t1 = clock();
     std::vector <unsigned int> frontiere=frontierePareto(espace_recherche_int);
+    t2=clock();
     std::cout<< "jai fini pareto" << std::endl;
+    std::cout << "temps de compilation de pareto : " << (double) (t2-t1)/1000 << std::endl;
     graphe *grapheTemp;
     //std::cout << "ji me tlouve prisontement don affichi frontier" << std::endl;
     for(const auto &i:espace_recherche_int)
     {
         grapheTemp=new graphe{i, *this};
         grapheTemp->poidsTotaux();
-        circle(page, real_x(grapheTemp->getm_poids()[0]),real_y(grapheTemp->getm_poids()[1]), 2 , makecol(255,255,255));
+        circle(page, real_x(grapheTemp->getm_poids()[0]),real_y(grapheTemp->getm_poids()[1]), 1 , makecol(255,255,255));
         delete(grapheTemp);
     }
     //std::cout << "ji me tlouve prisontement don affichi frontier2" << std::endl;
@@ -508,6 +534,30 @@ void graphe::afficher_frontierePareto(BITMAP*page) const
     }
 }
 
+std::vector<float> graphe::poidsTotaux(unsigned int i) const
+{
+    int puis=0;
+    std::vector <float> aRendre;
+    aRendre.resize(m_poidsTotaux.size(),0);
+    for(const auto &ar : m_aretes)
+    {
+        puis=pow(2,ar.second->getm_id());
+        if(puis&i)
+        {
+            for(int i=0; i<m_poidsTotaux.size(); ++i)
+            {
+                aRendre[i]+=ar.second->getm_poids()[i];
+            }
+        }
+    }/*
+    for(const auto &p : aRendre)
+    {
+        std::cout << "poids : " << p << std::endl;
+    }
+    system("pause");*/
+    return aRendre;
+}
+
 std::vector<unsigned int> graphe::frontierePareto(std::vector<unsigned int> espace_recherche_int) const//RENVOIE LA FRONTIERE
 {
     // On aura ici deux unordered_map du même type que notre espace de recherche :
@@ -515,7 +565,8 @@ std::vector<unsigned int> graphe::frontierePareto(std::vector<unsigned int> espa
     // - Une stockant tous les sommets qui sont à la frontière 'frontiere'
     // L'interet et que je rempli 'frontiere' en mettant tout ce qui n'est pas 'NONfrontiere'
     std::unordered_map <unsigned int, std::vector<float>> NONfrontiere, frontiere;
-    int increment=0;
+    std::vector <float> poids_aComp1, poids_aComp2;
+    int increment=0, incrementBoucle2=0, incrementBoucle1=0, paspossible=0;
     size_t marqueur1,marqueur2=0, memeadresse=0;
     graphe *comp_1, *comp_2;/*
     for(const auto &a : espace_recherche_int)
@@ -523,61 +574,58 @@ std::vector<unsigned int> graphe::frontierePareto(std::vector<unsigned int> espa
     system("pause");*/
     //this->afficher();
     //system("pause");
-    for(const auto &a:espace_recherche_int)
+    do
     {
-        /// Cette double boucle for imbriquée me permet de parcourir deux à deux chaque combinaison
-        /// et vecteur de poids afin de les comparer et de remplir 'NONfrontiere'
-        //std::cout<< "je suis la" << std::endl;
-        comp_1=new graphe{a, *this};
-        comp_1->poidsTotaux();
-        //comp_1->afficher();
-        //std::cout << comp_1->getm_poids()[0] << " " << comp_1->getm_poids()[1] << std::endl;
-        //system("pause");
-        for(const auto &b:espace_recherche_int)
-        {/*
-            std::cout << std::endl << std::endl << arthur++ << std::endl << std::endl;
-            std::cout<< "je suis la avec art" << std::endl;
-            std::cout << b << std::endl;*/
-            if(b!=a)
+        /// Cette boucle for me permet de parcourir chaque combinaison de 'espace_recherche_int
+        /// en créant et deletant un nouveau graphe pour chaque combinaison et en la comparant
+        /// deux à deux avec les autres combinaisons.
+        poids_aComp1 = this->poidsTotaux(espace_recherche_int[incrementBoucle1]);
+        do
+        {
+            if(espace_recherche_int[incrementBoucle2]!=espace_recherche_int[incrementBoucle1])    // Si on ne parle pas du même sommet
             {
-                comp_2=new graphe{b,*this};
-                comp_2->poidsTotaux();
-                //comp_2->afficher();
-                //std::cout << comp_2->getm_poids()[0] << " " << comp_2->getm_poids()[1] << std::endl;*/
-                //system("pause");
-                for(size_t i=0;i<comp_1->getm_poids().size();i++)
+                /// Je créé le graphe
+                poids_aComp2 = this->poidsTotaux(espace_recherche_int[incrementBoucle2]);
+                for(size_t i=0;i<poids_aComp1.size();i++)   // Je parcours tous les poids
                 {
-                    if(comp_1->getm_poids()[i]<comp_2->getm_poids()[i])
+                    if(poids_aComp1[i]<poids_aComp2[i]) // Je compare la stricte supériorité
                         marqueur1++;
-                    if(comp_1->getm_poids()[i]<=comp_2->getm_poids()[i])
+                    if(poids_aComp1[i]<=poids_aComp2[i])// Je compare la supériorité
                         marqueur2++;
                 }
-                if( (marqueur1>1) && (marqueur2 == comp_1->getm_poids().size())) //PROB
-                {
-                    NONfrontiere.insert({b, comp_2->getm_poids()});
-                    espace_recherche_int.erase(espace_recherche_int.begin()+increment);
-                    increment--;
+                if( (marqueur1>=1) && (marqueur2 == poids_aComp1.size()))    // Si j'ai un élément strictement meilleur et les deux éléments au moins meilleurs
+                {/*
+                    std::cout << std::endl << "J'ai un élément strictement meilleur et les deux éléments au moins meilleurs que comp_2" << std::endl;
+                    std::cout << std::endl << "Donc j'erase comp_2" << std::endl;*/
+                    espace_recherche_int.erase(espace_recherche_int.cbegin()+incrementBoucle2);   // Le sommet est dominé, je le supprime donc de mon espace
                 }
-                    /*
-                for (const auto &a : NONfrontiere)
-                {
-                    std::cout << "identifiant "<< a.first << std::endl;
-                    std::cout << "( " << a.second[0] << " ; " << a.second[1] << " )" << std::endl;
-                }*/
-                //system("pause");
-                marqueur1=0;
+                else if(marqueur1==0)   // Si rien n'est meilleur chez comp_1
+                {/*
+                    std::cout << std::endl << "comp_1 n'a rien de mieux" << std::endl;
+                    std::cout << std::endl << "Donc j'erase comp_1" << std::endl;*/
+                    espace_recherche_int.erase(espace_recherche_int.cbegin()+incrementBoucle1) ;   // Je le supprime
+                    incrementBoucle2=espace_recherche_int.size();   // et je termine le while pour passer au comp_1 suivant
+                    paspossible++;
+                    incrementBoucle1--;
+                }
+                marqueur1=0;    // Remise à zéro des marqueurs
                 marqueur2=0;
-                delete(comp_2);
+                //delete(comp_2); // On évite la fuite de mémoire !
             }
-            increment++;
-            //std::cout << "arthur fait caca tous les jours matin et soir" << std::endl;
-        }
-        increment=0;
-        delete(comp_1);
-        //std::cout << "papa" << std::endl;
-    }/*
+            if(incrementBoucle2!=espace_recherche_int.size())
+                incrementBoucle2++; // J'incrémente l'incrément de mon comp_2
+            paspossible=0;
+            /*std::cout << std::endl << "-----------------------------------------" << std::endl;
+            std::cout << "                    " << espace_recherche_int.size() << std::endl;
+            std::cout << std::endl << "inc_b_1" << incrementBoucle1 << " inc_b_2 "  << incrementBoucle2 << std::endl;
+            //system("pause");*/
+        }while(incrementBoucle2!=espace_recherche_int.size()); // Et je fais tourner ma boucle tant que l'incrément n'arrive pas au bout d'espace_recherche
+        incrementBoucle2=0;
+        incrementBoucle1++;
+        //delete(comp_1);
+    }while(incrementBoucle1!=espace_recherche_int.size());/*
     for(const auto &i : espace_recherche_int)
-        std::cout << i << std::endl;
+        std::cout << "voila les i : "<< i << std::endl;
     system("pause");*/
     //std::cout << "je fini de trouver nonfrontiere" << std::endl;
     //system("pause");
@@ -624,11 +672,13 @@ void graphe::afficher_allegro(BITMAP*page) const
     msg += "( ";
     for(const auto &p : m_poidsTotaux)
     {
+        //std::cout << p << std::endl;
         msg+=std::to_string(p);
         if(increment !=m_poidsTotaux.size()-1)
             msg += " ; ";
         increment++;
     }
+    //system("pause");
     msg += " )";
 
     msgf=msg.c_str();
