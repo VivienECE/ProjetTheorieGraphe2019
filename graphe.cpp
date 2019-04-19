@@ -250,7 +250,6 @@ std::vector<bool> add(const std::vector<bool>& a, const std::vector<bool>& b)
 
 std::vector <unsigned int> graphe::bruteforce_dist() const
 {
-    int stop = m_sommets.size();
     std::cout << "je rentre dans bruteforce_dist" << std::endl;
     clock_t t1, t2;
     t1=clock();
@@ -261,11 +260,11 @@ std::vector <unsigned int> graphe::bruteforce_dist() const
     int i=0, exp=0, puis=0;
     std::vector <int> mesPos;
     size_t maxS = m_sommets.size();
-    for (size_t max_temp=maxS; max_temp<m_aretes.size(); max_temp++)
+    for (size_t max_temp=maxS; max_temp<=m_aretes.size()+1; max_temp++)
     {
         std::cout << "nombre d'element dans espace_recherche_int " << espace_recherche_int.size() << std::endl;
         std::cout   << "et on en est qu'a la combinaison "
-                    << max_temp-1 << " parmi 23" << std::endl;
+                    << max_temp-1 << " parmi " << m_aretes.size() << std::endl;
         for(unsigned int i=0; i<m_aretes.size()-max_temp+1; i++)
         {
             a+="0";
@@ -285,16 +284,20 @@ std::vector <unsigned int> graphe::bruteforce_dist() const
                 }
                 exp++;
             }
-            s0->rechercherCC(sommetParcourus, puis, *this, stop);
+            s0->rechercherCC(sommetParcourus, puis);
             if(sommetParcourus.size()==m_sommets.size())
             {
                 espace_recherche_int.push_back(puis);
+                //if(max_temp!=maxS)
+                    //std::cout << "je sors de la connexite" << std::endl;
             }
             sommetParcourus.clear();
             puis=0;
             exp=0;
         } while(std::next_permutation(a.begin(), a.end()));
+        a.clear();
     }
+    free(s0);
     std::cout << "jai fini bruteforce" << std::endl;
     std::cout << "taille de espace_recherche_int " << espace_recherche_int.size() << std::endl;
     t2=clock();
@@ -332,7 +335,7 @@ std::vector <unsigned int> graphe::bruteforce() const
             }
             exp++;
         }
-        s0->rechercherCC(sommetParcourus, puis, *this, stop);
+        s0->rechercherCC(sommetParcourus, puis);
         if(sommetParcourus.size()==m_sommets.size())
         {
             espace_recherche_int.push_back(puis);
@@ -520,7 +523,6 @@ std::vector<unsigned int> graphe::frontierePareto_dist(std::vector<unsigned int>
     std::vector <float> poids_aComp1, poids_aComp2;
     int increment=0, incrementBoucle2=0, incrementBoucle1=0, paspossible=0;
     size_t marqueur1,marqueur2=0, memeadresse=0;
-    graphe *comp_1, *comp_2;
     do
     {
         /// Cette boucle for me permet de parcourir chaque combinaison de 'espace_recherche_int
@@ -652,10 +654,10 @@ std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I) const
     poidsTotaux.push_back(somme_cout);
     poidsTotaux.push_back(somme_distance);
 
-    /*std::cout <<"DEBUG ( ";
+    std::cout <<"DEBUG ( ";
     for(const auto i:poidsTotaux)
        std::cout << i << " ";
-    std::cout <<")" <<std::endl;system("pause");*/
+    std::cout <<")" <<std::endl;system("pause");
 
     return poidsTotaux;
 }
