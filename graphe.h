@@ -40,7 +40,7 @@ class graphe
         void afficher() const;
         void ajouter_arete(int,float,float, Sommet*, Sommet*);
         graphe prim(int poids) ;
-        void afficher_allegro(BITMAP*) const;
+        void afficher_allegro(BITMAP*, const int &i) const;
         std::vector <unsigned int> bruteforce()const;
         int rechercher_CC_graphe() const;
         void poidsTotaux(); //Calcul du poids total

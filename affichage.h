@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 void afficher_allegro(const std::unordered_map <int, std::vector<float>> &espace_recherche_int, const graphe &g_base);
-void afficher_allegro(graphe g);
+void afficher_allegro_prim(graphe &g);
 void afficherFrontierePareto_allegro(const graphe &g);
 double convert(double);
 

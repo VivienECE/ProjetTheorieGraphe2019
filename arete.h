@@ -21,6 +21,7 @@ class arete
         int getm_id() const;
         Sommet* getm_extremite(int) const;
         float getm_distance(int, int) const; //renvoi la distance si bon id correct, 0 sinon
+        void afficher_les_prim();
 
     private:
         std::vector<Sommet*> m_extremites;

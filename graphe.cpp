@@ -4,6 +4,7 @@
 #include "math.h"
 #include <algorithm>
 #include "time.h"
+#include "affichage.h"
 #define ORX 100
 #define ORY 550
 #define LONGEURAXE 400
@@ -186,10 +187,7 @@ graphe graphe::prim(int poids)
     graphe ArbreCouvrant;
     ArbreCouvrant.m_sommets.insert({m_sommets.begin()->first, new Sommet   {m_sommets.begin()->second->getm_id(),
                                                                             m_sommets.begin()->second->getm_x(),
-                                                                            m_sommets.begin()->second->getm_y()}});/*
-    std::cout << "voila l'arbre couvrant au début..." << std::endl;
-    ArbreCouvrant.afficher();
-    system("pause");*/
+                                                                            m_sommets.begin()->second->getm_y()}});
     float tampon, newtampon;
     arete *candidat1, *candidat2;
     int prems=1, dems=1;
@@ -211,10 +209,7 @@ graphe graphe::prim(int poids)
                         (ArbreCouvrant.m_sommets.count(a.second->getm_extremites()[1]->getm_id())==1))||
                         ((ArbreCouvrant.m_sommets.count(a.second->getm_extremites()[0]->getm_id())==1) &&
                         (ArbreCouvrant.m_sommets.count(a.second->getm_extremites()[1]->getm_id())==0))))
-                {/*
-                    std::cout << "voila une arete interessante" << std::endl << std::endl;
-                    a.second->afficher();
-                    system("pause");*/
+                {
                     /// Si l'arete que j'explore a d'un coté un sommet du nouveau graphe
                     /// et de l'autre un sommet non present dans le nouveau graphe
 
@@ -226,36 +221,24 @@ graphe graphe::prim(int poids)
 
                         tampon=newtampon;
                         candidat2=a.second;    // Je stocke le premier candidat au cas où on n'ai qu'une seule arete candidate
-                    }/*
-                    std::cout << "voila le tampon " << tampon << " et le newtampon " << newtampon << std::endl << std::endl;*/
+                    }
                     if((newtampon<tampon)&&(dems==0))
                     {
                         /// Si le poids de la nouvelle arete étudiée est moins lourd, je stocke dans mon tampon le nouveau poids
                         tampon=newtampon;
                         candidat2=a.second;    // Et je met à jour le candidat
-                    }/*
-                    std::cout << "voila le nouveau tampon " << tampon << std::endl << std::endl;
-                    system("pause");*/
+                    }
                     if(prems==1)
                         candidat1=candidat2;
                     dems=0;
                     prems=0;
                 }
-            }/*
-            std::cout << "voila le candidat 1" << std::endl << std::endl;
-            candidat1->afficher();
-            std::cout << "voila le candidat 2" << std::endl << std::endl;
-            candidat2->afficher();*/
+            }
             /// Il faut maintenant comparer l'arete 'n-1' candidate précédemment étudiée
             /// voisine de 's-1' avec l'arete qu'on vient d'etudier
             if((candidat1->getm_poids()[poids]>candidat2->getm_poids()[poids])&&(prems==0))
                 candidat1=candidat2;    // Et le tour est joué ! :)
-            /*
-            std::cout << "voila le nouveau candidat 1" << std::endl << std::endl;
-            candidat1->afficher();
-            system("pause");*/
-        }/*
-        std::cout << "jai fait toutes les aretes" << std::endl << std::endl;*/
+        }
         dems=1;
         prems=1;
         ArbreCouvrant.m_aretes.insert({candidat1->getm_id(), candidat1});
@@ -277,9 +260,6 @@ graphe graphe::prim(int poids)
                                            candidat1->getm_extremites()[1]->getm_y()}});
             ArbreCouvrant.m_sommets.find(candidat1->getm_extremites()[1]->getm_id())->second->ajouterVoisin(candidat1->getm_extremites()[0]);
         }
-        /*
-        std::cout << "voila l'arbre couvrant !" << std::endl << std::endl;
-        ArbreCouvrant.afficher();*/
 
     }while(ArbreCouvrant.m_sommets.size()!=m_sommets.size());
 
@@ -356,87 +336,6 @@ std::vector <unsigned int> graphe::bruteforce() const
         puis=0;
         exp=0;
     } while(std::next_permutation(a.begin(), a.end()));
-    /*
-    std::cout << mesPos.size();
-    float temps;
-    clock_t t1, t2, t_c1, t_c2;
-    t1=clock();
-
-    int aaa = 50000;
-    int bbb = 200000;
-    int mmm = 700000;
-    int www = 1200000;
-    int lll = 1500000;
-    int ooo = 5000000;
-    int iii = 10000000;
-    int ppp = 15000000;
-    int qqq = 16000000;
-    int hhh = 16774703;
-    std::cout << "je rentre dans bruteforce" << std::endl;
-    //std::cout << m_sommets.size() << std::endl;
-    //system("pause");
-    int taille=m_aretes.size();
-    int debut=0, fin=0;
-    for (int i=0; i<m_sommets.size()-1; ++i)
-    {
-        debut+=pow(2,i);
-    }
-    for (int i=m_aretes.size()-1; i>=m_aretes.size()-m_sommets.size()+1;--i)
-    {
-        fin+=pow(2,i);
-    }
-    std::cout << m_sommets.size() << std::endl;
-    std::cout<< debut << std::endl;
-    //system("pause");
-    std::vector <unsigned int> espace_recherche_int;
-    std::vector <Sommet*> ptrTest;
-    Sommet *s0 = m_sommets.begin()->second;
-    std::unordered_set <int> sommetParcourus;     // Conteneur permettant de stocker les sommets parcourus
-    size_t compteur=0;
-    int indice =0;
-    int a=0, id_arete=0, puis=0, id_extr0=0, id_extr1=0;
-    int paolo=0, sortie=0;
-    graphe *verifConnex;    // Ce graphe servira de graphe temporaire pour vérifier la connexité des combinaisons.
-
-    for(unsigned int i=debut;i<=fin;i++)
-    {
-        if(i==aaa) std::cout<<"i = "<<i<<std::endl;
-        else if(i==bbb) std::cout<<"i = "<<i<<std::endl;
-        else if(i==mmm) std::cout<<"i = "<<i<<std::endl;
-        else if(i==www) std::cout<<"i = "<<i<<std::endl;
-        else if(i==lll) std::cout<<"i = "<<i<<std::endl;
-        else if(i==ooo) std::cout<<"i = "<<i<<std::endl;
-        else if(i==iii) std::cout<<"i = "<<i<<std::endl;
-        else if(i==ppp) std::cout<<"i = "<<i<<std::endl;
-        else if(i==qqq) std::cout<<"i = "<<i<<std::endl;
-        else if(i==hhh) std::cout<<"i = "<<i<<std::endl;
-        /// Première boucle for qui parcours de 0 à 2^n, avec n la taille du graphe,
-        /// ce qui correspond à toutes les combinaisons d'aretes possibles.
-        for(int comp=0;comp<taille;comp++)
-        {
-            /// Cette boucle permet de réaliser l'opération logique de base AND
-            /// en comparant notre combinaison bit à bit avec les puissances de 2.
-            a=pow(2,comp);
-
-            if(i&a)         // Si l'opération logique AND ne renvoie pas 0
-               compteur++;  // J'incrémente un compteur qui compte les bit à l'état haut.
-        }
-        if(compteur==m_sommets.size()-1) //Si autant d'aretes que ordre -1
-        {
-            //t_c1=clock();
-            s0->rechercherCC(sommetParcourus, i, *this);
-            //t_c2=clock();
-            //std::cout << "temps de compilation de rechercherCC " << (float) t_c2-t_c1 << std::endl;
-            //system("pause");
-            if(sommetParcourus.size()==m_sommets.size()){
-                espace_recherche_int.push_back(i);
-                //std::cout<< "je suis la"<<std::endl;
-            }
-            sommetParcourus.clear();
-        }
-        compteur=0; // Enfin je réinitialise mon compteur à 0
-    }
-    */
     std::cout << "jai fini bruteforce" << std::endl;
     std::cout << "taille de espace_recherche_int " << espace_recherche_int.size() << std::endl;
     t2=clock();
@@ -447,8 +346,6 @@ std::vector <unsigned int> graphe::bruteforce() const
 int graphe::rechercher_CC_graphe() const
 {
     int i=0;
-    /*std::cout<< std::endl<< std::endl << "Composantes connexes :"
-    <<std::endl<<std::endl<<std::endl;*/
     std::unordered_set<int> cc;                                 /// id des sommets
     for(const auto &it : m_sommets)                                     /// boucle pour voir les sommets
     {
@@ -456,13 +353,8 @@ int graphe::rechercher_CC_graphe() const
         {
             ++i;                                                        /// j'implémante la variable du nombre de composante connexes
             it.second->rechercherCC(cc);
-
-            /*std::cout <<"Composante connexe n : " << i << std::endl;                          /// et je rentre dans un programme recursif qui rempli le tableau des sommets decouverts
-            std::cout << std::endl << std::endl;
-            std::cout<<"g fini"<<std::endl;*/
         }
     }
-
     return i;
 }
 
@@ -549,12 +441,7 @@ std::vector<float> graphe::poidsTotaux(unsigned int i) const
                 aRendre[i]+=ar.second->getm_poids()[i];
             }
         }
-    }/*
-    for(const auto &p : aRendre)
-    {
-        std::cout << "poids : " << p << std::endl;
     }
-    system("pause");*/
     return aRendre;
 }
 
@@ -664,9 +551,10 @@ std::vector<unsigned int> graphe::frontierePareto(std::vector<unsigned int> espa
 }
 
 
-void graphe::afficher_allegro(BITMAP*page) const
+void graphe::afficher_allegro(BITMAP*page, const int &i) const
 {
     size_t increment=0;
+    int posx = 0;
     std::string msg ;
     const char *msgf;
     msg += "( ";
@@ -680,15 +568,16 @@ void graphe::afficher_allegro(BITMAP*page) const
     }
     //system("pause");
     msg += " )";
-
+    if(i==1)
+        posx = 400;
     msgf=msg.c_str();
-    textprintf_centre_ex(page, font, 100, 20, makecol(255, 255, 255), -1, msgf);
+    textprintf_centre_ex(page, font, 200+posx, 20, makecol(255, 255, 255), -1, msgf);
     for(const auto i:m_sommets)
-        circle(page,i.second->getm_x(),i.second->getm_y(), 10, makecol(255,0,0));
+        circle(page,i.second->getm_x()-50+posx,i.second->getm_y(), 10, makecol(255,0,0));
 
     for(const auto j:m_aretes)
     {
-        line(page,j.second->getm_extremites()[0]->getm_x(),j.second->getm_extremites()[0]->getm_y(),j.second->getm_extremites()[1]->getm_x(),j.second->getm_extremites()[1]->getm_y(), makecol(255,30,30));
+        line(page,j.second->getm_extremites()[0]->getm_x()+posx-50,j.second->getm_extremites()[0]->getm_y(),j.second->getm_extremites()[1]->getm_x()+posx-50,j.second->getm_extremites()[1]->getm_y(), makecol(255,30,30));
     }
 }
 
