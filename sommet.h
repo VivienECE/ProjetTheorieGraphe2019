@@ -27,11 +27,13 @@ class Sommet
         int getm_id() const;
         double getm_x() const;
         double getm_y() const;
-        std::vector<arete*> getm_arete() const;
+        //std::vector<arete*> getm_arete() const;
+        std::unordered_map<int,arete*> getm_arete() const;
         void rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i, const graphe &g, int stop) const;
         void rechercherCC(std::set<int> &sommetParcourus, const unsigned int &i) const;
         ~Sommet();
         void connexite();
+        void ajouterArete(int id,arete*a);
         float calcul_distance(int) const; //Calcul la distance avec le sommet entrée en parametre, uniquement distance avec sommet adj.
         //std::pair<int,float> cout_min(std::unordered_set<int>) const; //Non utulisé finalement
         int id_adjacent(int) const;
@@ -40,8 +42,8 @@ class Sommet
     private:
         /// Voisinage : liste d'adjacence
         std::vector<Sommet*> m_voisins;
-        std::vector<arete*> m_arete;
-        //std::unordered_map<int,arete*> m_arete;
+        //std::vector<arete*> m_arete;
+        std::unordered_map<int,arete*> m_arete;
         /// Données spécifiques du sommet
         int m_id; // Identifiant
         double m_x, m_y; // Position

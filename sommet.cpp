@@ -25,7 +25,7 @@ void Sommet::resetConnexite(){
     for(const auto &v : m_voisins)
         delete v;
     for(const auto &a : m_arete)
-        delete a;
+        delete a.second;
     m_voisins.clear();
     m_arete.clear();
 }
@@ -43,7 +43,7 @@ void Sommet::afficherVoisins() const{
 
 void Sommet::connexite(){
     for(const auto i:m_arete) //PARCOURS Toutes les aretes du sommet
-        for(const auto j:i->getm_extremites()) //PARCOURS les extremites de l'arete aretes du sommet
+        for(const auto j:i.second->getm_extremites()) //PARCOURS les extremites de l'arete aretes du sommet
             if(j->getm_id()!=m_id)
                 ajouterVoisin(j);
 }
@@ -57,9 +57,9 @@ void Sommet::rechercherCC(std::unordered_set<int> &sommetParcourus, const unsign
     {
         for(const auto &ar : m_arete)                         /// je regarde les voisins du sommet
         {
-            int id_arete=ar->getm_id();
-            int id_extr0=ar->getm_extremites()[0]->getm_id();
-            int id_extr1=ar->getm_extremites()[1]->getm_id();
+            int id_arete=ar.second->getm_id();
+            int id_extr0=ar.second->getm_extremites()[0]->getm_id();
+            int id_extr1=ar.second->getm_extremites()[1]->getm_id();
             int puis = pow(2, id_arete);
             if  ((i & puis)&&                         // Et regarde si elle est "activée" dans le potentiel futur graphe
                 (((sommetParcourus.count(id_extr0)==0)&&(sommetParcourus.count(id_extr1)==1))||
@@ -69,12 +69,12 @@ void Sommet::rechercherCC(std::unordered_set<int> &sommetParcourus, const unsign
                 if  (sommetParcourus.count(id_extr0)==0)
                 {
                     sommetParcourus.insert({id_extr0});
-                    ar->getm_extremites()[0]->rechercherCC(sommetParcourus, i, g, stop);
+                    ar.second->getm_extremites()[0]->rechercherCC(sommetParcourus, i, g, stop);
                 }
                 else if (sommetParcourus.count(id_extr1)==0)
                 {
                     sommetParcourus.insert({id_extr1});
-                    ar->getm_extremites()[1]->rechercherCC(sommetParcourus, i, g, stop);
+                    ar.second->getm_extremites()[1]->rechercherCC(sommetParcourus, i, g, stop);
                 }
             }
         }
@@ -96,9 +96,9 @@ void Sommet::rechercherCC(std::set<int> &sommetParcourus, const unsigned int &i)
         file_sommets_explores.pop();
         for(const auto &ar : s->m_arete)                         /// je regarde les voisins du sommet
         {
-            int id_arete=ar->getm_id();
-            int id_extr0=ar->getm_extremites()[0]->getm_id();
-            int id_extr1=ar->getm_extremites()[1]->getm_id();
+            int id_arete=ar.second->getm_id();
+            int id_extr0=ar.second->getm_extremites()[0]->getm_id();
+            int id_extr1=ar.second->getm_extremites()[1]->getm_id();
             int puis = pow(2, id_arete);
             if  ((i & puis)&&                         // Et regarde si elle est "activée" dans le potentiel futur graphe
                 (((sommetParcourus.count(id_extr0)==0)&&(sommetParcourus.count(id_extr1)==1))||
@@ -108,12 +108,12 @@ void Sommet::rechercherCC(std::set<int> &sommetParcourus, const unsigned int &i)
                 if  (sommetParcourus.count(id_extr0)==0)
                 {
                     sommetParcourus.insert({id_extr0});
-                    file_sommets_explores.push(ar->getm_extremites()[0]);
+                    file_sommets_explores.push(ar.second->getm_extremites()[0]);
                 }
                 else if (sommetParcourus.count(id_extr1)==0)
                 {
                     sommetParcourus.insert({id_extr1});
-                    file_sommets_explores.push(ar->getm_extremites()[1]);
+                    file_sommets_explores.push(ar.second->getm_extremites()[1]);
                 }
             }
         }
@@ -137,7 +137,7 @@ double Sommet::getm_x() const {return m_x;}
 
 double Sommet::getm_y() const {return m_y;}
 
-std::vector<arete*> Sommet::getm_arete() const {return m_arete;}
+std::unordered_map<int,arete*> Sommet::getm_arete() const {return m_arete;}
 
 Sommet::~Sommet()
 {/*
@@ -145,25 +145,22 @@ Sommet::~Sommet()
         delete it;
     std::cout << "arthur a envie de fr caca" << std::endl;*/
     for(auto it : m_arete)
-        delete it;
+        delete it.second;
 }
 
 void Sommet::ajouterArete(arete*a)
 {
-    m_arete.push_back(a);
+    //m_arete.push_back(a);
+}
+
+void Sommet::ajouterArete(int id,arete*a)
+{
+    m_arete.emplace(id,a);
 }
 
 float Sommet::calcul_distance(int id_voisin) const
 {
-    int i=0;
-    float distance=0;
-    while(distance==0)
-    {
-        distance=(int)m_arete[i]->getm_distance(m_id, id_voisin);
-        i++;
-    }
-    //std::cout<< " DEBUGG POIDS:" << distance<<std::endl;
-    return distance;
+    return m_arete.find(id_voisin)->second->getm_poids()[m_arete.find(id_voisin)->second->getm_poids().size()-1];
 }
 
 std::vector<Sommet*> Sommet::getm_voisins() const {return m_voisins;}
@@ -175,12 +172,12 @@ int Sommet::id_arete(int id_sommet) const
 
     for(const auto i:m_arete) //PARCOURS LES ARETES DU SOMMET
     {
-        if( ((i->getm_extremite(0)->getm_id()==id_sommet) && (i->getm_extremite(1)->getm_id()==m_id) )
-            || ((i->getm_extremite(1)->getm_id()==id_sommet) && (i->getm_extremite(0)->getm_id()==m_id)))
+        if( ((i.second->getm_extremite(0)->getm_id()==id_sommet) && (i.second->getm_extremite(1)->getm_id()==m_id) )
+            || ((i.second->getm_extremite(1)->getm_id()==id_sommet) && (i.second->getm_extremite(0)->getm_id()==m_id)))
         //SI UNE ARETE A LES 2 ID EN EXTREMITES, RETOUR ID DE L'ARETE
         {
             //std::cout <<"DEBUG retour id_arete:" << i->getm_id() << std::endl << std::endl;
-            return i->getm_id();
+            return i.second->getm_id();
         }
     }
     std::cout << "DEBUG Erreur sommet.cpp/id_arete" << std::endl;

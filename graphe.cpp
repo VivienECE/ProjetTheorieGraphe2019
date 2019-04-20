@@ -92,9 +92,8 @@ graphe::graphe(std::string nomFichier){
         (m_sommets.find(id_voisin))->second->ajouterVoisin((m_sommets.find(id))->second);//remove si graphe orienté
          m_aretes.insert({id_arete,new arete{id_arete,(m_sommets.find(id))->second,(m_sommets.find(id_voisin))->second}});
          //Ajout de l'arete au 2 sommets m_aretes.find(id_arete);
-         (m_sommets.find(id))->second->ajouterArete(m_aretes.find(id_arete)->second);
-         (m_sommets.find(id_voisin))->second->ajouterArete(m_aretes.find(id_arete)->second);
-
+         (m_sommets.find(id))->second->ajouterArete(id_voisin,m_aretes.find(id_arete)->second);
+         (m_sommets.find(id_voisin))->second->ajouterArete(id,m_aretes.find(id_arete)->second);
     }
 }
 
@@ -301,7 +300,6 @@ std::vector <unsigned int> graphe::bruteforce_dist() const
 
 std::vector <unsigned int> graphe::bruteforce() const
 {
-    int stop=m_sommets.size();
     clock_t t1, t2;
     t1=clock();
     Sommet *s0 = m_sommets.begin()->second;
@@ -598,14 +596,13 @@ std::unordered_map <unsigned int, std::vector<float>> graphe::frontierePareto_di
     //std::cout << "jai insert dans mesPoids" << std::endl;
     int incrementBoucle2=0, incrementBoucle1=0, paspossible=0, reste=0;
     size_t marqueur1,marqueur2=0;
-    for(int j=0;j<=3;j++)
+    /*for(int j=0;j<=3;j++)
         {
             for(const auto i:espace_recherche_int)
             this->poidsTotauxDjikstra(i);
             std::cout << std::endl;
         }
-    system("pause");
-
+    */
     do
     {
         //std::cout << "Nouveau COMP1" << std::endl;
@@ -728,10 +725,8 @@ float graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
 
     //SOMME LES POIDS DU PARCOURS DE DJIKSTRA
     for(const auto i:s_marques)
-    {
-        //std::cout<< "id :" << i.first << " Distance :" << i.second << std::endl;//EVITE LA SYMETRIE
            somme+=i.second;
-    }
+
    // std::cout << "DEBUG somme:" << somme <<std::endl;
     return somme;
 }
@@ -753,6 +748,7 @@ std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I) const
             for(const auto j:i.second->getm_poids())
                 if(j!=i.second->getm_poids().back())
                     somme_cout+=j;
+
     //PUSH VECTEUR FLOAT
     poidsTotaux.push_back(somme_cout);
     poidsTotaux.push_back(somme_distance);

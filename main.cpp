@@ -19,12 +19,6 @@ int saisie(const int& borneInf, const int& borneSup);
 int main()
 {
     init_Allegro();
-    /*
-    graphe g{"broadway.txt"};
-    g.lire_poids("broadway_weights_0.txt");
-    std::vector<unsigned int> Liste=g.bruteforce_dist();
-    afficher_allegro2(g,Liste);
-    std::cout << Liste.size() <<std::endl;*/
     graphe g;
     unsigned int choixAlgo=0, choixFich=0, choixP=0;
     std::string fichier, fichierP;
