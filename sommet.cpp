@@ -45,21 +45,20 @@ void Sommet::afficherData() const{
 
 void Sommet::afficherVoisins() const{
     std::cout<<"  voisins :"<<std::endl;
-    for(auto v:m_voisins) {
+    for(auto &v:m_voisins) {
         v->afficherData();
     }
 }
 
 void Sommet::connexite(){
-    for(const auto i:m_arete) //PARCOURS Toutes les aretes du sommet
-        for(const auto j:i.second->getm_extremites()) //PARCOURS les extremites de l'arete aretes du sommet
+    for(const auto &i:m_arete) //PARCOURS Toutes les aretes du sommet
+        for(const auto &j:i.second->getm_extremites()) //PARCOURS les extremites de l'arete aretes du sommet
             if(j->getm_id()!=m_id)
                 ajouterVoisin(j);
 }
 
 void Sommet::rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i, const graphe &g, int stop) const
 {
-
     sommetParcourus.insert(m_id);                                        /// je met le sommet dans le tableau des sommets explores
     if(((int)m_arete.size()>1)&&((int)sommetParcourus.size()!=stop))
 
@@ -139,7 +138,6 @@ void Sommet::rechercherCC(std::set<int> &sommetParcourus, const unsigned int &i)
 }
 
 
-
 int Sommet::getm_id() const {return m_id;}
 
 double Sommet::getm_x() const {return m_x;}
@@ -148,10 +146,7 @@ double Sommet::getm_y() const {return m_y;}
 
 std::unordered_map<int,arete*> Sommet::getm_arete() const {return m_arete;}
 
-void Sommet::ajouterArete(arete*a)
-{
-    //m_arete.push_back(a);
-}
+std::vector<Sommet*> Sommet::getm_voisins() const {return m_voisins;}
 
 void Sommet::ajouterArete(int id,arete*a)
 {
@@ -163,7 +158,6 @@ float Sommet::calcul_distance(int id_voisin) const
     return m_arete.find(id_voisin)->second->getm_poids()[m_arete.find(id_voisin)->second->getm_poids().size()-1];
 }
 
-std::vector<Sommet*> Sommet::getm_voisins() const {return m_voisins;}
 
 int Sommet::id_arete(int id_sommet) const
 {

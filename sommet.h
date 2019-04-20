@@ -14,39 +14,48 @@ class graphe;
 class Sommet
 {
     public:
-        ///constructeur qui reçoit en params les données du sommet
+        ///CONSTRUCTEUR
         Sommet();
         ~Sommet();
         Sommet(int,double,double);
+
+        ///ADD
         void ajouterVoisin(Sommet*);
-        void resetConnexite();
-        void ajouterArete(arete*);
-        void afficherData() const;
-        void afficherVoisins() const;
-        //std::vector<float> min_distance_voisin(std::vector<int>) const; //[id][cout]
+        void ajouterArete(int id,arete*a);
+
+        ///GET
         std::vector<Sommet*> getm_voisins() const;
         int getm_id() const;
         double getm_x() const;
         double getm_y() const;
-        //std::vector<arete*> getm_arete() const;
         std::unordered_map<int,arete*> getm_arete() const;
+
+        ///AFFICHAGE CONSOLE
+        void afficherData() const;
+        void afficherVoisins() const;
+
+        ///RECHERCHE COMP CONNEXES
         void rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i, const graphe &g, int stop) const;
         void rechercherCC(std::set<int> &sommetParcourus, const unsigned int &i) const;
+
+        ///RECREER LA CONNEXITE D'UN GRAPHE VIERGE
         void connexite();
-        void ajouterArete(int id,arete*a);
+
+        ///DETRUIT TOUTE LES CONNEXIONS
+        void resetConnexite();
+
+        ///RENVOIE DISTANCE
         float calcul_distance(int) const; //Calcul la distance avec le sommet entrée en parametre, uniquement distance avec sommet adj.
-        //std::pair<int,float> cout_min(std::unordered_set<int>) const; //Non utulisé finalement
-        int id_adjacent(int) const;
+
+        ///RENVOIE ID ARETE
         int id_arete(int id_sommet) const;
 
     private:
-        /// Voisinage : liste d'adjacence
+
         std::vector<Sommet*> m_voisins;
-        //std::vector<arete*> m_arete;
         std::unordered_map<int,arete*> m_arete;
-        /// Données spécifiques du sommet
-        int m_id; // Identifiant
-        double m_x, m_y; // Position
+        int m_id;
+        double m_x, m_y;
 
 };
 

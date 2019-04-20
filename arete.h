@@ -9,17 +9,24 @@ class Sommet;
 class arete
 {
     public:
+        ///CONSTRUCTEURS
         arete();
         arete(int,std::vector<float>,Sommet*, Sommet*);
         arete(int,float,float,Sommet*,Sommet*);
         arete(int, Sommet*, Sommet*);
-        void afficher() const;
         ~arete();
-        void ajouter_poids(float);
+
+        ///GET
         std::vector<Sommet*> getm_extremites() const;
         std::vector<float> getm_poids() const;
         int getm_id() const;
-        Sommet* getm_extremite(int) const; //renvoie seconde extre.
+
+        ///AFFICHAGE CONSOLE
+        void afficher() const;
+
+        ///SET
+        void set_poids(float);
+
         void afficher_les_prim();
 
     private:

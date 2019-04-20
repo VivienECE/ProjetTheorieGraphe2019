@@ -10,15 +10,10 @@
 class prioritize{public: bool operator ()(std::pair<int, float>&p1 ,std::pair<int, float>&p2){return p1.second>p2.second;}};
 graphe::~graphe()
 {
-    //std::cout << "je détruis" << std::endl;
-    for(auto &s : m_sommets)
+    /*for(auto &s : m_sommets)  //PLANTE MAIN
         delete s.second;
-    for(auto &s : m_aretes)
-        delete s.second;
-    /*std::cout << "je détruis encore" << std::endl;
     for(auto &s : m_aretes)
         delete s.second;*/
-    //std::cout << "je détruis toujours" << std::endl;
 }
 
 graphe::graphe()
@@ -52,10 +47,10 @@ graphe::graphe(const int &valeur, const graphe &g)
 
             //Met à jour les aretes des 2 sommets (extremités de l'arete selectionné)
             m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id())->second
-            ->ajouterArete(m_aretes.find(num_arete)->second);
+            ->ajouterArete(m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id(),m_aretes.find(num_arete)->second);
 
              m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id())->second
-            ->ajouterArete(m_aretes.find(num_arete)->second);
+            ->ajouterArete(m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id(),m_aretes.find(num_arete)->second);
         }
     }
 }
@@ -119,7 +114,7 @@ void graphe::lire_poids(std::string nomFichier)
         for(int j=0; j<ponderation; ++j)
         {
             ifs >> poids;
-            m_aretes.find(i)->second->ajouter_poids(poids);
+            m_aretes.find(i)->second->set_poids(poids);
         }
     }
 
@@ -152,7 +147,7 @@ graphe graphe::prim(int poids)
     ArbreCouvrant.m_sommets.insert({m_sommets.begin()->first, new Sommet   {m_sommets.begin()->second->getm_id(),
                                                                             m_sommets.begin()->second->getm_x(),
                                                                             m_sommets.begin()->second->getm_y()}});
-    float tampon, newtampon;
+    float tampon=0, newtampon=0;
     arete *candidat1, *candidat2;
     int prems=1, dems=1;
     do
@@ -230,19 +225,6 @@ graphe graphe::prim(int poids)
     return ArbreCouvrant;
 }
 
-std::vector<bool> add(const std::vector<bool>& a, const std::vector<bool>& b)
-{
-        bool c;
-        std::vector<bool> result;
-        for(size_t i = 0; i < a.size() ; i++){
-                result.push_back(false);
-                result[i] = ((a[i] ^ b[i]) ^ c); // c is carry
-                c = ((a[i] & b[i]) | (a[i] & c)) | (b[i] & c);
-        }
-        return result;
-}
-
-
 std::vector <unsigned int> graphe::bruteforce_dist() const
 {
     std::cout << "je rentre dans bruteforce_dist" << std::endl;
@@ -300,10 +282,8 @@ std::vector <unsigned int> graphe::bruteforce_dist() const
     return espace_recherche_int;    // Pour finir, je retourne l'unordered_map qui contient mes combinaisons et les poids qui leurs sont associées
 }
 
-
 std::vector <unsigned int> graphe::bruteforce() const
 {
-    int stop=m_sommets.size();
     clock_t t1, t2;
     t1=clock();
     Sommet *s0 = m_sommets.begin()->second;
@@ -345,70 +325,6 @@ std::vector <unsigned int> graphe::bruteforce() const
     std::cout << "temps de compilation de brutefroce : " << (float)(t2 -t1)/1000 << std::endl;
     return espace_recherche_int;    // Pour finir, je retourne l'unordered_map qui contient mes combinaisons et les poids qui leurs sont associées
 }
-/*
-void rechercheCC(std::unordered_map <int, int> tabConnex, const unsigned int &i) const
-{
-    for(const auto &ar : m_arete)
-    {
-        if(i& (int)pow(2,ar->second->getm_id())
-        {
-            if(tabConnex.find(ar->second->getm_id()))
-            {
-
-            }
-        }
-    }
-}
-
-std::vector <unsigned int> graphe::bruteforce() const
-{
-    int stop=m_sommets.size();
-    clock_t t1, t2;
-    t1=clock();
-    Sommet *s0 = m_sommets.begin()->second;
-    std::vector <unsigned int> espace_recherche_int;
-    std::unordered_set <int> sommetParcourus;
-    std::unordered_map <int, int> tabConnex;
-    for (const auto &s : m_sommets)
-    {
-        tabConnex.insert({s->second->getm_id(),s->second->getm_id()});
-    }
-    std::string a;
-    int exp=0, puis=0;
-    std::vector <int> mesPos;
-    for(unsigned int i=0; i<m_aretes.size()-m_sommets.size()+1; i++)
-    {
-        a+="0";
-    }
-    for(unsigned int i =0; i< m_sommets.size()-1; i++)
-    {
-        a+="1";
-    }
-    do {
-        //++i;
-        for(const auto &b : a)
-        {
-            if(b=='1')
-            {
-                puis+=(int)pow(2,exp);
-            }
-            exp++;
-        }
-        s0->rechercherCC(sommetParcourus, puis);
-        if(sommetParcourus.size()==m_sommets.size())
-        {
-            espace_recherche_int.push_back(puis);
-        }
-        sommetParcourus.clear();
-        puis=0;
-        exp=0;
-    } while(std::next_permutation(a.begin(), a.end()));
-    std::cout << "jai fini bruteforce" << std::endl;
-    std::cout << "taille de espace_recherche_int " << espace_recherche_int.size() << std::endl;
-    t2=clock();
-    std::cout << "temps de compilation de brutefroce : " << (float)(t2 -t1)/1000 << std::endl;
-    return espace_recherche_int;    // Pour finir, je retourne l'unordered_map qui contient mes combinaisons et les poids qui leurs sont associées
-}*/
 
 void graphe::poidsTotaux()
 {
@@ -721,10 +637,9 @@ float graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
 
         s_marques.emplace(p_queue.top().first,p_queue.top().second); //MARQUE LE SOMMET DE POIDS PLUS FAIBLE DE LA PILE
     }
-
     //SOMME LES POIDS DU PARCOURS DE DJIKSTRA
     for(const auto &i:s_marques)
-           somme+=i.second;
+        somme+=i.second;
 
    // std::cout << "DEBUG somme:" << somme <<std::endl;
     return somme;
@@ -739,7 +654,7 @@ std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I) const
 
     //SOMME DES DISTANCES TOTAL
     for(size_t i=0;i<m_sommets.size();i++)
-        somme_distance+=Djikstra_sommet(i,I);
+        somme_distance+=Djikstra_sommet((int)i,I);
 
     //SOMME DES COUTS DES ARETES
     for(const auto &i:m_aretes)
