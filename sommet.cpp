@@ -81,7 +81,7 @@ void Sommet::rechercherCC(std::unordered_set<int> &sommetParcourus, const unsign
     }
 }
 
-void Sommet::rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i) const
+void Sommet::rechercherCC(std::set<int> &sommetParcourus, const unsigned int &i) const
 {
     sommetParcourus.insert(m_id);
 
@@ -128,6 +128,8 @@ void Sommet::rechercherCC(std::unordered_set<int> &sommetParcourus, const unsign
         }*/
     }
 }
+
+
 
 int Sommet::getm_id() const {return m_id;}
 

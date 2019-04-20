@@ -3,6 +3,7 @@
 #include <stack>
 #include "math.h"
 #include <algorithm>
+#include <set>
 #include "time.h"
 #include "affichage.h"
 
@@ -247,7 +248,7 @@ std::vector <unsigned int> graphe::bruteforce_dist() const
     t1=clock();
     Sommet *s0 = m_sommets.begin()->second;
     std::vector <unsigned int> espace_recherche_int;
-    std::unordered_set <int> sommetParcourus;
+    std::set <int> sommetParcourus;
     std::string a;
     int exp=0, puis=0;
     //std::unordered_set <int> mesPosRef, mesPos;
@@ -305,7 +306,7 @@ std::vector <unsigned int> graphe::bruteforce() const
     t1=clock();
     Sommet *s0 = m_sommets.begin()->second;
     std::vector <unsigned int> espace_recherche_int;
-    std::unordered_set <int> sommetParcourus;
+    std::set <int> sommetParcourus;
     std::string a;
     int exp=0, puis=0;
     std::vector <int> mesPos;
@@ -342,7 +343,70 @@ std::vector <unsigned int> graphe::bruteforce() const
     std::cout << "temps de compilation de brutefroce : " << (float)(t2 -t1)/1000 << std::endl;
     return espace_recherche_int;    // Pour finir, je retourne l'unordered_map qui contient mes combinaisons et les poids qui leurs sont associées
 }
+/*
+void rechercheCC(std::unordered_map <int, int> tabConnex, const unsigned int &i) const
+{
+    for(const auto &ar : m_arete)
+    {
+        if(i& (int)pow(2,ar->second->getm_id())
+        {
+            if(tabConnex.find(ar->second->getm_id()))
+            {
 
+            }
+        }
+    }
+}
+
+std::vector <unsigned int> graphe::bruteforce() const
+{
+    int stop=m_sommets.size();
+    clock_t t1, t2;
+    t1=clock();
+    Sommet *s0 = m_sommets.begin()->second;
+    std::vector <unsigned int> espace_recherche_int;
+    std::unordered_set <int> sommetParcourus;
+    std::unordered_map <int, int> tabConnex;
+    for (const auto &s : m_sommets)
+    {
+        tabConnex.insert({s->second->getm_id(),s->second->getm_id()});
+    }
+    std::string a;
+    int exp=0, puis=0;
+    std::vector <int> mesPos;
+    for(unsigned int i=0; i<m_aretes.size()-m_sommets.size()+1; i++)
+    {
+        a+="0";
+    }
+    for(unsigned int i =0; i< m_sommets.size()-1; i++)
+    {
+        a+="1";
+    }
+    do {
+        //++i;
+        for(const auto &b : a)
+        {
+            if(b=='1')
+            {
+                puis+=(int)pow(2,exp);
+            }
+            exp++;
+        }
+        s0->rechercherCC(sommetParcourus, puis);
+        if(sommetParcourus.size()==m_sommets.size())
+        {
+            espace_recherche_int.push_back(puis);
+        }
+        sommetParcourus.clear();
+        puis=0;
+        exp=0;
+    } while(std::next_permutation(a.begin(), a.end()));
+    std::cout << "jai fini bruteforce" << std::endl;
+    std::cout << "taille de espace_recherche_int " << espace_recherche_int.size() << std::endl;
+    t2=clock();
+    std::cout << "temps de compilation de brutefroce : " << (float)(t2 -t1)/1000 << std::endl;
+    return espace_recherche_int;    // Pour finir, je retourne l'unordered_map qui contient mes combinaisons et les poids qui leurs sont associées
+}*/
 
 void graphe::poidsTotaux()
 {
@@ -415,8 +479,8 @@ void graphe::afficher_frontierePareto(BITMAP*page, bool dist) const
     for(const auto &i:frontiere) //FRONTIERE
     {
         if(dist==false)
-            mesPoids=frontiere_dist.find(i)->second;
-        else mesPoids=this->poidsTotauxDjikstra(i);
+            mesPoids=this->poidsTotaux(i);
+        else mesPoids = frontiere_dist.find(i)->second;
         circlefill(page, real_x(mesPoids[0]),real_y(mesPoids[1]), 2 , makecol(0,255,0));
     }
 

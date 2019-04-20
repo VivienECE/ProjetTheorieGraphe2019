@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <set>
 #include "arete.h"
 #include "graphe.h"
 #include <string>
@@ -28,7 +29,7 @@ class Sommet
         double getm_y() const;
         std::vector<arete*> getm_arete() const;
         void rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i, const graphe &g, int stop) const;
-        void rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i) const;
+        void rechercherCC(std::set<int> &sommetParcourus, const unsigned int &i) const;
         ~Sommet();
         void connexite();
         float calcul_distance(int) const; //Calcul la distance avec le sommet entrée en parametre, uniquement distance avec sommet adj.
