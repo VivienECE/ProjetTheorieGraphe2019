@@ -13,6 +13,8 @@ graphe::~graphe()
     //std::cout << "je détruis" << std::endl;
     for(auto &s : m_sommets)
         delete s.second;
+    for(auto &s : m_aretes)
+        delete s.second;
     /*std::cout << "je détruis encore" << std::endl;
     for(auto &s : m_aretes)
         delete s.second;*/
@@ -92,8 +94,8 @@ graphe::graphe(std::string nomFichier){
         (m_sommets.find(id_voisin))->second->ajouterVoisin((m_sommets.find(id))->second);//remove si graphe orienté
          m_aretes.insert({id_arete,new arete{id_arete,(m_sommets.find(id))->second,(m_sommets.find(id_voisin))->second}});
          //Ajout de l'arete au 2 sommets m_aretes.find(id_arete);
-         (m_sommets.find(id))->second->ajouterArete(m_aretes.find(id_arete)->second);
-         (m_sommets.find(id_voisin))->second->ajouterArete(m_aretes.find(id_arete)->second);
+         (m_sommets.find(id))->second->ajouterArete(id_voisin,m_aretes.find(id_arete)->second);
+         (m_sommets.find(id_voisin))->second->ajouterArete(id,m_aretes.find(id_arete)->second);
 
     }
 }
@@ -712,7 +714,7 @@ float graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
         id=p_queue.top().first; //ENREGISTRE LE PREMIER SOMMET ET SA DISTANCE TOTAL AU SOMMET D'ORIGINE
         poids=p_queue.top().second; //MEMOIRE
         p_queue.pop(); //EJECTE
-        for(const auto i:m_sommets.find(id)->second->getm_voisins()) //Parcours sommets adj
+        for(const auto &i:m_sommets.find(id)->second->getm_voisins()) //Parcours sommets adj
          if(I & (int)pow(2,i->id_arete(id)) )//Si l'arrete existe, evite de recrée un graphe, verif
             if(s_marques.count(i->getm_id())==0) //Si sommet non marqués
                 p_queue.push(std::make_pair(i->getm_id(),i->calcul_distance(id)+poids)); //RAJOUTE A LA PILE PRIORITAIRE
@@ -721,11 +723,9 @@ float graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
     }
 
     //SOMME LES POIDS DU PARCOURS DE DJIKSTRA
-    for(const auto i:s_marques)
-    {
-        //std::cout<< "id :" << i.first << " Distance :" << i.second << std::endl;//EVITE LA SYMETRIE
+    for(const auto &i:s_marques)
            somme+=i.second;
-    }
+
    // std::cout << "DEBUG somme:" << somme <<std::endl;
     return somme;
 }
@@ -742,20 +742,19 @@ std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I) const
         somme_distance+=Djikstra_sommet(i,I);
 
     //SOMME DES COUTS DES ARETES
-    for(const auto i:m_aretes)
+    for(const auto &i:m_aretes)
         if(I & (int)pow(2,i.second->getm_id()) )
-            for(const auto j:i.second->getm_poids())
+            for(const auto &j:i.second->getm_poids())
                 if(j!=i.second->getm_poids().back())
                     somme_cout+=j;
     //PUSH VECTEUR FLOAT
     poidsTotaux.push_back(somme_cout);
     poidsTotaux.push_back(somme_distance);
-/*
-    std::cout <<"DEBUG ( ";
+
+    /*std::cout <<"DEBUG ( ";
     for(const auto i:poidsTotaux)
        std::cout << i << " ";
-    std::cout <<")" <<std::endl;//system("pause");
-*/
+    std::cout <<")" <<std::endl;//system("pause");*/
 
     return poidsTotaux;
 }
