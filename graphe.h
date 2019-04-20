@@ -6,7 +6,7 @@
 #include "sommet.h"
 #include "arete.h"
 #include "allegro.h"
-
+#include "affichage.h"
 #include "sommet.h"
 #include <fstream>
 #include <iostream>
@@ -19,14 +19,14 @@
 #define ORY 550
 #define LONGUEURGRAD 5
 #define LONGUEURGRAD2 2
-#define COEFFICIENTX 0.4
-#define COEFFICIENTY 2
 #define NBGRADX 4000
-#define NBGRADY 100
+#define NBGRADY 150
 #define PASY1 10
 #define PASY2 5
 #define PASX1 200
 #define PASX2 50
+
+typedef struct coefAlleg;
 
 class Sommet;
 class arete;
@@ -43,7 +43,7 @@ class graphe
         void afficher() const;
         void afficher_allegro(BITMAP*, const int &i) const;
         void afficher_allegro(BITMAP*) const;
-        void afficher_frontierePareto(BITMAP*page, bool dist) const;//ONLY 2D ou 1D
+        void afficher_frontierePareto(BITMAP*page, const bool &dist, const struct coefAlleg &mesCoef) const;//ONLY 2D ou 1D
 
         void ajouter_arete(int,float,float, Sommet*, Sommet*);
         void ajouter_connexite() const;
@@ -71,7 +71,7 @@ class graphe
 
 std::vector<bool> add(const std::vector<bool>& a, const std::vector<bool>& b);
 
-float real_x(float x);
-float real_y(float y);
+float real_x(float x, int coef);
+float real_y(float y, int coef);
 
 #endif // GRAPHE_H

@@ -51,12 +51,12 @@ void afficher_allegro_prim(graphe &g)
     destroy_bitmap(page);
 }
 
-void afficherFrontierePareto_allegro(const graphe &g, bool dist) //Affiche la frontier du graphe
+void afficherFrontierePareto_allegro(const graphe &g, const bool &dist, const t_coef &mesCoef) //Affiche la frontier du graphe
 {
     BITMAP*page;
     //PARTIE AFFICHAGE
     page=create_bitmap(800,600);
-    g.afficher_frontierePareto(page, dist);
+    g.afficher_frontierePareto(page, dist, mesCoef);
     blit(page, screen,0,0,0,0, 800,600);
     while (!key[KEY_ESC])
     {

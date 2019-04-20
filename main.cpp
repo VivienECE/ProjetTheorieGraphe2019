@@ -15,19 +15,17 @@
 
 int saisie(const int& borneInf, const int& borneSup);
 
+void initValAlleg(t_coef &mesCoef, const unsigned int &choixF, const unsigned int &choixAleg);
+
 
 int main()
 {
     init_Allegro();
-    /*
-    graphe g{"broadway.txt"};
-    g.lire_poids("broadway_weights_0.txt");
-    std::vector<unsigned int> Liste=g.bruteforce_dist();
-    afficher_allegro2(g,Liste);
-    std::cout << Liste.size() <<std::endl;*/
     graphe g;
     unsigned int choixAlgo=0, choixFich=0, choixP=0;
+    unsigned int larg, haut;
     std::string fichier, fichierP;
+    t_coef mesCoefs;
     do
     {
         std::cout   << "Quel graphe voulez-vous tracer ?"  <<std::endl
@@ -87,10 +85,11 @@ int main()
             afficher_allegro_prim(g);
             break;
         case PARETO :
-            afficherFrontierePareto_allegro(g, false);
+            initValAlleg(mesCoefs, choixFich, choixAlgo);
+            afficherFrontierePareto_allegro(g, false, mesCoefs);
             break;
         case PARETO_DIST :
-            afficherFrontierePareto_allegro(g, true);
+            afficherFrontierePareto_allegro(g, true, mesCoefs);
             break;
         case QUITTER :
             exit(EXIT_SUCCESS);
@@ -120,6 +119,43 @@ int saisie(const int& borneInf, const int& borneSup)
             std::cout << "Votre choix doit etre compris entre " << borneInf << " et " << borneSup << ", recommencez :";
     }
     return choix;
+}
+
+void initValAlleg(t_coef &mesCoef, const unsigned int &choixF, const unsigned int &choixAleg)
+{
+    if ((choixF==MANHATTAN)&&(choixAleg==PARETO_DIST))
+    {
+        mesCoef.coefficient_X=0.1;
+        mesCoef.coefficient_Y=2;
+        mesCoef.nbGrad_X=6000;
+        mesCoef.nbGrad_Y=200;
+        mesCoef.pas_X1=1000;
+        mesCoef.pas_X2=200;
+        mesCoef.pas_Y1=20;
+        mesCoef.pas_Y2=5;
+    }
+    else if ((choixF==MANHATTAN)&&(choixAleg==PARETO))
+    {
+        mesCoef.coefficient_X=5;
+        mesCoef.coefficient_Y=5;
+        mesCoef.nbGrad_X=130;
+        mesCoef.nbGrad_Y=130;
+        mesCoef.pas_X1=10;
+        mesCoef.pas_X2=5;
+        mesCoef.pas_Y1=10;
+        mesCoef.pas_Y2=5;
+    }
+    /*else if ((choixF==TRIVILLE)&&(choixAleg==PARETO))
+    {
+        mesCoef.coefficient_X=3;
+        mesCoef.coefficient_Y=3;
+        mesCoef.nbGrad_X=150;
+        mesCoef.nbGrad_Y=150;
+        mesCoef.pas_X1=10;
+        mesCoef.pas_X2=5;
+        mesCoef.pas_Y1=10;
+        mesCoef.pas_Y2=5;
+    }*/
 }
 
 END_OF_MAIN();

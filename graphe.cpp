@@ -423,17 +423,17 @@ void graphe::poidsTotaux()
     }
 }
 
-float real_x(float x)
+float real_x(float x, int coef)
 {
-    return x*COEFFICIENTX+ORX;
+    return x*coef+ORX;
 }
 
-float real_y(float y)
+float real_y(float y, int coef)
 {
-    return ORY-y*COEFFICIENTY;
+    return ORY-y*coef;
 }
 
-void graphe::afficher_frontierePareto(BITMAP*page, bool dist) const
+void graphe::afficher_frontierePareto(BITMAP*page, const bool &dist, const t_coef &mesCoef) const
 {
     clock_t t1, t2;
     //TOUT AFFICHER+SURLIGNER FRONTIERE
@@ -473,7 +473,7 @@ void graphe::afficher_frontierePareto(BITMAP*page, bool dist) const
         if(dist==false)
             mesPoids=this->poidsTotaux(i);
         else mesPoids = frontiere_dist.find(i)->second;
-        circle(page, real_x(mesPoids[0]),real_y(mesPoids[1]), 1 , makecol(255,255,255));
+        circle(page, real_x(mesPoids[0], mesCoef.coefficient_X),real_y(mesPoids[1], mesCoef.coefficient_Y), 1 , makecol(255,255,255));
     }
     std::cout << "ji me tlouve prisontement don affichi frontier2" << std::endl;
     for(const auto &i:frontiere) //FRONTIERE
@@ -481,32 +481,33 @@ void graphe::afficher_frontierePareto(BITMAP*page, bool dist) const
         if(dist==false)
             mesPoids=this->poidsTotaux(i);
         else mesPoids = frontiere_dist.find(i)->second;
-        circlefill(page, real_x(mesPoids[0]),real_y(mesPoids[1]), 2 , makecol(0,255,0));
+        circlefill(page, real_x(mesPoids[0], mesCoef.coefficient_X),real_y(mesPoids[1], mesCoef.coefficient_Y), 2 , makecol(0,255,0));
     }
 
     std::cout << "ji me tlouve prisontement don affichi frontier3" << std::endl;
-    longueurX=(NBGRADX)*COEFFICIENTX;
-    longueurY=(NBGRADY)*COEFFICIENTY;
+    longueurX=(mesCoef.nbGrad_X)*mesCoef.coefficient_X;
+    longueurY=(mesCoef.nbGrad_Y)*mesCoef.coefficient_Y;
 
     line(page, ORX,ORY,ORX,ORY-longueurY,makecol(255,255,255));
     line(page, ORX,ORY,ORX+longueurX,ORY,makecol(255,255,255));
-    for(int i=0; i<NBGRADX; i+=PASX2)
+    for(int i=0; i<mesCoef.nbGrad_X; i+=mesCoef.pas_X2)
     {
-        if(i%PASX1==0)
+        if(i%mesCoef.pas_X1==0)
         {
-            line(page, real_x(i), ORY+LONGUEURGRAD, real_x(i), ORY-LONGUEURGRAD, makecol(200,200,200));
+            line(page, real_x(i, mesCoef.coefficient_X), ORY+LONGUEURGRAD, real_x(i, mesCoef.coefficient_X), ORY-LONGUEURGRAD, makecol(200,200,200));
         }
-        line(page, real_x(i), ORY+LONGUEURGRAD2, real_x(i), ORY-LONGUEURGRAD2, makecol(200,200,200));
+        line(page, real_x(i, mesCoef.coefficient_X), ORY+LONGUEURGRAD2, real_x(i, mesCoef.coefficient_X), ORY-LONGUEURGRAD2, makecol(200,200,200));
     }
-    for(int i=0; i<NBGRADY; i+=PASY2)
+    for(int i=0; i<mesCoef.nbGrad_Y; i+=mesCoef.pas_Y2)
     {
-        if(i%PASY1==0)
+        if(i%mesCoef.pas_Y1==0)
         {
-            line(page, ORX-LONGUEURGRAD, real_y(i), ORX+LONGUEURGRAD, real_y(i), makecol(200,200,200));
+            line(page, ORX-LONGUEURGRAD, real_y(i, mesCoef.coefficient_Y), ORX+LONGUEURGRAD, real_y(i, mesCoef.coefficient_Y), makecol(200,200,200));
         }
-        line(page, ORX-LONGUEURGRAD2, real_y(i), ORX+LONGUEURGRAD2, real_y(i), makecol(200,200,200));
+        line(page, ORX-LONGUEURGRAD2, real_y(i, mesCoef.coefficient_Y), ORX+LONGUEURGRAD2, real_y(i, mesCoef.coefficient_Y), makecol(200,200,200));
     }
     std::cout << "jai fini l'affichage" << std::endl;
+    //system("pause");
 }
 
 std::vector<float> graphe::poidsTotaux(unsigned int i) const
@@ -585,6 +586,7 @@ std::vector<unsigned int> graphe::frontierePareto(std::vector<unsigned int> espa
 
 std::unordered_map <unsigned int, std::vector<float>> graphe::frontierePareto_dist(std::vector<unsigned int> &espace_recherche_int) const//RENVOIE LA FRONTIERE
 {
+    std::cout << "je rentre dans frontierepareto_dist" << std::endl;
     /// On aura ici deux unordered_map du même type que notre espace de recherche :
     /// - Une stockant tous les sommets qui ne sont pas à la frontière 'NONfrontiere'
     /// - Une stockant tous les sommets qui sont à la frontière 'frontiere'
@@ -598,13 +600,13 @@ std::unordered_map <unsigned int, std::vector<float>> graphe::frontierePareto_di
     //std::cout << "jai insert dans mesPoids" << std::endl;
     int incrementBoucle2=0, incrementBoucle1=0, paspossible=0, reste=0;
     size_t marqueur1,marqueur2=0;
-    for(int j=0;j<=3;j++)
+    /*for(int j=0;j<=3;j++)
         {
             for(const auto i:espace_recherche_int)
             this->poidsTotauxDjikstra(i);
             std::cout << std::endl;
         }
-    system("pause");
+    system("pause");*/
 
     do
     {
