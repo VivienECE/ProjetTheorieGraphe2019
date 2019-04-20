@@ -7,11 +7,7 @@ arete::arete()
 
 arete::~arete()
 {
-    //std::cout << " et moi aussi " << std::endl;
-    //MODIF V
-    for (auto it : m_extremites)
-        delete it;
-    //MODIF V
+
 }
 
 std::vector<Sommet*> arete::getm_extremites() const {return m_extremites;}
@@ -19,8 +15,6 @@ std::vector<Sommet*> arete::getm_extremites() const {return m_extremites;}
 std::vector<float> arete::getm_poids() const {return m_poids;}
 
 int arete::getm_id() const {return m_id;}
-
-Sommet* arete::getm_extremite(int i) const {return m_extremites[i];}
 
 arete::arete(int id,float P1,float P2 ,Sommet* S1, Sommet* S2):m_id(id)
 {
@@ -46,7 +40,7 @@ arete::arete(int id,  Sommet* debut,  Sommet* fin):m_id(id)
     m_extremites.push_back(fin);
 }
 
-void arete::ajouter_poids(float poids)
+void arete::set_poids(float poids)
 {
     m_poids.push_back(poids);
 }
@@ -60,16 +54,4 @@ void arete::afficher() const
     for (auto j:m_poids)
         std::cout<< " : "<< j ;
     std::cout<< std::endl;
-}
-
-float arete::getm_distance(int a, int b) const
-{
-    //this->afficher();// PAS DE POIDS???
-    if( ((getm_extremites()[0]->getm_id()==a) && (getm_extremites()[1]->getm_id()==b))
-       ||((getm_extremites()[0]->getm_id()==b) && (getm_extremites()[1]->getm_id()==a)))
-        {
-            return m_poids.back();
-        }
-    else
-        return 0;
 }

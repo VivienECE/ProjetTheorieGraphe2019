@@ -28,4 +28,12 @@ void afficherFrontierePareto_allegro(const graphe &g, const bool &dist, const t_
     //PARTIE AFFICHAGE
     page=create_bitmap(800,600);
     g.afficher_frontierePareto(page, dist, mesCoef);
+    blit(page, screen,0,0,0,0, 800,600);
+    while (!key[KEY_ESC])
+    {
+
+    }
+    std::cout <<" Adios";
+    destroy_bitmap(page);
+
 }

@@ -10,6 +10,10 @@
 class prioritize{public: bool operator ()(std::pair<int, float>&p1 ,std::pair<int, float>&p2){return p1.second>p2.second;}};
 graphe::~graphe()
 {
+    for(auto &s : m_sommets)  //PLANTE MAIN
+        delete s.second;
+    for(auto &s : m_aretes)
+        delete s.second;
 
 }
 
@@ -49,7 +53,6 @@ graphe::graphe(const int &valeur, const graphe &g)
 
              m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id())->second
             ->ajouterArete(m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id(),m_aretes.find(num_arete)->second);
-            //MODIF V
         }
     }
 }
@@ -113,7 +116,7 @@ void graphe::lire_poids(std::string nomFichier)
         for(int j=0; j<ponderation; ++j)
         {
             ifs >> poids;
-            m_aretes.find(i)->second->ajouter_poids(poids);
+            m_aretes.find(i)->second->set_poids(poids);
         }
     }
 
@@ -146,7 +149,7 @@ graphe graphe::prim(int poids)
     ArbreCouvrant.m_sommets.insert({m_sommets.begin()->first, new Sommet   {m_sommets.begin()->second->getm_id(),
                                                                             m_sommets.begin()->second->getm_x(),
                                                                             m_sommets.begin()->second->getm_y()}});
-    float tampon, newtampon;
+    float tampon=0, newtampon=0;
     arete *candidat1, *candidat2;
     int prems=1, dems=1;
     do
@@ -224,19 +227,6 @@ graphe graphe::prim(int poids)
     return ArbreCouvrant;
 }
 
-std::vector<bool> add(const std::vector<bool>& a, const std::vector<bool>& b)
-{
-        bool c;
-        std::vector<bool> result;
-        for(size_t i = 0; i < a.size() ; i++){
-                result.push_back(false);
-                result[i] = ((a[i] ^ b[i]) ^ c); // c is carry
-                c = ((a[i] & b[i]) | (a[i] & c)) | (b[i] & c);
-        }
-        return result;
-}
-
-
 std::vector <unsigned int> graphe::bruteforce_dist() const
 {
     std::cout << "je rentre dans bruteforce_dist" << std::endl;
@@ -294,10 +284,8 @@ std::vector <unsigned int> graphe::bruteforce_dist() const
     return espace_recherche_int;    // Pour finir, je retourne l'unordered_map qui contient mes combinaisons et les poids qui leurs sont associées
 }
 
-
 std::vector <unsigned int> graphe::bruteforce() const
 {
-    int stop=m_sommets.size();
     clock_t t1, t2;
     t1=clock();
     Sommet *s0 = m_sommets.begin()->second;
@@ -700,34 +688,31 @@ void graphe::afficher_allegro(BITMAP*page, const int &i) const
 float graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
 {
     //INI
-    //std::cout<< "DEBUG DEPUIS SOMMET :" << id_debut<< std::endl;
-    float somme=0;
     std::priority_queue<std::pair <int,float>,std::vector<std::pair<int,float>>, prioritize> p_queue; //QUEUE PRIORITAIRE, TRI PAR POIDS DECROISSANT, DEF Ligne 3, graphe.Cpp
     std::unordered_map<int,float> s_marques; s_marques.emplace(id_debut,0);
-    int id;float poids;
     p_queue.push(std::make_pair(id_debut,0));
 
     //PARCOURS BFS PILE PRIORITAIRE, TJR EN PREMIER LE SOMMET AVEC PLUS PETIT POIDS
     while(p_queue.size()!=0)
     {
-        id=p_queue.top().first; //ENREGISTRE LE PREMIER SOMMET ET SA DISTANCE TOTAL AU SOMMET D'ORIGINE
-        poids=p_queue.top().second; //MEMOIRE
+        int id=p_queue.top().first; //ENREGISTRE LE PREMIER SOMMET ET SA DISTANCE TOTAL AU SOMMET D'ORIGINE
+        float poids=p_queue.top().second; //MEMOIRE
         p_queue.pop(); //EJECTE
         for(const auto &i:m_sommets.find(id)->second->getm_voisins()) //Parcours sommets adj
          if(I & (int)pow(2,i->id_arete(id)) )//Si l'arrete existe, evite de recrée un graphe, verif
-            if(s_marques.count(i->getm_id())==0) //Si sommet non marqués
-                p_queue.push(std::make_pair(i->getm_id(),i->calcul_distance(id)+poids)); //RAJOUTE A LA PILE PRIORITAIRE
+           // if(s_marques.count(i->getm_id())==0) //Si sommet non marqués
+            if(s_marques.find(i->getm_id())==s_marques.end())
+                p_queue.push(std::make_pair(i->getm_id(),i->get_distance(id)+poids)); //RAJOUTE A LA PILE PRIORITAIRE
 
         s_marques.emplace(p_queue.top().first,p_queue.top().second); //MARQUE LE SOMMET DE POIDS PLUS FAIBLE DE LA PILE
     }
+    s_marques.clear();
 
     //SOMME LES POIDS DU PARCOURS DE DJIKSTRA
+    float somme=0;
     for(const auto &i:s_marques)
-    {
-        //std::cout<< "id :" << i.first << " Distance :" << i.second << std::endl;//EVITE LA SYMETRIE
-           somme+=i.second;
-    }
-   // std::cout << "DEBUG somme:" << somme <<std::endl;
+        somme+=i.second;
+
     return somme;
 }
 
@@ -740,7 +725,7 @@ std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I) const
 
     //SOMME DES DISTANCES TOTAL
     for(size_t i=0;i<m_sommets.size();i++)
-        somme_distance+=Djikstra_sommet(i,I);
+        somme_distance+=Djikstra_sommet((int)i,I);
 
     //SOMME DES COUTS DES ARETES
     for(const auto &i:m_aretes)

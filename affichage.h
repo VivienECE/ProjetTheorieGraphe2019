@@ -23,9 +23,12 @@ typedef struct coefAlleg
 
 class graphe;
 
-void afficher_allegro(const std::unordered_map <int, std::vector<float>> &espace_recherche_int, const graphe &g_base);
+///Affiche les 2 arbres couvrant minimum
 void afficher_allegro_prim(graphe &g);
+
+///Affiche la frontiere de Pareto
 void afficherFrontierePareto_allegro(const graphe &g, const bool &dist, const t_coef &mesCoefs);
-double convert(double);
+
+///Fonction debuggage, affiche les graphes.
 void afficher_allegro2(const graphe &g_base,const std::vector<unsigned int> espace_recherche_int);
 #endif // AFFICHAGE_H_INCLUDED
