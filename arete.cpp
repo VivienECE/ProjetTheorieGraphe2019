@@ -7,9 +7,8 @@ arete::arete()
 
 arete::~arete()
 {
-    //std::cout << " et moi aussi " << std::endl;
-    for (auto it : m_extremites)
-        delete it;
+    /*for (auto it : m_extremites)
+        delete it;*/ //NOP
 }
 
 std::vector<Sommet*> arete::getm_extremites() const {return m_extremites;}

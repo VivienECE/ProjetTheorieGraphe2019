@@ -11,12 +11,9 @@
 #define PARETO 2
 #define PARETO_DIST 3
 
-
-
 int saisie(const int& borneInf, const int& borneSup);
 
 void initValAlleg(t_coef &mesCoef, const unsigned int &choixF, const unsigned int &choixAleg);
-
 
 int main()
 {
@@ -100,7 +97,6 @@ int main()
     }while (choixAlgo !=0);
     return 0;
 }
-
 
 // Code inspiré de cpp.developpez.com
 int saisie(const int& borneInf, const int& borneSup)

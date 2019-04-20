@@ -44,8 +44,8 @@ class Sommet
         ///DETRUIT TOUTE LES CONNEXIONS
         void resetConnexite();
 
-        ///RENVOIE DISTANCE
-        float calcul_distance(int) const; //Calcul la distance avec le sommet entrée en parametre, uniquement distance avec sommet adj.
+        ///RENVOIE DISTANCE ENTRE THIS SOMMET ET L'ID DU SOMMET EN PARAMETRE
+        float get_distance(int) const; //Calcul la distance avec le sommet entrée en parametre, uniquement distance avec sommet adj.
 
         ///RENVOIE ID ARETE
         int id_arete(int id_sommet) const;

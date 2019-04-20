@@ -15,8 +15,6 @@ Sommet::Sommet()
 
 Sommet::~Sommet()
 {
-    for(auto &s : m_voisins)
-        delete s;
     for(auto &s : m_arete)
         delete s.second;
 }
@@ -153,7 +151,7 @@ void Sommet::ajouterArete(int id,arete*a)
     m_arete.emplace(id,a);
 }
 
-float Sommet::calcul_distance(int id_voisin) const
+float Sommet::get_distance(int id_voisin) const
 {
     return m_arete.find(id_voisin)->second->getm_poids()[m_arete.find(id_voisin)->second->getm_poids().size()-1];
 }
