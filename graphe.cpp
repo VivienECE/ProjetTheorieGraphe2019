@@ -600,14 +600,6 @@ std::unordered_map <unsigned int, std::vector<float>> graphe::frontierePareto_di
     //std::cout << "jai insert dans mesPoids" << std::endl;
     int incrementBoucle2=0, incrementBoucle1=0, paspossible=0, reste=0;
     size_t marqueur1,marqueur2=0;
-    /*for(int j=0;j<=3;j++)
-        {
-            for(const auto i:espace_recherche_int)
-            this->poidsTotauxDjikstra(i);
-            std::cout << std::endl;
-        }
-    system("pause");*/
-
     do
     {
         //std::cout << "Nouveau COMP1" << std::endl;
