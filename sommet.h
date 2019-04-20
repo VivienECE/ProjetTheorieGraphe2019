@@ -16,7 +16,6 @@ class Sommet
     public:
         ///constructeur qui reçoit en params les données du sommet
         Sommet();
-        ~Sommet();
         Sommet(int,double,double);
         void ajouterVoisin(Sommet*);
         void resetConnexite();
@@ -32,6 +31,7 @@ class Sommet
         std::unordered_map<int,arete*> getm_arete() const;
         void rechercherCC(std::unordered_set<int> &sommetParcourus, const unsigned int &i, const graphe &g, int stop) const;
         void rechercherCC(std::set<int> &sommetParcourus, const unsigned int &i) const;
+        ~Sommet();
         void connexite();
         void ajouterArete(int id,arete*a);
         float calcul_distance(int) const; //Calcul la distance avec le sommet entrée en parametre, uniquement distance avec sommet adj.

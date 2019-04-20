@@ -26,7 +26,7 @@
 #define PASX1 200
 #define PASX2 50
 
-//typedef struct coefAlleg;
+typedef struct coefAlleg;
 
 class Sommet;
 class arete;

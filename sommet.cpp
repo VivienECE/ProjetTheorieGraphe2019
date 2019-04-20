@@ -13,14 +13,6 @@ Sommet::Sommet()
 
 }
 
-Sommet::~Sommet()
-{
-    for(auto &s : m_voisins)
-        delete s;
-    for(auto &s : m_arete)
-        delete s.second;
-}
-
 Sommet::Sommet(int id,double x,double y):m_id{id},m_x{x},m_y{y}
 {
 }
@@ -34,7 +26,6 @@ void Sommet::resetConnexite(){
         delete v;
     for(const auto &a : m_arete)
         delete a.second;
-
     m_voisins.clear();
     m_arete.clear();
 }
@@ -148,6 +139,15 @@ double Sommet::getm_y() const {return m_y;}
 
 std::unordered_map<int,arete*> Sommet::getm_arete() const {return m_arete;}
 
+Sommet::~Sommet()
+{/*
+    for(auto it : m_voisins)
+        delete it;
+    std::cout << "arthur a envie de fr caca" << std::endl;*/
+    for(auto it : m_arete)
+        delete it.second;
+}
+
 void Sommet::ajouterArete(arete*a)
 {
     //m_arete.push_back(a);
@@ -167,5 +167,19 @@ std::vector<Sommet*> Sommet::getm_voisins() const {return m_voisins;}
 
 int Sommet::id_arete(int id_sommet) const
 {
-    return m_arete.find(id_sommet)->second->getm_id();
+    //std::cout << "DEBUG NB ARETES:" << m_arete.size() << " SOMMET "
+    //<< id_sommet << " et " << m_id << std::endl;
+
+    for(const auto i:m_arete) //PARCOURS LES ARETES DU SOMMET
+    {
+        if( ((i.second->getm_extremite(0)->getm_id()==id_sommet) && (i.second->getm_extremite(1)->getm_id()==m_id) )
+            || ((i.second->getm_extremite(1)->getm_id()==id_sommet) && (i.second->getm_extremite(0)->getm_id()==m_id)))
+        //SI UNE ARETE A LES 2 ID EN EXTREMITES, RETOUR ID DE L'ARETE
+        {
+            //std::cout <<"DEBUG retour id_arete:" << i->getm_id() << std::endl << std::endl;
+            return i.second->getm_id();
+        }
+    }
+    std::cout << "DEBUG Erreur sommet.cpp/id_arete" << std::endl;
+    return -1;
 }
