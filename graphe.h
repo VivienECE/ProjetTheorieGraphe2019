@@ -71,7 +71,7 @@ class graphe
 
 std::vector<bool> add(const std::vector<bool>& a, const std::vector<bool>& b);
 
-float real_x(float x, int coef);
-float real_y(float y, int coef);
+float real_x(float x, float coef);
+float real_y(float y, float coef);
 
 #endif // GRAPHE_H

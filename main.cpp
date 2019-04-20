@@ -89,6 +89,7 @@ int main()
             afficherFrontierePareto_allegro(g, false, mesCoefs);
             break;
         case PARETO_DIST :
+            initValAlleg(mesCoefs, choixFich, choixAlgo);
             afficherFrontierePareto_allegro(g, true, mesCoefs);
             break;
         case QUITTER :
@@ -125,14 +126,14 @@ void initValAlleg(t_coef &mesCoef, const unsigned int &choixF, const unsigned in
 {
     if ((choixF==MANHATTAN)&&(choixAleg==PARETO_DIST))
     {
-        mesCoef.coefficient_X=0.1;
-        mesCoef.coefficient_Y=2;
-        mesCoef.nbGrad_X=6000;
-        mesCoef.nbGrad_Y=200;
-        mesCoef.pas_X1=1000;
-        mesCoef.pas_X2=200;
-        mesCoef.pas_Y1=20;
-        mesCoef.pas_Y2=5;
+        mesCoef.coefficient_X=6;
+        mesCoef.coefficient_Y=0.06;
+        mesCoef.nbGrad_X=180;
+        mesCoef.nbGrad_Y=10000;
+        mesCoef.pas_X1=20;
+        mesCoef.pas_X2=5;
+        mesCoef.pas_Y1=1000;
+        mesCoef.pas_Y2=100;
     }
     else if ((choixF==MANHATTAN)&&(choixAleg==PARETO))
     {
@@ -145,17 +146,28 @@ void initValAlleg(t_coef &mesCoef, const unsigned int &choixF, const unsigned in
         mesCoef.pas_Y1=10;
         mesCoef.pas_Y2=5;
     }
-    /*else if ((choixF==TRIVILLE)&&(choixAleg==PARETO))
+    else if ((choixF==TRIVILLE)&&(choixAleg==PARETO))
     {
-        mesCoef.coefficient_X=3;
-        mesCoef.coefficient_Y=3;
-        mesCoef.nbGrad_X=150;
-        mesCoef.nbGrad_Y=150;
+        mesCoef.coefficient_X=6;
+        mesCoef.coefficient_Y=6;
+        mesCoef.nbGrad_X=80;
+        mesCoef.nbGrad_Y=70;
         mesCoef.pas_X1=10;
-        mesCoef.pas_X2=5;
+        mesCoef.pas_X2=2;
         mesCoef.pas_Y1=10;
-        mesCoef.pas_Y2=5;
-    }*/
+        mesCoef.pas_Y2=2;
+    }
+    else if ((choixF==TRIVILLE)&&(choixAleg==PARETO_DIST))
+    {
+        mesCoef.coefficient_X=6;
+        mesCoef.coefficient_Y=6;
+        mesCoef.nbGrad_X=80;
+        mesCoef.nbGrad_Y=70;
+        mesCoef.pas_X1=10;
+        mesCoef.pas_X2=2;
+        mesCoef.pas_Y1=10;
+        mesCoef.pas_Y2=2;
+    }
 }
 
 END_OF_MAIN();

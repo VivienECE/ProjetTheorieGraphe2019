@@ -10,13 +10,7 @@
 class prioritize{public: bool operator ()(std::pair<int, float>&p1 ,std::pair<int, float>&p2){return p1.second>p2.second;}};
 graphe::~graphe()
 {
-    //std::cout << "je détruis" << std::endl;
-    for(auto &s : m_sommets)
-        delete s.second;
-    /*std::cout << "je détruis encore" << std::endl;
-    for(auto &s : m_aretes)
-        delete s.second;*/
-    //std::cout << "je détruis toujours" << std::endl;
+
 }
 
 graphe::graphe()
@@ -49,11 +43,13 @@ graphe::graphe(const int &valeur, const graphe &g)
                                         m_sommets.find(g.m_aretes.find((int)num_arete)->second->getm_extremites()[1]->getm_id())->second}});
 
             //Met à jour les aretes des 2 sommets (extremités de l'arete selectionné)
+            //MODIF V
             m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id())->second
-            ->ajouterArete(m_aretes.find(num_arete)->second);
+            ->ajouterArete(m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id(),m_aretes.find(num_arete)->second);
 
              m_sommets.find(m_aretes.find(num_arete)->second->getm_extremites()[1]->getm_id())->second
-            ->ajouterArete(m_aretes.find(num_arete)->second);
+            ->ajouterArete(m_aretes.find(num_arete)->second->getm_extremites()[0]->getm_id(),m_aretes.find(num_arete)->second);
+            //MODIF V
         }
     }
 }
@@ -92,8 +88,8 @@ graphe::graphe(std::string nomFichier){
         (m_sommets.find(id_voisin))->second->ajouterVoisin((m_sommets.find(id))->second);//remove si graphe orienté
          m_aretes.insert({id_arete,new arete{id_arete,(m_sommets.find(id))->second,(m_sommets.find(id_voisin))->second}});
          //Ajout de l'arete au 2 sommets m_aretes.find(id_arete);
-         (m_sommets.find(id))->second->ajouterArete(m_aretes.find(id_arete)->second);
-         (m_sommets.find(id_voisin))->second->ajouterArete(m_aretes.find(id_arete)->second);
+         (m_sommets.find(id))->second->ajouterArete(id_voisin,m_aretes.find(id_arete)->second);
+         (m_sommets.find(id_voisin))->second->ajouterArete(id,m_aretes.find(id_arete)->second);
 
     }
 }
@@ -343,70 +339,6 @@ std::vector <unsigned int> graphe::bruteforce() const
     std::cout << "temps de compilation de brutefroce : " << (float)(t2 -t1)/1000 << std::endl;
     return espace_recherche_int;    // Pour finir, je retourne l'unordered_map qui contient mes combinaisons et les poids qui leurs sont associées
 }
-/*
-void rechercheCC(std::unordered_map <int, int> tabConnex, const unsigned int &i) const
-{
-    for(const auto &ar : m_arete)
-    {
-        if(i& (int)pow(2,ar->second->getm_id())
-        {
-            if(tabConnex.find(ar->second->getm_id()))
-            {
-
-            }
-        }
-    }
-}
-
-std::vector <unsigned int> graphe::bruteforce() const
-{
-    int stop=m_sommets.size();
-    clock_t t1, t2;
-    t1=clock();
-    Sommet *s0 = m_sommets.begin()->second;
-    std::vector <unsigned int> espace_recherche_int;
-    std::unordered_set <int> sommetParcourus;
-    std::unordered_map <int, int> tabConnex;
-    for (const auto &s : m_sommets)
-    {
-        tabConnex.insert({s->second->getm_id(),s->second->getm_id()});
-    }
-    std::string a;
-    int exp=0, puis=0;
-    std::vector <int> mesPos;
-    for(unsigned int i=0; i<m_aretes.size()-m_sommets.size()+1; i++)
-    {
-        a+="0";
-    }
-    for(unsigned int i =0; i< m_sommets.size()-1; i++)
-    {
-        a+="1";
-    }
-    do {
-        //++i;
-        for(const auto &b : a)
-        {
-            if(b=='1')
-            {
-                puis+=(int)pow(2,exp);
-            }
-            exp++;
-        }
-        s0->rechercherCC(sommetParcourus, puis);
-        if(sommetParcourus.size()==m_sommets.size())
-        {
-            espace_recherche_int.push_back(puis);
-        }
-        sommetParcourus.clear();
-        puis=0;
-        exp=0;
-    } while(std::next_permutation(a.begin(), a.end()));
-    std::cout << "jai fini bruteforce" << std::endl;
-    std::cout << "taille de espace_recherche_int " << espace_recherche_int.size() << std::endl;
-    t2=clock();
-    std::cout << "temps de compilation de brutefroce : " << (float)(t2 -t1)/1000 << std::endl;
-    return espace_recherche_int;    // Pour finir, je retourne l'unordered_map qui contient mes combinaisons et les poids qui leurs sont associées
-}*/
 
 void graphe::poidsTotaux()
 {
@@ -423,12 +355,12 @@ void graphe::poidsTotaux()
     }
 }
 
-float real_x(float x, int coef)
+float real_x(float x, float coef)
 {
     return x*coef+ORX;
 }
 
-float real_y(float y, int coef)
+float real_y(float y, float coef)
 {
     return ORY-y*coef;
 }
@@ -442,10 +374,14 @@ void graphe::afficher_frontierePareto(BITMAP*page, const bool &dist, const t_coe
     std::vector <unsigned int> frontiere;
     std::unordered_map <unsigned int, std::vector<float>> frontiere_dist;
 
+    BITMAP *buffer, *page2;
+    buffer=create_bitmap(800, 600);
+    page2=create_bitmap(800,600);
+
     std::vector <float> mesPoids;
 
-    int longueurX=0, longueurY=0;
-
+    float longueurX=0, longueurY=0;
+    int incrementGrapheAA=0;
     if(dist==false)
     {
         espace_recherche_int=bruteforce();
@@ -460,7 +396,12 @@ void graphe::afficher_frontierePareto(BITMAP*page, const bool &dist, const t_coe
         frontiere_dist=frontierePareto_dist(frontiere);
     }
     t2=clock();
-
+/*
+    for (const auto &g : frontiere_dist)
+    {
+        std::cout<< "poids 0 : " << g.second[0] << "  poids 1 : " << g.second[1] << std::endl;
+    }
+    system("pause");*/
 
     std::cout<< "jai fini pareto" << std::endl;
     std::cout << "temps de compilation de pareto : " << (double) (t2-t1)/1000 << std::endl;
@@ -490,6 +431,8 @@ void graphe::afficher_frontierePareto(BITMAP*page, const bool &dist, const t_coe
 
     line(page, ORX,ORY,ORX,ORY-longueurY,makecol(255,255,255));
     line(page, ORX,ORY,ORX+longueurX,ORY,makecol(255,255,255));
+    std::cout << "jaffiche laxe X de pas " << mesCoef.pas_X1 << " et " << mesCoef.pas_X2 << " avec le nbGrad "  << mesCoef.nbGrad_X << std::endl;
+
     for(int i=0; i<mesCoef.nbGrad_X; i+=mesCoef.pas_X2)
     {
         if(i%mesCoef.pas_X1==0)
@@ -498,6 +441,7 @@ void graphe::afficher_frontierePareto(BITMAP*page, const bool &dist, const t_coe
         }
         line(page, real_x(i, mesCoef.coefficient_X), ORY+LONGUEURGRAD2, real_x(i, mesCoef.coefficient_X), ORY-LONGUEURGRAD2, makecol(200,200,200));
     }
+    std::cout << "je passe a y" << std::endl;
     for(int i=0; i<mesCoef.nbGrad_Y; i+=mesCoef.pas_Y2)
     {
         if(i%mesCoef.pas_Y1==0)
@@ -507,7 +451,64 @@ void graphe::afficher_frontierePareto(BITMAP*page, const bool &dist, const t_coe
         line(page, ORX-LONGUEURGRAD2, real_y(i, mesCoef.coefficient_Y), ORX+LONGUEURGRAD2, real_y(i, mesCoef.coefficient_Y), makecol(200,200,200));
     }
     std::cout << "jai fini l'affichage" << std::endl;
-    //system("pause");
+
+    while (!key[KEY_ESC])
+    {
+        if(key[KEY_RIGHT])
+        {
+            std::cout << "increment : " << incrementGrapheAA << std::endl;
+            clear(page2);
+            while(key[KEY_RIGHT]){}
+
+            //std::cout << "je v rentrer dans les cond des points" << std::endl;
+            /// j'eteins le point correspondant precedent
+            if((dist==false)&&((incrementGrapheAA!=0)&&(incrementGrapheAA!=frontiere.size())))
+                mesPoids=this->poidsTotaux(frontiere[incrementGrapheAA-1]);
+            else if ((dist==true)&&((incrementGrapheAA!=0)&&(incrementGrapheAA!=frontiere.size())))
+                mesPoids = frontiere_dist.find(frontiere[incrementGrapheAA-1])->second;
+            circlefill(page, real_x(mesPoids[0], mesCoef.coefficient_X),real_y(mesPoids[1], mesCoef.coefficient_Y), 2 , makecol(0,255,0));
+
+            //std::cout << "je v rentrer dans le deuxieme" << std::endl;
+            /// J'allume le point correspondant
+            if(dist==false)
+                mesPoids=this->poidsTotaux(frontiere[incrementGrapheAA]);
+            else mesPoids = frontiere_dist.find(frontiere[incrementGrapheAA])->second;
+            circlefill(page, real_x(mesPoids[0], mesCoef.coefficient_X),real_y(mesPoids[1], mesCoef.coefficient_Y), 2 , makecol(255,0,255));
+            //std::cout << "je sors de mes deux conditions sur les points" << std::endl;
+
+            graphe aAfficher={frontiere[incrementGrapheAA], *this};
+            //std::cout << "je sors de cree mon graphe" <<std::endl;
+            aAfficher.poidsTotaux();
+            aAfficher.afficher_allegro(page2, 0);
+            if(incrementGrapheAA==0)
+            {
+                if(dist==false)
+                    mesPoids=this->poidsTotaux(frontiere[frontiere.size()-1]);
+                else mesPoids = frontiere_dist.find(frontiere[frontiere.size()-1])->second;
+                circlefill(page, real_x(mesPoids[0], mesCoef.coefficient_X),real_y(mesPoids[1], mesCoef.coefficient_Y), 2 , makecol(0,255,0));
+                incrementGrapheAA=0;
+            }
+            incrementGrapheAA++;
+            if(incrementGrapheAA==frontiere.size())
+            {
+                incrementGrapheAA--;
+                if(dist==false)
+                    mesPoids=this->poidsTotaux(frontiere[incrementGrapheAA-1]);
+                else mesPoids = frontiere_dist.find(frontiere[incrementGrapheAA-1])->second;
+                circlefill(page, real_x(mesPoids[0], mesCoef.coefficient_X),real_y(mesPoids[1], mesCoef.coefficient_Y), 2 , makecol(0,255,0));
+                incrementGrapheAA=0;
+            }
+        }
+        while(key[KEY_SPACE])
+        {
+            clear(buffer);
+            stretch_blit(page, buffer,0,0,800,600, -50, 600-480, 640,480);
+            blit(buffer, screen, 0, 0, 0, 0, 800, 600);
+        }
+        stretch_blit(page, buffer,0,0,800,600, -50, 600-480, 640,480);
+        stretch_blit(page2, buffer, 0, 0, 800, 600, 500, 0, 640, 480);
+        blit(buffer, screen, 0, 0, 0, 0, 800, 600);
+    }
 }
 
 std::vector<float> graphe::poidsTotaux(unsigned int i) const
@@ -536,7 +537,7 @@ std::vector<unsigned int> graphe::frontierePareto(std::vector<unsigned int> espa
     // - Une stockant tous les sommets qui sont à la frontière 'frontiere'
     // L'interet et que je rempli 'frontiere' en mettant tout ce qui n'est pas 'NONfrontiere'
     std::vector <float> poids_aComp1, poids_aComp2;
-    int incrementBoucle2=0, incrementBoucle1=0, paspossible=0;
+    int incrementBoucle2=0, incrementBoucle1=0, paspossible=0, reste=0;
     size_t marqueur1,marqueur2=0;
     do
     {
@@ -560,6 +561,7 @@ std::vector<unsigned int> graphe::frontierePareto(std::vector<unsigned int> espa
                 if( (marqueur1>=1) && (marqueur2 == poids_aComp1.size()))    // Si j'ai un élément strictement meilleur et les deux éléments au moins meilleurs
                 {
                     espace_recherche_int.erase(espace_recherche_int.cbegin()+incrementBoucle2);   // Le sommet est dominé, je le supprime donc de mon espace
+                    reste++;
                 }
                 else if(marqueur1==0)   // Si rien n'est meilleur chez comp_1
                 {
@@ -571,10 +573,10 @@ std::vector<unsigned int> graphe::frontierePareto(std::vector<unsigned int> espa
                 marqueur1=0;    // Remise à zéro des marqueurs
                 marqueur2=0;
             }
-            if(incrementBoucle2!=(int)espace_recherche_int.size())
-
+            if((incrementBoucle2!=(int)espace_recherche_int.size()) && (reste==0))
                 incrementBoucle2++; // J'incrémente l'incrément de mon comp_2
             paspossible=0;
+            reste=0;
         }while(incrementBoucle2!=(int)espace_recherche_int.size()); // Et je fais tourner ma boucle tant que l'incrément n'arrive pas au bout d'espace_recherche
         incrementBoucle2=0;
         incrementBoucle1++;
@@ -613,7 +615,6 @@ std::unordered_map <unsigned int, std::vector<float>> graphe::frontierePareto_di
         poids_aComp1 = mesPoids_E_R.find(espace_recherche_int[incrementBoucle1])->second;
 
 
-        //poids_aComp1 = this->poidsTotauxDjikstra(espace_recherche_int[incrementBoucle1]);
         do
         {
             //std::cout   << "--------------- COMP 1 -------------------" << std::endl
@@ -634,13 +635,13 @@ std::unordered_map <unsigned int, std::vector<float>> graphe::frontierePareto_di
                 }
                 if( (marqueur1>=1) && (marqueur2 == poids_aComp1.size()))    /// Si j'ai un élément strictement meilleur et les deux éléments au moins meilleurs
                 {
-                    //std::cout << "COMP 2 est domine, je le supprime de ma liste, CIAO" << std::endl;
+                //    std::cout << "COMP 2 est domine, je le supprime de ma liste, CIAO" << std::endl;
                     espace_recherche_int.erase(espace_recherche_int.cbegin()+incrementBoucle2);   /// Le sommet est dominé, je le supprime donc de mon espace
                     reste++;
                 }
                 else if(marqueur1==0)   // Si rien n'est meilleur chez comp_1
                 {
-                    //std::cout << "COMP 1 est domine, je le supprime de ma liste, CIAO" << std::endl;
+                //    std::cout << "COMP 1 est domine, je le supprime de ma liste, CIAO" << std::endl;
 
                     espace_recherche_int.erase(espace_recherche_int.cbegin()+incrementBoucle1) ;   /// Je le supprime
 
@@ -687,10 +688,10 @@ void graphe::afficher_allegro(BITMAP*page, const int &i) const
         posx = 400;
     msgf=msg.c_str();
     textprintf_centre_ex(page, font, 200+posx, 20, makecol(255, 255, 255), -1, msgf);
-    for(const auto i:m_sommets)
+    for(const auto &i:m_sommets)
         circle(page,i.second->getm_x()-50+posx,i.second->getm_y(), 10, makecol(255,0,0));
 
-    for(const auto j:m_aretes)
+    for(const auto &j:m_aretes)
     {
         line(page,j.second->getm_extremites()[0]->getm_x()+posx-50,j.second->getm_extremites()[0]->getm_y(),j.second->getm_extremites()[1]->getm_x()+posx-50,j.second->getm_extremites()[1]->getm_y(), makecol(255,30,30));
     }
@@ -712,7 +713,7 @@ float graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
         id=p_queue.top().first; //ENREGISTRE LE PREMIER SOMMET ET SA DISTANCE TOTAL AU SOMMET D'ORIGINE
         poids=p_queue.top().second; //MEMOIRE
         p_queue.pop(); //EJECTE
-        for(const auto i:m_sommets.find(id)->second->getm_voisins()) //Parcours sommets adj
+        for(const auto &i:m_sommets.find(id)->second->getm_voisins()) //Parcours sommets adj
          if(I & (int)pow(2,i->id_arete(id)) )//Si l'arrete existe, evite de recrée un graphe, verif
             if(s_marques.count(i->getm_id())==0) //Si sommet non marqués
                 p_queue.push(std::make_pair(i->getm_id(),i->calcul_distance(id)+poids)); //RAJOUTE A LA PILE PRIORITAIRE
@@ -721,7 +722,7 @@ float graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
     }
 
     //SOMME LES POIDS DU PARCOURS DE DJIKSTRA
-    for(const auto i:s_marques)
+    for(const auto &i:s_marques)
     {
         //std::cout<< "id :" << i.first << " Distance :" << i.second << std::endl;//EVITE LA SYMETRIE
            somme+=i.second;
@@ -742,20 +743,14 @@ std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I) const
         somme_distance+=Djikstra_sommet(i,I);
 
     //SOMME DES COUTS DES ARETES
-    for(const auto i:m_aretes)
+    for(const auto &i:m_aretes)
         if(I & (int)pow(2,i.second->getm_id()) )
-            for(const auto j:i.second->getm_poids())
+            for(const auto &j:i.second->getm_poids())
                 if(j!=i.second->getm_poids().back())
                     somme_cout+=j;
     //PUSH VECTEUR FLOAT
     poidsTotaux.push_back(somme_cout);
     poidsTotaux.push_back(somme_distance);
-/*
-    std::cout <<"DEBUG ( ";
-    for(const auto i:poidsTotaux)
-       std::cout << i << " ";
-    std::cout <<")" <<std::endl;//system("pause");
-*/
 
     return poidsTotaux;
 }

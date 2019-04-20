@@ -17,7 +17,8 @@
 
 typedef struct coefAlleg
 {
-    int coefficient_X, coefficient_Y, pas_X1, pas_X2, pas_Y1, pas_Y2, nbGrad_X, nbGrad_Y;
+    int pas_X1, pas_X2, pas_Y1, pas_Y2, nbGrad_X, nbGrad_Y;
+    float coefficient_X, coefficient_Y;
 }t_coef;
 
 class graphe;

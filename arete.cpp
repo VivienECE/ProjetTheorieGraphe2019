@@ -8,9 +8,10 @@ arete::arete()
 arete::~arete()
 {
     //std::cout << " et moi aussi " << std::endl;
-    /*
+    //MODIF V
     for (auto it : m_extremites)
-        delete it;*/
+        delete it;
+    //MODIF V
 }
 
 std::vector<Sommet*> arete::getm_extremites() const {return m_extremites;}
