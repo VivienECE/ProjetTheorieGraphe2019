@@ -630,7 +630,8 @@ float graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
         p_queue.pop(); //EJECTE
         for(const auto &i:m_sommets.find(id)->second->getm_voisins()) //Parcours sommets adj
          if(I & (int)pow(2,i->id_arete(id)) )//Si l'arrete existe, evite de recrée un graphe, verif
-            if(s_marques.count(i->getm_id())==0) //Si sommet non marqués
+           // if(s_marques.count(i->getm_id())==0) //Si sommet non marqués
+            if(s_marques.find(i->getm_id())==s_marques.end())
                 p_queue.push(std::make_pair(i->getm_id(),i->get_distance(id)+poids)); //RAJOUTE A LA PILE PRIORITAIRE
 
         s_marques.emplace(p_queue.top().first,p_queue.top().second); //MARQUE LE SOMMET DE POIDS PLUS FAIBLE DE LA PILE
