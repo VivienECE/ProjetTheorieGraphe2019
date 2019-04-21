@@ -10,11 +10,6 @@
 class prioritize{public: bool operator ()(std::pair<int, float>&p1 ,std::pair<int, float>&p2){return p1.second>p2.second;}};
 graphe::~graphe()
 {
-    for(auto &s : m_sommets)  //PLANTE MAIN
-        delete s.second;
-    for(auto &s : m_aretes)
-        delete s.second;
-
 }
 
 graphe::graphe()
@@ -706,8 +701,6 @@ float graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
 
         s_marques.emplace(p_queue.top().first,p_queue.top().second); //MARQUE LE SOMMET DE POIDS PLUS FAIBLE DE LA PILE
     }
-    s_marques.clear();
-
     //SOMME LES POIDS DU PARCOURS DE DJIKSTRA
     float somme=0;
     for(const auto &i:s_marques)
