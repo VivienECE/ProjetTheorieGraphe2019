@@ -20,7 +20,6 @@ int main()
     init_Allegro();
     graphe g;
     unsigned int choixAlgo=0, choixFich=0, choixP=0;
-    unsigned int larg, haut;
     std::string fichier, fichierP;
     t_coef mesCoefs;
     do
@@ -72,8 +71,8 @@ int main()
         system("cls");
         std::cout   << "Quel algorithme voulez-vous utiliser ?"  <<std::endl
                     << "<1> prim" << std::endl
-                    << "<2> pareto arbre couvrant double pondération, obtimisation bi-objectif" << std::endl
-                    << "<3> pareto optimisation double objectif poids//distance" << std::endl
+                    << "<2> pareto arbre couvrant double ponderation, obtimisation bi-objectif" << std::endl
+                    << "<3> pareto optimisation double objectif poids/distance" << std::endl
                     << "<0> quitter" << std::endl;
         choixAlgo=saisie(QUITTER, PARETO_DIST);
         switch(choixAlgo)
@@ -95,7 +94,7 @@ int main()
             break;
         }
         system("cls");
-    }while (choixAlgo !=0);
+    }while ((choixAlgo !=0)||(choixFich!=0));
     return 0;
 }
 
@@ -155,14 +154,58 @@ void initValAlleg(t_coef &mesCoef, const unsigned int &choixF, const unsigned in
     }
     else if ((choixF==TRIVILLE)&&(choixAleg==PARETO_DIST))
     {
-        mesCoef.coefficient_X=6;
-        mesCoef.coefficient_Y=6;
-        mesCoef.nbGrad_X=80;
-        mesCoef.nbGrad_Y=70;
+        mesCoef.coefficient_X=5;
+        mesCoef.coefficient_Y=0.3;
+        mesCoef.nbGrad_X=100;
+        mesCoef.nbGrad_Y=2000;
+        mesCoef.pas_X1=10;
+        mesCoef.pas_X2=2;
+        mesCoef.pas_Y1=500;
+        mesCoef.pas_Y2=100;
+    }
+    else if ((choixF==CUBETOWN)&&(choixAleg==PARETO))
+    {
+        mesCoef.coefficient_X=10;
+        mesCoef.coefficient_Y=10;
+        mesCoef.nbGrad_X=60;
+        mesCoef.nbGrad_Y=50;
         mesCoef.pas_X1=10;
         mesCoef.pas_X2=2;
         mesCoef.pas_Y1=10;
         mesCoef.pas_Y2=2;
+    }
+    else if ((choixF==CUBETOWN)&&(choixAleg==PARETO_DIST))
+    {
+        mesCoef.coefficient_X=10;
+        mesCoef.coefficient_Y=0.5;
+        mesCoef.nbGrad_X=60;
+        mesCoef.nbGrad_Y=1000;
+        mesCoef.pas_X1=10;
+        mesCoef.pas_X2=2;
+        mesCoef.pas_Y1=500;
+        mesCoef.pas_Y2=100;
+    }
+    else if ((choixF==BROADWAY)&&(choixAleg==PARETO))
+    {
+        mesCoef.coefficient_X=15;
+        mesCoef.coefficient_Y=15;
+        mesCoef.nbGrad_X=30;
+        mesCoef.nbGrad_Y=30;
+        mesCoef.pas_X1=10;
+        mesCoef.pas_X2=2;
+        mesCoef.pas_Y1=10;
+        mesCoef.pas_Y2=2;
+    }
+    else if ((choixF==BROADWAY)&&(choixAleg==PARETO_DIST))
+    {
+        mesCoef.coefficient_X=10;
+        mesCoef.coefficient_Y=3;
+        mesCoef.nbGrad_X=60;
+        mesCoef.nbGrad_Y=150;
+        mesCoef.pas_X1=10;
+        mesCoef.pas_X2=2;
+        mesCoef.pas_Y1=20;
+        mesCoef.pas_Y2=5;
     }
 }
 
