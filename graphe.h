@@ -44,10 +44,10 @@ class graphe
         void afficher() const;
 
         ///AFFICHAGE GRAPHE SUR LA BITPMAP
-        void afficher_allegro(BITMAP*, const int &i) const;
+        void afficher_allegro(BITMAP*, const int &i, const std::vector<float> &mesPoids) const;
 
         ///AFFICHAGE FRONTIERE SUR LA BITPMAP, dist-> Normale ou Opti poids/distance, coefAlleg->Coeff pour conserver affichage milieu page
-        void afficher_frontierePareto(BITMAP*page, const bool &dist, const struct coefAlleg &mesCoef) const;//ONLY 2D ou 1D
+        void pareto(BITMAP*page, const bool &dist, const struct coefAlleg &mesCoef) const;//ONLY 2D ou 1D
 
         ///ADD ARETE
         void ajouter_arete(int,float,float, Sommet*, Sommet*);
@@ -91,7 +91,5 @@ class graphe
 };
 
 class prioritize;
-float real_x(float x, int coef);
-float real_y(float y, int coef);
 
 #endif // GRAPHE_H

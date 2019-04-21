@@ -27,7 +27,7 @@ class arete
         ///SET
         void set_poids(float);
 
-        void afficher_les_prim();
+        //void afficher_les_prim();
 
     private:
         std::vector<Sommet*> m_extremites;
