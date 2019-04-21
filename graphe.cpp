@@ -515,7 +515,6 @@ std::unordered_map <unsigned int, std::vector<float>> graphe::frontierePareto_di
     /// Je retourne maintenant tranquillement dans 'pareto()'...
 }
 
-
 float graphe::Djikstra_sommet(int id_debut, const unsigned int &I,int &ponderation) const
 {
     //INI
@@ -553,8 +552,8 @@ std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I, int &ordre
     //INI
 
     //SOMME DES DISTANCES TOTAL
-    for(size_t i=0;i<ordre;i++)
-        somme_distance+=Djikstra_sommet((int)i,I,ponderation);
+    for(int i=0;i<ordre;i++)
+        somme_distance+=Djikstra_sommet(i,I,ponderation);
 
     //SOMME DES COUTS DES ARETES
     for(const auto &i:m_aretes)

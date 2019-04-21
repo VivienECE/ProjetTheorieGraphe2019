@@ -24,13 +24,7 @@ void afficher_allegro_prim(graphe &g)
     page=create_bitmap(800,600);
     for(int i=0;i<2;++i)
     {
-        aAfficher=g.prim(i);/*
-        std::cout << " affichage des aretes dans affichage.ccp" << std::endl;
-        for(const auto &ar : aAfficher.m_aretes)
-        {
-            ar.second->afficher()
-        }
-        system("pause");*/
+        aAfficher=g.prim(i);
         aAfficher.poidsTotaux();
         mesPoids=aAfficher.getm_poids();
         //std::cout << "poids : " << mesPoids[0] << " " << mesPoids[1] << std::endl;

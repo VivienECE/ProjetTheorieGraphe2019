@@ -55,34 +55,46 @@ class graphe
         ///ALGORITHME PRIM
         graphe prim(int poids);
 
+        ///Determine l'espace de recherche
         ///RENVOIE LES GRAPHES CONNEXES (De taille  =  ordre-1) SOUS FORMES D'ENTIER
         std::vector <unsigned int> bruteforce()const;
 
+        ///Determine l'espace de recherche cout/dist
         ///RENVOIE LES GRAPHES CONNEXES (De taille >=  ordre-1)SOUS FORMES D'ENTIER
         std::vector <unsigned int> bruteforce_dist()const;
 
         ///Calcul du poids total
         void poidsTotaux();
 
-        ///RENVOIE LES POIDS
+        ///GET
         std::vector<float> getm_poids();
+        std::vector<Sommet*> getm_voisins(int &id) const;
 
-        ///RENVOIE LES GRAPHES(INT) DE LA FRONTIERE, EN PARAMETRE L'ESPACE DE RECHERCHE
+        ///Tri l'espace de recherche et renvoie les graphes de la frontiere de pareto
+        ///Appel les algos de djikstra
+        ///Parametres: Espace de recherche
+        ///Renvoie tout les graphes de la frontiere sous forme d'entier
         std::vector <unsigned int> frontierePareto(std::vector <unsigned int>) const;
 
-        ///RENVOIE LES GRAPHES(INT) DE LA FRONTIERE, EN PARAMETRE L'ESPACE DE RECHERCHE
+        ///Tri l'espace de recherche et renvoie les graphes de la frontiere de pareto
+        ///Appel les algos de djikstra, bi-objectifs somme des couts et distances
+        ///Parametres: Espace de recherche
+        ///Renvoie tout les graphes de la frontiere sous forme d'entier
         std::unordered_map <unsigned int, std::vector<float>> frontierePareto_dist(std::vector <unsigned int> &espace_recherche_int) const;
 
-        ///RENVOIE TAB 2D, tab[0] somme des cout, tab[1] somme des distances
+        ///Parcours djikstra pour tout les sommets du graphe
+        ///Parametres: le num du graphe, l'ordre, le nbr de poids
+        ///Renvoie un TAB 2D, tab[0] somme des couts, tab[1] somme des distances
         std::vector<float> poidsTotauxDjikstra(const unsigned int &I,int &ordre, int &ponderation) const; //retourne les poids total+ total des distances
 
-        ///Parcours djikstra, Parametre: ID sommet départ, graphe sous forme d'entier, renvoie le cout des distances total.
+        ///Parcours djikstra pour 1 sommet de départ
+        ///Parametres: ID sommet départ, graphe sous forme d'entier
+        ///Renvoie la somme des coûts des distances pout le sommet de départ.
         float Djikstra_sommet(int id_debut,const unsigned int &i,int &ponderation) const; //retourne somme des djisktra pour le sommet -symetrie
 
         ///ADDITIONNE LES POIDS
         std::vector<float> poidsTotaux(unsigned int i) const;
 
-        std::vector<Sommet*> getm_voisins(int &id) const;
 
     private:
         std::unordered_map<int,Sommet*> m_sommets;//stockée dans une map (clé=id du sommet, valeur= pointeur sur le sommet)
@@ -90,6 +102,7 @@ class graphe
         std::vector <float> m_poidsTotaux;
 };
 
+///Priority queue
 class prioritize;
 
 #endif // GRAPHE_H

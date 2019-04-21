@@ -7,6 +7,7 @@
 #define CUBETOWN 2
 #define TRIVILLE 3
 #define MANHATTAN 4
+#define AUTRE 5
 #define QUITTER 0
 #define PARETO 2
 #define PARETO_DIST 3
@@ -31,12 +32,13 @@ int main()
     do
     {
         std::cout   << "Quel graphe voulez-vous tracer ?"  <<std::endl
-                    << "<1> broadway" << std::endl
-                    << "<2> cubetown" << std::endl
-                    << "<3> triville" << std::endl
-                    << "<4> manhattan"<< std::endl
-                    << "<0> quitter"  << std::endl;
-        choixFich=saisie(QUITTER,MANHATTAN);
+                    << "<1> Broadway" << std::endl
+                    << "<2> Cubetown" << std::endl
+                    << "<3> Triville" << std::endl
+                    << "<4> Manhattan"<< std::endl
+                    << "<5> Autre fichier"<< std::endl
+                    << "<0> Quitter"  << std::endl;
+        choixFich=saisie(QUITTER,AUTRE);
         switch(choixFich)
         {
         case BROADWAY:
@@ -91,8 +93,18 @@ int main()
             }
             else fichierP += "manhattan_weights_" + std::to_string(choixP) + ".txt";
             break;
+        case AUTRE:
+        {
+            std::string choix;
+            std::cout << std::endl << "Entrer le nom du fichier (sans le .txt); ";
+            std::cin >> choix;
+            fichier = choix +".txt";
+            fichierP = choix + "_weights_0.txt";
+            break;
+        }
         case QUITTER :
             exit(EXIT_SUCCESS);
+            break;
         default :
             break;
         }
