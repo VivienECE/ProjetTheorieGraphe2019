@@ -23,14 +23,15 @@ typedef struct coefAlleg
 
 class graphe;
 
-///Affiche les 2 arbres couvrant minimum
+///Affiche les 2 arbres couvrant minimum du graphe en parametre
 void afficher_allegro_prim(graphe &g);
 
 ///Affiche la frontiere de Pareto
+///Parametre: graphe à afficher, bool true/false poids de base/somme poids+dist, coefficient d'affichage
 void afficherFrontierePareto_allegro(const graphe &g, const bool &dist, const t_coef &mesCoefs);
 
+///Inverse les coords pour un affichage correct (origine x,y en haut à gauche sur allegro)
 float real_x(float x, int coef);
-
 float real_y(float y, int coef);
 
 ///boucle d'affichage de pareto

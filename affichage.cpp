@@ -110,9 +110,9 @@ void boucleAffichagePareto(const std::vector <unsigned int> &espace_recherche_in
             while(key[KEY_RIGHT]){}
 
             /// j'eteins le point correspondant precedent
-            if((dist==false)&&((incrementGrapheAA!=0)&&(incrementGrapheAA!=frontiere.size())))
+            if((dist==false)&&((incrementGrapheAA!=0)&&(incrementGrapheAA!=(int)frontiere.size())))
                 mesPoids=grapheRef.poidsTotaux(frontiere[incrementGrapheAA-1]);
-            else if ((dist==true)&&((incrementGrapheAA!=0)&&(incrementGrapheAA!=frontiere.size())))
+            else if ((dist==true)&&((incrementGrapheAA!=0)&&(incrementGrapheAA!=(int)frontiere.size())))
                 mesPoids = frontiere_dist.find(frontiere[incrementGrapheAA-1])->second;
             circlefill(page, real_x(mesPoids[0], mesCoef.coefficient_X),real_y(mesPoids[1], mesCoef.coefficient_Y), 2 , makecol(0,255,0));
 
@@ -122,7 +122,7 @@ void boucleAffichagePareto(const std::vector <unsigned int> &espace_recherche_in
             else mesPoids = frontiere_dist.find(frontiere[incrementGrapheAA])->second;
             circlefill(page, real_x(mesPoids[0], mesCoef.coefficient_X),real_y(mesPoids[1], mesCoef.coefficient_Y), 2 , makecol(255,0,255));
 
-            graphe aAfficher={frontiere[incrementGrapheAA], grapheRef};
+            graphe aAfficher={(int)frontiere[incrementGrapheAA], grapheRef};
             aAfficher.afficher_allegro(page2, 0, mesPoids);
             if(incrementGrapheAA==0)
             {
@@ -132,7 +132,7 @@ void boucleAffichagePareto(const std::vector <unsigned int> &espace_recherche_in
                 circlefill(page, real_x(mesPoids[0], mesCoef.coefficient_X),real_y(mesPoids[1], mesCoef.coefficient_Y), 2 , makecol(0,255,0));
             }
             incrementGrapheAA++;
-            if(incrementGrapheAA==frontiere.size())
+            if((size_t)incrementGrapheAA==frontiere.size())
             {
                 incrementGrapheAA--;
                 if(dist==false)

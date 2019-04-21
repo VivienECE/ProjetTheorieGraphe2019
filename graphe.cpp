@@ -509,38 +509,6 @@ std::unordered_map <unsigned int, std::vector<float>> graphe::frontierePareto_di
     /// Je retourne maintenant tranquillement dans 'pareto()'...
 }
 
-/*
-float graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
-{
-    //INI
-    std::priority_queue<std::pair <int,float>,std::vector<std::pair<int,float>>, prioritize> p_queue; //QUEUE PRIORITAIRE, TRI PAR POIDS DECROISSANT, DEF Ligne 3, graphe.Cpp
-    std::unordered_map<int,float> s_marques; s_marques.emplace(id_debut,0);
-    p_queue.push(std::make_pair(id_debut,0));
-
-    //PARCOURS BFS PILE PRIORITAIRE, TJR EN PREMIER LE SOMMET AVEC PLUS PETIT POIDS
-    while(p_queue.size()!=0)
-    {
-        int id=p_queue.top().first; //ENREGISTRE LE PREMIER SOMMET ET SA DISTANCE TOTAL AU SOMMET D'ORIGINE
-        float poids=p_queue.top().second; //MEMOIRE
-        p_queue.pop(); //EJECTE
-        for(const auto &i:m_sommets.find(id)->second->getm_voisins()) //Parcours sommets adj
-         if(I & (int)pow(2,i->id_arete(id)) )//Si l'arrete existe, evite de recrée un graphe, verif
-           // if(s_marques.count(i->getm_id())==0) //Si sommet non marqués
-            if(s_marques.find(i->getm_id())==s_marques.end())
-                p_queue.push(std::make_pair(i->getm_id(),i->get_distance(id)+poids)); //RAJOUTE A LA PILE PRIORITAIRE
-
-        s_marques.emplace(p_queue.top().first,p_queue.top().second); //MARQUE LE SOMMET DE POIDS PLUS FAIBLE DE LA PILE
-
-    }
-    //SOMME LES POIDS DU PARCOURS DE DJIKSTRA
-    float somme=0;
-    for(const auto &i:s_marques)
-        somme+=i.second;
-
-    return somme;
-}*/
-
-
 float graphe::Djikstra_sommet(int id_debut, const unsigned int &I,int &ponderation) const
 {
     //INI
@@ -578,8 +546,8 @@ std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I, int &ordre
     //INI
 
     //SOMME DES DISTANCES TOTAL
-    for(size_t i=0;i<ordre;i++)
-        somme_distance+=Djikstra_sommet((int)i,I,ponderation);
+    for(int i=0;i<ordre;i++)
+        somme_distance+=Djikstra_sommet(i,I,ponderation);
 
     //SOMME DES COUTS DES ARETES
     for(const auto &i:m_aretes)

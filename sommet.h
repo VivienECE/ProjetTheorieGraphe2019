@@ -41,10 +41,11 @@ class Sommet
         ///RECREER LA CONNEXITE D'UN GRAPHE VIERGE
         void connexite();
 
-        ///DETRUIT TOUTE LES CONNEXIONS
+        ///DETRUIT TOUTEs LES CONNEXIONS
         void resetConnexite();
 
-        ///RENVOIE DISTANCE ENTRE THIS SOMMET ET L'ID DU SOMMET EN PARAMETRE
+        ///Renvoie la distance entre un sommet et son voisin
+        ///Parametres:id voisin, nbr de pondération (distance est toujours la derniere pondération, cas n ponderation)
         float get_distance(int &id_voisin, int &ponderation) const; //Calcul la distance avec le sommet entrée en parametre, uniquement distance avec sommet adj.
 
         ///RENVOIE ID ARETE
