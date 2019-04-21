@@ -577,9 +577,11 @@ std::unordered_map <unsigned int, std::vector<float>> graphe::frontierePareto_di
     /// - Une stockant tous les sommets qui sont à la frontière 'frontiere'
     /// L'interet et que je rempli 'frontiere' en mettant tout ce qui n'est pas 'NONfrontiere'
     std::unordered_map <unsigned int, std::vector<float>> mesPoids_E_R;
+    int ordre=m_sommets.size();
+    int ponderation=m_poidsTotaux.size();
     for(const auto &e_r_i: espace_recherche_int)
     {
-        mesPoids_E_R.insert({e_r_i, this->poidsTotauxDjikstra(e_r_i)});
+        mesPoids_E_R.insert({e_r_i, this->poidsTotauxDjikstra(e_r_i,ordre,ponderation)});
     }
     std::vector <float> poids_aComp1, poids_aComp2;
     //std::cout << "jai insert dans mesPoids" << std::endl;
@@ -680,6 +682,7 @@ void graphe::afficher_allegro(BITMAP*page, const int &i) const
     }
 }
 
+/*
 float graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
 {
     //INI
@@ -700,6 +703,36 @@ float graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
                 p_queue.push(std::make_pair(i->getm_id(),i->get_distance(id)+poids)); //RAJOUTE A LA PILE PRIORITAIRE
 
         s_marques.emplace(p_queue.top().first,p_queue.top().second); //MARQUE LE SOMMET DE POIDS PLUS FAIBLE DE LA PILE
+
+    }
+    //SOMME LES POIDS DU PARCOURS DE DJIKSTRA
+    float somme=0;
+    for(const auto &i:s_marques)
+        somme+=i.second;
+
+    return somme;
+}*/
+
+
+float graphe::Djikstra_sommet(int id_debut, const unsigned int &I,int &ponderation) const
+{
+    //INI
+    std::priority_queue<std::pair <int,float>,std::vector<std::pair<int,float>>, prioritize> p_queue; //QUEUE PRIORITAIRE, TRI PAR POIDS DECROISSANT, DEF Ligne 3, graphe.Cpp
+    std::unordered_map<int,float> s_marques; s_marques.emplace(id_debut,0);
+    p_queue.push(std::make_pair(id_debut,0));
+    //PARCOURS BFS PILE PRIORITAIRE, TJR EN PREMIER LE SOMMET AVEC PLUS PETIT POIDS
+    while(p_queue.size()!=0)
+    {
+        int id=p_queue.top().first; //ENREGISTRE LE PREMIER SOMMET ET SA DISTANCE TOTAL AU SOMMET D'ORIGINE
+        float poids=p_queue.top().second; //MEMOIRE
+        p_queue.pop(); //EJECTE
+        for(const auto &i:this->getm_voisins(id)) //Parcours sommets adj
+          if(I & (int)pow(2,i->id_arete(id)) )//Si l'arrete existe, evite de recrée un graphe, verif
+           // if(s_marques.count(i->getm_id())==0) //Si sommet non marqués
+            if(s_marques.find(i->getm_id())==s_marques.end())
+                p_queue.push(std::make_pair(i->getm_id(),i->get_distance(id,ponderation)+poids)); //RAJOUTE A LA PILE PRIORITAIRE
+
+        s_marques.emplace(p_queue.top().first,p_queue.top().second); //MARQUE LE SOMMET DE POIDS PLUS FAIBLE DE LA PILE
     }
     //SOMME LES POIDS DU PARCOURS DE DJIKSTRA
     float somme=0;
@@ -709,7 +742,7 @@ float graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
     return somme;
 }
 
-std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I) const
+std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I, int &ordre, int &ponderation) const
 {
     //INI
     std::vector<float> poidsTotaux;
@@ -717,8 +750,8 @@ std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I) const
     //INI
 
     //SOMME DES DISTANCES TOTAL
-    for(size_t i=0;i<m_sommets.size();i++)
-        somme_distance+=Djikstra_sommet((int)i,I);
+    for(size_t i=0;i<ordre;i++)
+        somme_distance+=Djikstra_sommet((int)i,I,ponderation);
 
     //SOMME DES COUTS DES ARETES
     for(const auto &i:m_aretes)
@@ -731,4 +764,9 @@ std::vector<float> graphe::poidsTotauxDjikstra(const unsigned int &I) const
     poidsTotaux.push_back(somme_distance);
 
     return poidsTotaux;
+}
+
+std::vector<Sommet*> graphe::getm_voisins(int &id) const
+{
+    return m_sommets.find(id)->second->getm_voisins();
 }

@@ -143,13 +143,12 @@ void Sommet::ajouterArete(int id,arete*a)
     m_arete.emplace(id,a);
 }
 
-float Sommet::get_distance(int id_voisin) const
+float Sommet::get_distance(int &id_voisin, int &ponderation) const
 {
-    return m_arete.find(id_voisin)->second->getm_poids()[m_arete.find(id_voisin)->second->getm_poids().size()-1];
+    return m_arete.find(id_voisin)->second->getm_poids()[ponderation-1];
 }
 
-
-int Sommet::id_arete(int id_sommet) const
+int Sommet::id_arete(int &id_sommet) const
 {
     return m_arete.find(id_sommet)->second->getm_id();
 }
