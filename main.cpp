@@ -10,6 +10,7 @@
 #define QUITTER 0
 #define PARETO 2
 #define PARETO_DIST 3
+#define PARETO_3D 4
 
 int saisie(const int& borneInf, const int& borneSup);
 
@@ -18,10 +19,15 @@ void initValAlleg(t_coef &mesCoef, const unsigned int &choixF, const unsigned in
 int main()
 {
     init_Allegro();
-    graphe g;
     unsigned int choixAlgo=0, choixFich=0, choixP=0;
     std::string fichier, fichierP;
     t_coef mesCoefs;
+    /*
+    graphe g{"manhattan.txt"};
+    g.lire_poids("manhattan_weights_0_3poids.txt");
+    g.poidsTotaux();
+    afficherFrontierePareto_allegro(g, false, mesCoefs);*/
+
     do
     {
         std::cout   << "Quel graphe voulez-vous tracer ?"  <<std::endl
@@ -36,27 +42,54 @@ int main()
         case BROADWAY:
             fichier="broadway.txt";
             std::cout   << "Quel fichier de poids ?" << std::endl
-                        << "<0>     <1>     <2>" << std::endl;
-            choixP=saisie(0,2);
-            fichierP += "broadway_weights_" + std::to_string(choixP) + ".txt";
+                        << "<0>     <1>     <2>" << std::endl
+                        << "Si vous voulez un affichage avec 3 poids en 3D choisissez <3>" << std::endl;
+            choixP=saisie(0,3);
+            if(choixP==3)
+            {
+                fichierP="broadway_weights_0_3poids.txt";
+                choixAlgo=PARETO_3D;
+            }
+            else fichierP += "broadway_weights_" + std::to_string(choixP) + ".txt";
             break;
         case CUBETOWN :
             fichier="cubetown.txt";
-            fichierP="cubetown_weights_0.txt";
+            std::cout   << "voulez-vous un affichage avec 3 poids en 3D ?" << std::endl
+                        << "<1> : OUI     <2> : NON" << std::endl;
+            choixP=saisie(1,2);
+            if(choixP == 1)
+            {
+                fichierP="cubetown_weights_0_3poids.txt";
+                choixAlgo=PARETO_3D;
+            }
+            else
+                fichierP="cubetown_weights_0.txt";
             break;
         case TRIVILLE :
             fichier="triville.txt";
             std::cout   << "Quel fichier de poids ?" << std::endl
-                        << "<0>     <1>" << std::endl;
-            choixP=saisie(0,1);
-            fichierP += "triville_weights_" + std::to_string(choixP) + ".txt";
+                        << "<0>     <1>" << std::endl
+                        << "Si vous voulez un affichage avec 3 poids en 3D choisissez <2>" << std::endl;
+            choixP=saisie(0,2);
+            if(choixP == 2)
+            {
+                fichierP="triville_weights_0_3poids.txt";
+                choixAlgo=PARETO_3D;
+            }
+            else fichierP += "triville_weights_" + std::to_string(choixP) + ".txt";
             break;
         case MANHATTAN :
             fichier="manhattan.txt";
             std::cout   << "Quel fichier de poids ?" << std::endl
-                        << "<0>     <1>     <2>" << std::endl;
-            choixP=saisie(0,2);
-            fichierP += "manhattan_weights_" + std::to_string(choixP) + ".txt";
+                        << "<0>     <1>     <2>" << std::endl
+                        << "Si vous voulez un affichage avec 3 poids en 3D choisissez <3>" << std::endl;
+            choixP=saisie(0,3);
+            if (choixP ==3)
+            {
+                fichierP="manhattan_weights_0_3poids.txt";
+                choixAlgo=PARETO_3D;
+            }
+            else fichierP += "manhattan_weights_" + std::to_string(choixP) + ".txt";
             break;
         case QUITTER :
             exit(EXIT_SUCCESS);
@@ -74,7 +107,8 @@ int main()
                     << "<2> pareto arbre couvrant double ponderation, obtimisation bi-objectif" << std::endl
                     << "<3> pareto optimisation double objectif poids/distance" << std::endl
                     << "<0> quitter" << std::endl;
-        choixAlgo=saisie(QUITTER, PARETO_DIST);
+        if(choixAlgo==PARETO_3D) choixAlgo=PARETO;
+        else choixAlgo=saisie(QUITTER, PARETO_DIST);
         switch(choixAlgo)
         {
         case PRIM :

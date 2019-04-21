@@ -27,13 +27,13 @@ class graphe;
 void afficher_allegro_prim(graphe &g);
 
 ///Affiche la frontiere de Pareto
-void afficherFrontierePareto_allegro(const graphe &g, const bool &dist, const t_coef &mesCoefs);
+void afficherFrontierePareto_allegro(graphe &g, const bool &dist, const t_coef &mesCoefs);
 
 float real_x(float x, int coef);
 
 float real_y(float y, int coef);
 
 ///boucle d'affichage de pareto
-void boucleAffichagePareto(const std::vector <unsigned int> &espace_recherche_int, const std::vector <unsigned int> &frontiere, const std::unordered_map <unsigned int, std::vector<float>> &frontiere_dist, const graphe &grapheRef, const t_coef &mesCoef, const bool &dist, BITMAP* page);
+void boucleAffichagePareto(const std::vector <unsigned int> &espace_recherche_int, const std::vector <unsigned int> &frontiere, const std::unordered_map <unsigned int, std::vector<float>> &frontiere_dist, graphe &grapheRef, const t_coef &mesCoef, const bool &dist, BITMAP* page);
 
 #endif // AFFICHAGE_H_INCLUDED
