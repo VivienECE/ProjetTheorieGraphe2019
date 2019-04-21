@@ -364,7 +364,7 @@ std::vector<unsigned int> graphe::frontierePareto(std::vector<unsigned int> espa
     }while(incrementBoucle1!=(int)espace_recherche_int.size());
 
     return espace_recherche_int;   // Je retourne enfin la frontiere, i.e. toutes les combinaisons dominantes avec leurs poids.
-    /// Je retourne maintenant tranquillement dans 'afficher_frontierePareto()'...
+    /// Je retourne maintenant tranquillement dans 'pareto()'...
 }
 
 std::vector<float> graphe::poidsTotaux(unsigned int i) const
@@ -504,7 +504,7 @@ std::unordered_map <unsigned int, std::vector<float>> graphe::frontierePareto_di
     }while(incrementBoucle1!=(int)espace_recherche_int.size());
 
     return mesPoids_E_R;   /// Je retourne enfin la frontiere, i.e. toutes les combinaisons dominantes avec leurs poids.
-    /// Je retourne maintenant tranquillement dans 'afficher_frontierePareto()'...
+    /// Je retourne maintenant tranquillement dans 'pareto()'...
 }
 
 float graphe::Djikstra_sommet(int id_debut, const unsigned int &I) const
